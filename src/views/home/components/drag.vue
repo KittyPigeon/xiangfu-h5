@@ -98,18 +98,19 @@ const onTouchEnd = () => {
     const threshold = props.expandedHeight * 0.3; // 定义拖拽阈值
 
     if (isPanelExpanded.value) {
-        // 当前是展开状态，判断是否向下拖拽超过阈值，执行收起
-        if (contentTranslateY.value > threshold) {
-            isPanelExpanded.value = false;
-            contentTranslateY.value = -props.expandedHeight;
-            arrowRotate.value = 0;
-            contentOpacity.value = 0;
-        } else {
-            // 未超过阈值，恢复展开状态
-            contentTranslateY.value = 0;
-            arrowRotate.value = 180;
-            contentOpacity.value = 1;
-        }
+        isPanelExpanded.value = false;
+        contentTranslateY.value = -props.expandedHeight;
+        arrowRotate.value = 0;
+        contentOpacity.value = 0;
+        // // 当前是展开状态，判断是否向下拖拽超过阈值，执行收起
+        // if (contentTranslateY.value > threshold) {
+
+        // } else {
+        //     // 未超过阈值，恢复展开状态
+        //     contentTranslateY.value = 0;
+        //     arrowRotate.value = 180;
+        //     contentOpacity.value = 1;
+        // }
     } else {
         // 当前是收起状态，判断是否向上拖拽超过阈值，执行展开
         if (Math.abs(contentTranslateY.value) > threshold) {
@@ -165,6 +166,7 @@ onMounted(() => {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+
     .icon {
         display: inline-block;
         width: 8px;
