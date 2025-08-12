@@ -1,5 +1,5 @@
 <template>
-  <div class="my-favorite" :class="{active:isActive}" @click="handleFavoriteClick">
+  <div class="my-favorite" :class="{ active: isActive }" @click="handleFavoriteClick">
     <!-- Vant 图标（需提前注册或按需引入） -->
     <span class="favorite-icon"></span>
     <span class="favorite-text">我的收藏</span>
@@ -13,6 +13,7 @@ const isActive = ref(false)
 
 // 点击事件（可扩展：弹出收藏列表弹窗）
 const handleFavoriteClick = () => {
+  isActive.value = !isActive.value
   // 实际逻辑：打开收藏列表弹窗/跳转收藏页等
 };
 </script>
@@ -31,6 +32,7 @@ const handleFavoriteClick = () => {
   transition: background 0.2s;
   margin-bottom: 12px;
   margin-left: 8px;
+
   &.active {
     .favorite-icon {
       background: url('../../../assets/icons/icon-love-active.svg') no-repeat center;
