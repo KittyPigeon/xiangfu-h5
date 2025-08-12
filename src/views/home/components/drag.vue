@@ -51,7 +51,7 @@ const arrowRotate = ref(0); // 箭头旋转角度
 const contentOpacity = ref(0); // 内容区域的透明度，用于过渡动画
 const isDragging = ref(false); // 是否正在拖拽
 const isPanelExpanded = ref(false); // 内容是否展开
-
+const emit = defineEmits(['drag'])
 // 触摸/鼠标按下事件（兼容移动端和 PC 端）
 const onTouchStart = (e: TouchEvent | MouseEvent) => {
     const event = e as TouchEvent;
@@ -102,6 +102,7 @@ const onTouchEnd = () => {
         contentTranslateY.value = -props.expandedHeight;
         arrowRotate.value = 0;
         contentOpacity.value = 0;
+        emit('drag', isPanelExpanded.value)
         // // 当前是展开状态，判断是否向下拖拽超过阈值，执行收起
         // if (contentTranslateY.value > threshold) {
 
@@ -113,12 +114,16 @@ const onTouchEnd = () => {
         // }
     } else {
         // 当前是收起状态，判断是否向上拖拽超过阈值，执行展开
+
         if (Math.abs(contentTranslateY.value) > threshold) {
+            
             isPanelExpanded.value = true;
             contentTranslateY.value = 0;
             arrowRotate.value = 180;
             contentOpacity.value = 1;
+            emit('drag', isPanelExpanded.value)
         } else {
+             emit('drag', false)
             // 未超过阈值，恢复收起状态
             contentTranslateY.value = -props.expandedHeight;
             arrowRotate.value = 0;

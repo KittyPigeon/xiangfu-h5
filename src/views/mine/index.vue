@@ -1,10 +1,272 @@
-<script setup lang="ts" name="Demo">
-import { reactive } from "vue";
-
-</script>
-
 <template>
-  <div class="home-content">
-    首页
+  <div class="my-page">
+    <!-- 头部区域 -->
+    <div class="header">
+      <!-- 头像 -->
+      <van-image round fit="cover" class="avatar" :src="avatarUrl" />
+      <!-- 昵称 & ID -->
+      <div class="user-info">
+        <span class="nickname">{{ nickname }}</span>
+        <span class="user-id"><span class="icon-id"></span> {{ userId }}</span>
+      </div>
+      <div class="icon-arrow"></div>
+    </div>
+
+    <!-- 优惠券列表 -->
+    <van-cell-group class="coupon-list">
+      <van-cell title="我的优惠券" is-link :value="couponList.length" class="title" />
+      <div class="coupon-table">
+        <div class="table-header">
+          <span>商户</span>
+          <span>领取时间</span>
+          <span>面额</span>
+        </div>
+        <div class="table-row" v-for="(item, index) in couponList" :key="index">
+
+          <span class="table-row-column merchant-row">
+            <div class="qrcode">
+              <!-- 二维码占位（可替换为实际图片） -->
+              <van-image class="qrcode" fit="cover" :src="qrcodeUrl" />
+            </div>
+            <div class="merchant">{{ item.merchant }}</div>
+          </span>
+          <span class="table-row-column">{{ item.date }}</span>
+          <span class="table-row-column">{{ item.amount }}</span>
+        </div>
+      </div>
+    </van-cell-group>
+
+    <!-- 我参加的活动 -->
+    <van-cell-group class="activity-list">
+      <van-cell title="我参加的活动" is-link :value="activityList.length" />
+      <div class="activity-table">
+        <div class="table-header">
+          <span>活动名称</span>
+          <span>活动时间</span>
+          <span>面额</span>
+        </div>
+        <div class="table-row" v-for="(item, index) in activityList" :key="index">
+          <!-- 活动图标 -->
+
+          <span class="table-row-column merchant-row">
+            <van-image class="activity-icon" fit="cover" :src="item.icon" />
+            <span class="name-group">
+              <span class="name">{{ item.name }}</span>
+              <span class="hot" v-if="item.isHot">热门</span></span>
+          </span>
+
+
+          <span class="table-row-column">{{ item.date }}</span>
+          <span class="table-row-column">{{ item.amount }}</span>
+        </div>
+      </div>
+    </van-cell-group>
   </div>
 </template>
+
+<script setup lang="ts">
+import { ref } from 'vue';
+
+// 响应式数据
+const avatarUrl = ref('https://example.com/avatar.jpg'); // 实际头像地址
+const nickname = ref('也曾指尖盛夏');
+const userId = ref('1588888888');
+const qrcodeUrl = ref('https://example.com/qrcode.png'); // 二维码占位
+
+// 优惠券列表（模拟数据）
+const couponList = ref([
+  { merchant: '祥符茶馆', date: '2025.08.02', amount: 18 },
+  { merchant: '祥符茶馆', date: '2025.08.02', amount: 18 },
+  { merchant: '祥符茶馆', date: '2025.08.02', amount: 18 },
+  { merchant: '祥符茶馆', date: '2025.08.02', amount: 18 },
+]);
+
+// 活动列表（模拟数据）
+const activityList = ref([
+  { name: '跑行天下', date: '2025.08.02', amount: 7, isHot: true, icon: 'https://example.com/activity1.png' },
+  { name: '跑行天下', date: '2025.08.02', amount: 7, isHot: false, icon: 'https://example.com/activity2.png' },
+  { name: '跑行天下', date: '2025.08.02', amount: 5, isHot: false, icon: 'https://example.com/activity3.png' },
+]);
+</script>
+
+<style scoped lang="less">
+.van-hairline--top-bottom:after,
+.van-hairline-unset--top-bottom:after {
+  border: none;
+}
+
+.my-page {
+  background: linear-gradient(180deg, #FF6D23 11.54%, rgba(255, 109, 35, 0) 100%);
+  position: relative;
+
+  // background: url('../../assets/images/carton2.png') no-repeat top right;
+  // background-size: contain;
+  &::before {
+    content: '';
+    width: 291px;
+    height: 231px;
+    background: url('../../assets/images/carton2.png') no-repeat top right;
+    background-size: cover;
+    display: block;
+    // z-index: -1;
+    position: absolute;
+    top: -20px;
+    right: 0;
+  }
+
+  min-height: 100vh;
+  padding: 68px 16px 48px;
+
+  // 头部区域
+  .header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 14px;
+
+    .avatar {
+      width: 62px;
+      height: 62px;
+      border: 2px solid #fff;
+      margin-right: 14px;
+    }
+
+    .user-info {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+
+      .nickname {
+        font-size: 16px;
+        font-weight: 500;
+        color: #111111;
+      }
+
+      .user-id {
+        display: flex;
+        align-items: center;
+        font-size: 12px;
+        // color: #FF5600;
+        color: #fff;
+        margin-top: 4px;
+
+        .icon-id {
+          display: inline-block;
+          width: 24px;
+          height: 16px;
+          margin-right: 3px;
+          background: url('../../assets/icons/icon-id.svg') no-repeat center;
+        }
+      }
+    }
+
+    .icon-arrow {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      background: url('../../assets/icons/icon-arrow.svg') no-repeat center;
+    }
+  }
+
+  // 优惠券列表
+  .coupon-list,
+  .activity-list {
+    background-color: #fff;
+    border-radius: 16px;
+    margin-bottom: 12px;
+    padding: 10px 12px;
+
+    .van-cell {
+      border-radius: 16px;
+      padding: 0;
+      margin-bottom: 8px;
+    }
+
+    :deep(.van-cell:after) {
+      border: none;
+    }
+
+    :deep(.van-cell__title) {
+      font-size: 16px;
+      font-weight: 500;
+      color: #000;
+    }
+
+    .coupon-table,
+    .activity-table {
+      background-color: #fff;
+
+      .table-header {
+        display: flex;
+        justify-content: space-between;
+        background-color: #FFE2D3;
+        padding: 5px 0;
+        font-weight: bold;
+        font-size: 12px;
+        color: #D44700;
+        border-radius: 8px;
+        margin-bottom: 10px;
+
+        span {
+          flex: 1;
+          text-align: center;
+        }
+      }
+
+      .table-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 0;
+        border-bottom: 1px solid #eee;
+        font-size: 12px;
+        font-weight: 500;
+
+        .table-row-column {
+          flex: 1;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .merchant-row {
+          font-size: 12px;
+          color: #111111;
+
+        }
+
+        &:last-child {
+          border-bottom: none;
+        }
+
+        .name-group {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          .hot {
+            // width: 32px;
+            height: 17px;
+            border-radius: 4px;
+            line-height: 17px;
+            text-align: center;
+            color: #fff;
+            padding:0 4px;
+            font-size: 12px;
+            display: inline-block;
+            background: #FF6D23;
+          }
+
+
+        }
+
+        .qrcode,
+        .activity-icon {
+          width: 40px;
+          height: 40px;
+          margin-right: 8px;
+          border-radius: 4px;
+        }
+      }
+    }
+  }
+}
+</style>

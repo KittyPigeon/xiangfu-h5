@@ -12,7 +12,7 @@ const cachedViews = computed(() => {
 
 <template>
   <div class="app-wrapper">
-    <nav-bar />
+    <!-- <nav-bar /> -->
     <div class="router-view">
       <router-view v-slot="{ Component }">
         <keep-alive :include="cachedViews">
