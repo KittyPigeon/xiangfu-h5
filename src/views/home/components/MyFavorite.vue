@@ -22,6 +22,7 @@ const handleFavoriteClick = () => {
 .my-favorite {
   display: flex;
   align-items: center;
+  z-index: 2;
   padding: 0 18px;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.3) 0%, #FFFFFF 8.22%);
   width: 112px;
