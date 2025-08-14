@@ -11,8 +11,7 @@
 </template>
 
 <script setup lang="ts">
-import { VanImage } from 'vant';
-
+import {ref} from 'vue'
 const bannerImage = ref('https://example.com/banner.jpg'); // 替换为实际图片
 const bannerTitle = ref('书香溢社区，温暖伴同行');
 </script>

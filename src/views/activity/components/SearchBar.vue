@@ -14,14 +14,13 @@
 import { ref,  } from 'vue';
 
 const searchValue = ref('');
-
+const emit = defineEmits(['search'])
 // 搜索输入事件
 const handleInput = (e: Event) => {
   const value = (e.target as HTMLInputElement).value;
   emit('search', value);
 };
 
-defineEmits(['search']);
 </script>
 
 <style scoped lang="less">

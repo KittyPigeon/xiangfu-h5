@@ -23,7 +23,7 @@ const initMap = async () => {
   }).then((AMap) => {
     const map = new AMap.Map("map-container", {
       zoom: 11, // 级别
-      center: [116.397428, 39.90923], // 中心点坐标
+      center: [120.098838, 30.32526], // 中心点坐标
       viewMode: "2D" // 使用2D视图
     })
 
@@ -60,14 +60,18 @@ onUnmounted(() => {
     <div id="map-container" class="map-container"></div>
     <!-- 我的收藏 -->
     <button @click.stop="showPopup = !showPopup">展示详情</button>
-    <!-- 我的收藏 -->
-    <MyFavorite />
-    <!-- 搜索栏 -->
-    <SearchBar @search-input="handleSearchInput" @search="handleSearch" />
-    <!-- 收藏弹窗 -->
-    <DragExpandPanel class="drag-panel-container" title="分类筛选&收藏筛选" @drag="handleDrag">
-      <StartList :is-expanded="isExpanded"></StartList>
-    </DragExpandPanel>
+
+    <div class="activity-control">
+      <!-- 我的收藏 -->
+      <MyFavorite />
+      <!-- 搜索栏 -->
+      <SearchBar @search-input="handleSearchInput" @search="handleSearch" />
+      <!-- 收藏弹窗 -->
+      <DragExpandPanel class="drag-panel-container" title="分类筛选&收藏筛选" @drag="handleDrag">
+        <StartList :is-expanded="isExpanded"></StartList>
+      </DragExpandPanel>
+    </div>
+
     <TeaHouseDetailPopup v-model:show="showPopup" :name="'祥符茶馆'" :rating="3.7" :cover-image="CoverImage" />
 
   </div>
@@ -83,15 +87,24 @@ onUnmounted(() => {
   position: relative;
   display: flex;
   flex-direction: column;
-  background: #f2f2f2;
+  // background: #f2f2f2;
 
   .map-container {
-    flex: 1;
-    // position: absolute;
-    // bottom: 0;
-    // left: 0;
-    // right: 0;
-    // top: 0;
+    // flex: 1;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    top: 0;
+    z-index: 1;
+  }
+
+  .activity-control {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 99;
   }
 
   .drag-panel-container {

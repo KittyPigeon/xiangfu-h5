@@ -20,6 +20,9 @@
 
     <!-- 活动 Banner 组件 -->
     <ActivityBanner />
+
+    <!-- 活动详情弹窗 -->
+    <ActivityDetailPopup v-model:show="showPopup" @close="showPopup=!showPopup" @favorite-change="handleFavorite" />
   </div>
 </template>
 
@@ -31,8 +34,11 @@ import CategoryTab from './components/CategoryTab.vue';
 import ActivityMap from './components/ActivityMap.vue';
 import ActivityTab from './components/ActivityTab.vue';
 import ActivityBanner from './components/ActivityBanner.vue';
+import ActivityDetailPopup from './components/ActivityDetailPopup.vue'
 const mainBanner = ref('https://example.com/main-banner.jpg'); // 替换为实际图片
 
+// 
+const showPopup = ref(true)
 const handleSearch = (value: string) => {
   console.log('搜索内容：', value);
 };
@@ -44,6 +50,10 @@ const handleCategoryChange = (index: number) => {
 const handleActivityTabChange = (index: number) => {
   console.log('活动 Tab 切换：', index);
 };
+
+const handleFavorite = () => {
+
+}
 </script>
 
 <style scoped lang="less">
