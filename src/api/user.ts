@@ -16,12 +16,17 @@ export const queryMapActivities = (userCouponId) => {
 }
 
 // 分页查询用户优惠券
-export const getUserCoupons = (data) => {
+export const queryUserCoupons = (data) => {
     return get(`/api/user/coupon/page`, data)
 }
 
 // 检查是否已领取
 export const checkUserCoupon = (couponId) => {
     return get(`/api/user/coupon/check/${couponId}`)
+}
+
+// 获取用户信息
+export const getUserData = () => {
+    return get(`/api/user/info`)
 }
 

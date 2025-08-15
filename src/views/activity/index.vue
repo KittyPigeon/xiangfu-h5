@@ -46,7 +46,7 @@ import ActivityDetailPopup from './components/ActivityDetailPopup.vue'
 const mainBanner = ref('https://example.com/main-banner.jpg'); // 替换为实际图片
 
 // 
-const showPopup = ref(true)
+const showPopup = ref(false)
 const handleSearch = (value: string) => {
   console.log('搜索内容：', value);
 };

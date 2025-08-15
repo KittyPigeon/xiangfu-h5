@@ -26,12 +26,12 @@
           <span class="table-row-column merchant-row">
             <div class="qrcode">
               <!-- 二维码占位（可替换为实际图片） -->
-              <van-image class="qrcode" fit="cover" :src="qrcodeUrl" />
+              <van-image class="qrcode" fit="cover" :src="item.couponCode" @click="showQrcode(item)" />
             </div>
-            <div class="merchant">{{ item.merchant }}</div>
+            <div class="merchant">{{ item.merchantName }}</div>
           </span>
-          <span class="table-row-column">{{ item.date }}</span>
-          <span class="table-row-column">{{ item.amount }}</span>
+          <span class="table-row-column">{{ item.receiveTime }}</span>
+          <span class="table-row-column">{{ item.discountAmount }}</span>
         </div>
       </div>
     </van-cell-group>
@@ -49,14 +49,14 @@
           <!-- 活动图标 -->
 
           <span class="table-row-column merchant-row">
-            <van-image class="activity-icon" fit="cover" :src="item.icon" />
+            <van-image class="activity-icon" fit="cover" :src="item.coverImage" />
             <span class="name-group">
-              <span class="name">{{ item.name }}</span>
+              <span class="name">{{ item.title }}</span>
               <span class="hot" v-if="item.isHot">热门</span></span>
           </span>
 
 
-          <span class="table-row-column">{{ item.date }}</span>
+          <span class="table-row-column">{{ item.startTime }}</span>
           <span class="table-row-column">{{ item.amount }}</span>
         </div>
       </div>
@@ -65,28 +65,88 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
+import { showToast } from 'vant';
+import { getUserData, queryUserCoupons } from '@/api/user';
+import { queryUserActivity } from '@/api/activity'
+import dayjs from 'dayjs';
+import to from 'await-to-js';
+onMounted(async () => {
+  await getUserInfo();
+  await getUserCoupon();
+  await getUserActivity();
+})
+
 
 // 响应式数据
 const avatarUrl = ref('https://example.com/avatar.jpg'); // 实际头像地址
 const nickname = ref('也曾指尖盛夏');
 const userId = ref('1588888888');
-const qrcodeUrl = ref('https://example.com/qrcode.png'); // 二维码占位
 
 // 优惠券列表（模拟数据）
 const couponList = ref([
-  { merchant: '祥符茶馆', date: '2025.08.02', amount: 18 },
-  { merchant: '祥符茶馆', date: '2025.08.02', amount: 18 },
-  { merchant: '祥符茶馆', date: '2025.08.02', amount: 18 },
-  { merchant: '祥符茶馆', date: '2025.08.02', amount: 18 },
+  { merchantName: '祥符茶馆', receiveTime: '2025.08.02', discountAmount: 18, couponCode: 'https://example.com/activity1.png' },
+  { merchantName: '祥符茶馆', receiveTime: '2025.08.02', discountAmount: 18, couponCode: 'https://example.com/activity1.png' },
+  { merchantName: '祥符茶馆', receiveTime: '2025.08.02', discountAmount: 18, couponCode: 'https://example.com/activity1.png' },
+  { merchantName: '祥符茶馆', receiveTime: '2025.08.02', discountAmount: 18, couponCode: 'https://example.com/activity1.png' },
 ]);
 
 // 活动列表（模拟数据）
 const activityList = ref([
-  { name: '跑行天下', date: '2025.08.02', amount: 7, isHot: true, icon: 'https://example.com/activity1.png' },
-  { name: '跑行天下', date: '2025.08.02', amount: 7, isHot: false, icon: 'https://example.com/activity2.png' },
-  { name: '跑行天下', date: '2025.08.02', amount: 5, isHot: false, icon: 'https://example.com/activity3.png' },
+  { title: '跑行天下', startTime: '2025.08.02', amount: 7, isHot: true, coverImage: 'https://example.com/activity1.png' },
+  { title: '跑行天下', startTime: '2025.08.02', amount: 7, isHot: false, coverImage: 'https://example.com/activity2.png' },
+  { title: '跑行天下', startTime: '2025.08.02', amount: 5, isHot: false, coverImage: 'https://example.com/activity3.png' },
 ]);
+
+// 接口
+const getUserInfo = async () => {
+  const [err, res] = await to<any, any>(getUserData());
+  if (err) {
+    showToast(err.message)
+    return
+  }
+  nickname.value = res.data.nickname;
+  avatarUrl.value = res.data.avatar;
+  userId.value = res.data.userId;
+  localStorage.setItem('user', JSON.stringify(res.data))
+}
+
+const getUserCoupon = async () => {
+  const [err, res] = await to<any, any>(queryUserCoupons({
+    current: 1,
+    size: 9999,
+    status: 1
+  }));
+  if (err) {
+    showToast(err.message)
+    return
+  }
+  couponList.value = res.data.records;
+}
+const getUserActivity = async () => {
+  const [err, res] = await to<any, any>(queryUserActivity({
+    current: 1,
+    size: 9999,
+    status: 1
+  }));
+  if (err) {
+    showToast(err.message)
+    return
+  }
+  activityList.value = res.data.map((o) => {
+    return {
+      ...o,
+      startTime: dayjs(o.startTime).format('YYYY.MM.DD'),
+      amount: 8,
+      isHot: true
+    }
+  });
+}
+
+const showQrcode = (data) => {
+  console.log('data',data)
+  
+}
 </script>
 
 <style scoped lang="less">
@@ -242,6 +302,7 @@ const activityList = ref([
           display: flex;
           flex-direction: column;
           justify-content: center;
+
           .hot {
             // width: 32px;
             height: 17px;
@@ -249,7 +310,7 @@ const activityList = ref([
             line-height: 17px;
             text-align: center;
             color: #fff;
-            padding:0 4px;
+            padding: 0 4px;
             font-size: 12px;
             display: inline-block;
             background: #FF6D23;

@@ -28,7 +28,9 @@
   },
   "dependencies": {
     "@amap/amap-jsapi-loader": "^1.0.1",
+    "await-to-js": "^3.0.0",
     "axios": "^1.6.8",
+    "dayjs": "^1.11.13",
     "normalize.css": "^8.0.1",
     "nprogress": "^0.2.0",
     "pinia": "^2.1.7",
