@@ -1,28 +1,36 @@
 <template>
   <div class="home-page">
-    <!-- 搜索组件 -->
-    <SearchBar @search="handleSearch" />
+    <div class="header">游祥符</div>
+    <div class="header-top">
+      <!-- 搜索组件 -->
+      <SearchBar @search="handleSearch" />
 
-    <!-- 分类 Tab 组件 -->
-    <CategoryTab @change="handleCategoryChange" />
+      <!-- 分类 Tab 组件 -->
+      <CategoryTab @change="handleCategoryChange" />
 
-    <!-- Banner 组件 -->
-    <div class="header-banner">
-      <van-image fit="cover" class="main-banner" :src="mainBanner" />
-      <div class="slogan">带你游 祥符</div>
     </div>
 
-    <!-- 活动地图组件 -->
-    <ActivityMap />
 
-    <!-- 活动 Tab 组件 -->
-    <ActivityTab @change="handleActivityTabChange" />
+    <!-- <div class="header-banner">
+      <van-image fit="cover" class="main-banner" :src="mainBanner" />
+      <div class="slogan">带你游 祥符</div>
+    </div> -->
 
-    <!-- 活动 Banner 组件 -->
-    <ActivityBanner />
 
-    <!-- 活动详情弹窗 -->
-    <ActivityDetailPopup v-model:show="showPopup" @close="showPopup=!showPopup" @favorite-change="handleFavorite" />
+    <div class="home-content">
+      <!-- 活动地图组件 -->
+      <ActivityMap />
+
+      <!-- 活动 Tab 组件 -->
+      <ActivityTab @change="handleActivityTabChange" />
+
+      <!-- 活动 Banner 组件 -->
+      <ActivityBanner />
+
+      <!-- 活动详情弹窗 -->
+      <ActivityDetailPopup v-model:show="showPopup" @close="showPopup = !showPopup" @favorite-change="handleFavorite" />
+    </div>
+
   </div>
 </template>
 
@@ -58,9 +66,39 @@ const handleFavorite = () => {
 
 <style scoped lang="less">
 .home-page {
-  background: #f5f5f5;
-  min-height: 100vh;
+  position: relative;
+  background: linear-gradient(180deg, #FF6D23 11.54%, rgba(255, 109, 35, 0) 100%);
+  height: 100%;
 
+  &::after {
+    content: '';
+    position: absolute;
+    top: 90px;
+    left: 0;
+    z-index: 1;
+    display: block;
+    width: 100vw;
+    height: 298px;
+    background: url('../../assets/images/bg.png') no-repeat center;
+    background-size: cover;
+  }
+
+  .header {
+    height: 54px;
+    line-height: 54px;
+    text-align: center;
+    font-size: 16px;
+    font-weight: 600;
+    color: #fff;
+    z-index: 2;
+  }
+  .header-top{
+    position: absolute;
+    top:54px;
+    left: 0;
+    right: 0;
+    z-index: 99;
+  }
   .header-banner {
     position: relative;
     margin: 0 16px;
@@ -80,6 +118,20 @@ const handleFavorite = () => {
       font-weight: bold;
       text-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
     }
+  }
+
+  .home-content {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.3) 0%, #FFFFFF 8.22%);
+    border: 1px solid #FFFFFF;
+    border-radius: 16px;
+    padding: 12px 14px;
+    position: absolute;
+    bottom: 0;
+    left: 8px;
+    right: 8px;
+    height: 430px;
+    overflow-y: scroll;
+    z-index: 99;
   }
 }
 </style>

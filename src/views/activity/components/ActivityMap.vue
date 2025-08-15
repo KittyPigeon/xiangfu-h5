@@ -1,12 +1,19 @@
 <template>
   <div class="activity-map">
-    <!-- 地图容器 -->
-    <div id="amap-container" class="map-container"></div>
+
     <!-- 地图标题 -->
     <div class="map-title">
-      <span>活动地图</span>
-      <!-- <van-button size="small" type="info" @click="handleViewMore">查看</van-button> -->
+      <span class="title">活动地图</span>
+      <span class="look-group" @click="handleViewMore">
+        <span class="look">查看</span>
+        <van-icon name="arrow" size="12" color="rgba(0, 0, 0, 0.35)" />
+      </span>
     </div>
+
+
+    <!-- 地图容器 -->
+    <div id="amap-container" class="map-container"></div>
+
   </div>
 </template>
 
@@ -24,15 +31,15 @@ const initMap = async () => {
     version: "2.0", // 指定要加载的 JSAPI 的版本
     plugins: ['AMap.Scale', 'AMap.ToolBar'] // 需要使用的的插件列表
   }).then((AMap) => {
-    const map = new AMap.Map("map-container", {
+    const map = new AMap.Map("amap-container", {
       zoom: 11, // 级别
       center: [116.397428, 39.90923], // 中心点坐标
       viewMode: "2D" // 使用2D视图
     })
 
     // 添加插件
-    map.addControl(new AMap.Scale())
-    map.addControl(new AMap.ToolBar())
+    // map.addControl(new AMap.Scale())
+    // map.addControl(new AMap.ToolBar())
   }).catch(e => {
     console.error(e)
   })
@@ -57,12 +64,11 @@ const handleViewMore = () => {
 
 <style scoped lang="less">
 .activity-map {
-  margin: 0 16px;
-
+  // margin: 0 16px;
   .map-container {
     width: 100%;
-    height: 200px;
-    border-radius: 8px;
+    height: 100px;
+    border-radius: 12px;
     overflow: hidden;
   }
 
@@ -70,12 +76,25 @@ const handleViewMore = () => {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin: 8px 0;
+    margin-bottom: 8px;
 
-    span {
-      font-size: 16px;
+    span.title {
+      font-size: 18px;
       font-weight: bold;
-      color: #333;
+      color: #000;
+    }
+
+    .look-group {
+      display: flex;
+      align-items: center;
+
+      .look {
+        font-size: 12px;
+        font-weight: 600;
+        margin-right: 2px;
+        color: rgba(0, 0, 0, 0.35);
+      }
+
     }
   }
 }

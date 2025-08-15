@@ -69,6 +69,7 @@ export default defineConfig(({ mode }) => {
       }
     },
     build: {
+      outDir: env.VITE_DIRT,
       rollupOptions: {
         output: {
           chunkFileNames: "static/js/[name]-[hash].js",

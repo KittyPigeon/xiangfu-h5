@@ -5,3 +5,10 @@
     clear: both;
   }
 }
+.svg-mask(@url, @size: 24px, @color: @text-color-secondary) {
+  width: @size;
+  height: @size;
+  mask: url(@url) no-repeat center / contain;
+  -webkit-mask: url(@url) no-repeat center / contain;
+  background-color: @color;
+}
