@@ -75,6 +75,9 @@ const getCategoryList = async () => {
     }
   });
 }
+
+const handleSearchInput = () => { }
+const handleSearch = () => { }
 </script>
 
 <template>

@@ -77,6 +77,10 @@ const getUserCoupon = async () => {
 const loadingMore = () => {
     // page.value++;
     // getUserCoupon()
+    if (!finished.value) {
+        page.value++;
+        getUserCoupon()
+    }
 }
 </script>
 <style scoped lang='less'>

@@ -1,6 +1,6 @@
 <template>
     <div class="category-tab">
-        <div v-for="(item, index) in tabs" :key="index" class="tab-item" :class="{ active: current === index }"
+        <div v-for="(item, index) in tabList" :key="index" class="tab-item" :class="{ active: current === index }"
             @click="handleTabClick(index)">
             <!-- <van-icon :name="item.icon" class="tab-icon" /> -->
             <span class="tab-icon" :class="[item.icon]"></span>
@@ -10,20 +10,20 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-
+import { ref, onMounted } from 'vue';
+import { queryActivityCategory } from '@/api/activity'
 interface TabItem {
     text: string;
     icon: string;
 }
-
-const tabs = ref<TabItem[]>([
-    { text: '运动健身', icon: 'bike' },
-    { text: '艺术积累', icon: 'brush' },
-    { text: '便利生活', icon: 'shop' },
-    { text: '社区活动', icon: 'community' },
-    { text: '教育教学', icon: 'book' },
-]);
+const props = defineProps({
+    tabList: {
+        type: Array<TabItem>,
+        default() {
+            return []
+        }
+    }
+});
 
 const current = ref(0);
 const emit = defineEmits(['change'])
@@ -32,6 +32,13 @@ const handleTabClick = (index: number) => {
     emit('change', index);
 };
 
+onMounted(() => {
+    getCategory();
+})
+const getCategory = async () => {
+    const res = await queryActivityCategory()
+    console.log('res', res)
+}
 </script>
 
 <style scoped lang="less">
@@ -40,6 +47,8 @@ const handleTabClick = (index: number) => {
 .category-tab {
     display: flex;
     justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 20px;
     margin: 0 20px;
 
     .tab-item {
@@ -53,34 +62,34 @@ const handleTabClick = (index: number) => {
             color: rgba(255, 255, 255, 0.9);
             margin-bottom: 4px;
 
-            &.bike {
+            &.icon-sports {
                 .svg-mask('@/assets/icons/icon-tab-bike.svg', 24px, #fff);
 
             }
 
-            &.brush {
+            &.icon-festival {
                 .svg-mask('@/assets/icons/icon-tab-brush.svg', 24px, #fff);
 
             }
 
-            &.shop {
+            &.icon-exhibition {
                 .svg-mask('@/assets/icons/icon-tab-shop.svg', 24px, #fff);
 
             }
 
-            &.community {
+            &.icon-music {
                 .svg-mask('@/assets/icons/icon-tab-community.svg', 24px, #fff);
 
             }
 
-            &.book {
+            &.icon-culture {
                 .svg-mask('@/assets/icons/icon-tab-book.svg', 24px, #fff);
             }
         }
 
         .tab-text {
             font-size: 12px;
-           color: rgba(255, 255, 255, 0.9);
+            color: rgba(255, 255, 255, 0.9);
         }
     }
 }

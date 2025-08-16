@@ -1,14 +1,29 @@
 <template>
   <div class="activity-banner">
     <van-image fit="cover" class="banner-image" :src="bannerImage" />
-    <div class="banner-tag"></div>
+    <div class="banner-tag" v-if="isRecommend"></div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
 const bannerImage = ref('https://example.com/banner.jpg'); // 替换为实际图片
-const bannerTitle = ref('书香溢社区，温暖伴同行');
+
+const props = defineProps({
+  bannerImage: {
+    type: String,
+    default() {
+      return ''
+    }
+  },
+  isRecommend: {
+    type: Boolean,
+    default() {
+      return false;
+    }
+  }
+});
+
 </script>
 
 <style scoped lang="less">

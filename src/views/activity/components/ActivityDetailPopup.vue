@@ -5,21 +5,21 @@
         <div class="activity-popup">
             <!-- 顶部 Banner（含关闭按钮） -->
             <div class="popup-header">
-                <van-image fit="cover" class="header-image" :src="Banner" />
+                <van-image fit="cover" class="header-image" :src="activityInfo.coverImage" />
                 <van-icon name="close" class="close-icon" @click.stop="handleClose" />
             </div>
 
             <!-- 标题与基础信息 -->
             <div class="info-section">
-                <div class="icon-star active"></div>
-                <h2 class="title">{{ title }}</h2>
+                <div class="icon-star" :class="{ active: activityInfo.isFavorited }" @click="toggleFavorite"></div>
+                <h2 class="title">{{ activityInfo.title }}</h2>
                 <div class="address-group">
                     <span class="icon-location"></span>
-                    <span class="distance">距离1km</span>
+                    <span class="distance">{{ activityInfo.distanceDesc }}</span>
                 </div>
-                <div class="activity-tag">社区活动 文化</div>
-                <div class="date">2025-08-20 16:01:30</div>
-                <div class="content" v-html="content"></div>
+                <div class="activity-tag">{{ activityInfo.categoryName }}</div>
+                <div class="date">{{ activityInfo.startTime }}</div>
+                <div class="content" v-html="activityInfo.content"></div>
             </div>
 
             <!-- 正文内容 -->
@@ -46,6 +46,7 @@ const content = ref(`
 const isRecommended = ref(true); // 是否推荐
 const isFavorite = ref(false); // 是否收藏
 
+// const activityInfo = ref(null)
 // 关闭弹窗
 const handleClose = () => {
     showPopup.value = false;
@@ -54,8 +55,7 @@ const handleClose = () => {
 
 // 收藏功能
 const toggleFavorite = () => {
-    isFavorite.value = !isFavorite.value;
-    emit('favorite-change', isFavorite.value);
+    emit('favorite-change', !props.activityInfo.isFavorite);
 };
 
 // 定义 props 和 emits
@@ -67,9 +67,13 @@ const props = defineProps({
     category: { type: String, default: '社区活动文化' },
     content: { type: String, default: '' },
     isRecommended: { type: Boolean, default: true },
+    activityInfo: {
+        type: Object
+    }
 });
 
 const emit = defineEmits(['close', 'favorite-change']);
+
 </script>
 
 <style scoped lang="less">

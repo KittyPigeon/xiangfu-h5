@@ -133,7 +133,7 @@ const getUserCoupon = async () => {
     showToast(err.message)
     return
   }
-  couponList.value = res.data.records;
+  couponList.value = res.data.records.slice(0, 4);
 }
 const getUserActivity = async () => {
   const [err, res] = await to<any, any>(queryCollectList({
@@ -154,7 +154,7 @@ const getUserActivity = async () => {
       title: o.targetName,
       coverImage: o.targetImage
     }
-  });
+  }).slice(0, 3);
 }
 
 const showQrcode = (data) => {

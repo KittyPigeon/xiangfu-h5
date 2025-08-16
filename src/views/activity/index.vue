@@ -6,7 +6,7 @@
       <SearchBar @search="handleSearch" />
 
       <!-- 分类 Tab 组件 -->
-      <CategoryTab @change="handleCategoryChange" />
+      <CategoryTab :tab-list="tabList" @change="handleCategoryChange" />
 
     </div>
 
@@ -24,43 +24,170 @@
       <!-- 活动 Tab 组件 -->
       <ActivityTab @change="handleActivityTabChange" />
 
-      <!-- 活动 Banner 组件 -->
-      <ActivityBanner />
+      <div class="activity-list">
+        <div class="activity-list-item" v-for="(item, index) in activityList" :key="index"
+          @click="openActivityDetail(item)">
+          <!-- 活动 Banner 组件 -->
+          <ActivityBanner :banner-image="item.coverImage" :is-recommend="item.isRecommend" />
+        </div>
+
+      </div>
+
 
       <!-- 活动详情弹窗 -->
-      <ActivityDetailPopup v-model:show="showPopup" @close="showPopup = !showPopup" @favorite-change="handleFavorite" />
+      <ActivityDetailPopup :activity-info="activityInfo" v-model:show="showPopup" @close="showPopup = !showPopup"
+        @favorite-change="handleFavorite" />
     </div>
 
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-
+import { ref, onMounted } from 'vue'
+import { queryActivityCategory, queryActivityList, queryActivityDetail } from '@/api/activity';
+import { addCollect, delColloect } from '@/api/collect'
 import SearchBar from './components/SearchBar.vue';
 import CategoryTab from './components/CategoryTab.vue';
 import ActivityMap from './components/ActivityMap.vue';
 import ActivityTab from './components/ActivityTab.vue';
 import ActivityBanner from './components/ActivityBanner.vue';
 import ActivityDetailPopup from './components/ActivityDetailPopup.vue'
-const mainBanner = ref('https://example.com/main-banner.jpg'); // 替换为实际图片
-
+import { EnumCollectTargetType } from '@/enums/collect'
+import to from 'await-to-js'
+import { showToast } from 'vant';
 // 
 const showPopup = ref(false)
+const tabList = ref([])
+const tabIndex = ref(0)
+const searchName = ref('')
+const activityTabIndex = ref(0);
+const activityTabMap = ref([
+  {
+    timeFilter: 'ongoing'
+  },
+  {
+    timeFilter: 'upcoming',
+  },
+  {
+    timeFilter: 'past'
+  }
+])
+const activityInfo = ref(null)
+const activityList = ref([{ coverImage: '', isRecommend: true, id: 22 }])
 const handleSearch = (value: string) => {
   console.log('搜索内容：', value);
+  searchName.value = value;
+  getActivityList()
 };
 
 const handleCategoryChange = (index: number) => {
   console.log('分类 Tab 切换：', index);
+  tabIndex.value = index;
+  getActivityList()
 };
 
 const handleActivityTabChange = (index: number) => {
   console.log('活动 Tab 切换：', index);
+  activityTabIndex.value = index;
+  getActivityList();
 };
 
-const handleFavorite = () => {
+const handleFavorite = async (flag) => {
+  const params = {
+    targetType: EnumCollectTargetType.ACTIVITY,
+    targetId: activityInfo.value.id
+  }
+  const [err, res] = flag ? await to(addCollect(params)) : await to(delColloect(params);)
+  if (err) {
+    showToast(err.message)
+    return
+  }
+  if (flag) {
+    showToast('收藏成功')
+  }
+  if (!flag) {
+    showToast('取消收藏成功')
+  }
+}
 
+onMounted(async () => {
+  await getCategory();
+  await getActivityList();
+})
+const getCategory = async () => {
+  const [err, res] = await to<any, any>(queryActivityCategory())
+  if (err) {
+    return;
+  }
+  tabList.value = res.data.map(o => {
+    return {
+      ...o,
+      text: o.name
+    }
+  });
+}
+const getActivityList = async () => {
+  const params = {
+    queryDTO: {
+      keyword: searchName.value,
+      categoryId: tabList.value[tabIndex.value].id,
+      timeFilter: activityTabMap.value[activityTabIndex.value].timeFilter,
+      latitude: 30.22,
+      longitude: 120.12,
+      radius: 5000,
+    },
+    current: 1,
+    size: 10,
+  }
+  const [err, res] = await to<any, any>(queryActivityList(params))
+  if (err) {
+    return;
+  }
+  activityList.value = res.data.records;
+}
+
+const openActivityDetail = async (data) => {
+  // showPopup.value = true
+  const [err, res] = await to<any, any>(queryActivityDetail(data.id));
+  // if (err) {
+  //   showToast(err.message)
+  //   return;
+  // }
+  showPopup.value = true;
+  activityInfo.value = {
+    "id": 1,
+    "title": "春节文化展览",
+    "categoryId": 1,
+    "categoryName": "文化活动",
+    "categoryIcon": "icon-culture",
+    "merchantId": 1,
+    "merchantName": "文化中心",
+    "merchantLogo": "https://example.com/logo.jpg",
+    "description": "传统文化展览，了解春节习俗",
+    "content": "传统文化展览，了解春节习俗传统文化展览，了解春节习俗传统文化展览，了解春节习俗传统文化展览，了解春节习俗",
+    "coverImage": "https://example.com/cover.jpg",
+    "images": "",
+    "imageList": [],
+    "startTime": "",
+    "endTime": "",
+    "address": "北京市朝阳区文化中心",
+    "longitude": 116.397428,
+    "latitude": 39.90923,
+    "maxParticipants": 100,
+    "currentParticipants": 50,
+    "tags": "",
+    "tagList": [],
+    "status": 1,
+    "statusDesc": "正常",
+    "activityStatusDesc": "进行中",
+    "distance": 500,
+    "distanceDesc": "500m",
+    "remainingParticipants": 50,
+    "canSignUp": true,
+    "isFavorited": false,
+    "createTime": ""
+  }
+  activityInfo.value = res.data;
 }
 </script>
 
@@ -92,13 +219,15 @@ const handleFavorite = () => {
     color: #fff;
     z-index: 2;
   }
-  .header-top{
+
+  .header-top {
     position: absolute;
-    top:54px;
+    top: 54px;
     left: 0;
     right: 0;
     z-index: 99;
   }
+
   .header-banner {
     position: relative;
     margin: 0 16px;
