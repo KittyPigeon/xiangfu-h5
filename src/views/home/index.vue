@@ -8,14 +8,18 @@ import TeaHouseDetailPopup from './components/TeaHouseDetailPopup.vue'
 import CoverImage from '@/assets/images/s.png'
 // @ts-ignore
 import AMapLoader from '@amap/amap-jsapi-loader';
-import { queryHotMerchantCategory } from '@/api/shop'
+import { queryHotMerchantCategory, queryMerchatPage } from '@/api/shop'
 import to from 'await-to-js';
 import { showToast } from "vant";
+import { flat } from "vant/lib/utils";
 
-
+const searchName = ref('')
 const isExpanded = ref(false)
 const showPopup = ref(false)
 const categoryList = ref([])
+const categoryIndex = ref(0)
+const merchatList = ref([])
+const isFavorite = ref(false)
 const handleDrag = (t) => {
   isExpanded.value = t;
 }
@@ -76,8 +80,55 @@ const getCategoryList = async () => {
   });
 }
 
+const getMarchantData = async () => {
+  // 经纬度暂时固定
+
+  const params = {
+    queryDTO: JSON.stringify({
+      keyword: searchName.value,
+      categoryId: categoryList.value[categoryIndex.value],
+      status: 1,
+      latitude: 30.32526,
+      longitude: 120.098838,
+      radius: 5000,
+      isFavorite: isFavorite.value
+    }),
+    size: 9999,
+    current: 1,
+  }
+  const [err, res] = await to<any, any>(queryMerchatPage(params))
+  if (err) {
+    showToast(err.message)
+    return;
+  }
+  merchatList.value = res.data.map(item => {
+    return {
+      ...item,
+      icon: item.icon,
+      text: item.name,
+      badge: item.merchantCount,
+    }
+  });
+}
 const handleSearchInput = () => { }
-const handleSearch = () => { }
+const handleSearch = (val) => {
+  searchName.value = val;
+  getMarchantData();
+}
+
+const handleCategoryClick = (item) => {
+  categoryList.value.forEach(o => {
+    o.isActive = false;
+  })
+  categoryIndex.value = categoryList.value.findIndex((o) => o.id == item.id);
+  categoryList.value[categoryIndex.value].isActive = true;
+  getMarchantData();
+}
+
+const handelFavorite = (flag) => {
+  isFavorite.value = flag
+  getMarchantData();
+}
 </script>
 
 <template>
@@ -88,12 +139,13 @@ const handleSearch = () => { }
 
     <div class="activity-control">
       <!-- 我的收藏 -->
-      <MyFavorite />
+      <MyFavorite @favorite="handelFavorite" />
       <!-- 搜索栏 -->
       <SearchBar @search-input="handleSearchInput" @search="handleSearch" />
       <!-- 收藏弹窗 -->
       <DragExpandPanel class="drag-panel-container" title="分类筛选&收藏筛选" @drag="handleDrag">
-        <StartList :is-expanded="isExpanded" :filter-items-list="categoryList"></StartList>
+        <StartList :is-expanded="isExpanded" :filter-items-list="categoryList" @item-click="handleCategoryClick">
+        </StartList>
       </DragExpandPanel>
     </div>
 

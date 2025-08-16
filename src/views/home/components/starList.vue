@@ -7,7 +7,7 @@
                 <!-- 图标 -->
                 <div class="item-icon">
                     <!-- <img :src="item.icon" :alt="item.text" /> -->
-                     <div class="icon" :class="[item.icon]"></div>
+                    <div class="icon" :class="[item.icon]"></div>
                 </div>
                 <!-- 徽章数字 -->
                 <div class="badge" v-if="item.badge">
@@ -33,6 +33,7 @@ interface FilterItem {
     badge: number;       // 徽章数字
     isActive: boolean;   // 是否选中
 }
+const emit = defineEmits(['item-click'])
 const props = defineProps({
     // 是否显示倒计时（如听力科目设为false）
     isExpanded: {
@@ -69,10 +70,8 @@ const filterItems = ref<FilterItem[]>([
 
 // 点击筛选项事件
 const handleItemClick = (item: FilterItem) => {
-    // 这里可根据需求修改选中态逻辑（如单选/多选）
-    item.isActive = !item.isActive;
     // 可在此处 emit 事件给父组件：
-    // emit('item-click', item);
+    emit('item-click', item);
 };
 </script>
 
@@ -120,19 +119,23 @@ const handleItemClick = (item: FilterItem) => {
                 .icon {
                     width: 44px;
                     height: 44px;
-                    &.icon-food{
+
+                    &.icon-food {
                         background: url('../../../assets/images/icon-food.png') no-repeat center;
                         background-size: cover;
                     }
-                    &.icon-shopping{
+
+                    &.icon-shopping {
                         background: url('../../../assets/images/icon-food.png') no-repeat center;
                         background-size: cover;
                     }
-                    &.icon-entertainment{
+
+                    &.icon-entertainment {
                         background: url('../../../assets/images/icon-food.png') no-repeat center;
                         background-size: cover;
                     }
-                    &.icon-hotel{
+
+                    &.icon-hotel {
                         background: url('../../../assets/images/icon-food.png') no-repeat center;
                         background-size: cover;
                     }

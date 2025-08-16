@@ -9,13 +9,17 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { showToast } from 'vant';
+
+const emit = defineEmits(['favorite'])
 const isActive = ref(false)
 
 // 点击事件（可扩展：弹出收藏列表弹窗）
 const handleFavoriteClick = () => {
   isActive.value = !isActive.value
   // 实际逻辑：打开收藏列表弹窗/跳转收藏页等
+  emit('favorite', isActive.value)
 };
+
 </script>
 
 <style scoped lang="less">
