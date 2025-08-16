@@ -18,3 +18,7 @@ export const queryHotMerchant = (data) => {
 export const queryHotMerchantCategory = () => {
     return get(`/api/merchant/category/count/enabled`)
 }
+// 获取启用分类商户数量统计
+export const queryMerchatShop = () => {
+    return get(`/api/merchant/page`)
+}

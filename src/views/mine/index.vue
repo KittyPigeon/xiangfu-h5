@@ -14,7 +14,7 @@
 
     <!-- 优惠券列表 -->
     <van-cell-group class="coupon-list">
-      <van-cell title="我的优惠券" is-link :value="couponList.length" class="title" />
+      <van-cell title="我的优惠券" is-link :value="couponList.length" class="title" @click="goToCouponsList" />
       <div class="coupon-table">
         <div class="table-header">
           <span>商户</span>
@@ -38,7 +38,7 @@
 
     <!-- 我参加的活动 -->
     <van-cell-group class="activity-list">
-      <van-cell title="我参加的活动" is-link :value="activityList.length" />
+      <van-cell title="我参加的活动" is-link :value="activityList.length" @click="goToActivityList" />
       <div class="activity-table">
         <div class="table-header">
           <span>活动名称</span>
@@ -78,12 +78,16 @@ import { queryCollectList } from '@/api/collect'
 import { EnumCollectTargetType } from '@/enums/collect'
 import dayjs from 'dayjs';
 import to from 'await-to-js';
+import { useRouter } from 'vue-router';
+
 onMounted(async () => {
   await getUserInfo();
   await getUserCoupon();
   await getUserActivity();
 })
 
+// hooks
+const router = useRouter();
 
 // 响应式数据
 const avatarUrl = ref(''); // 实际头像地址
@@ -154,9 +158,15 @@ const getUserActivity = async () => {
 }
 
 const showQrcode = (data) => {
-  console.log('data', data)
   qrCodeVisible.value = true;
   qrcodeUrl.value = data.couponCode;
+}
+
+const goToActivityList = () => {
+  router.push('/activityList')
+}
+const goToCouponsList = () => {
+  router.push('/couponList')
 }
 </script>
 
@@ -342,12 +352,14 @@ const showQrcode = (data) => {
 
   }
 }
+
 .wrapper {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-  }
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
 .activity-qrcode-url {
   width: 360px;
   height: auto;

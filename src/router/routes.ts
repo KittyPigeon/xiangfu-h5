@@ -26,6 +26,22 @@ const routes: Array<RouteRecordRaw> = [
         }
       },
       {
+        path: "/activityList",
+        name: "ActivityList",
+        component: () => import("@/views/mine/activity-list.vue"),
+        meta: {
+          title: "我的活动"
+        }
+      },
+      {
+        path: "couponList",
+        name: "CouponList",
+        component: () => import("@/views/mine/coupon-list.vue"),
+        meta: {
+          title: "我的优惠券"
+        }
+      },
+      {
         path: "intro",
         name: "Intro",
         component: () => import("@/views/intro/index.vue"),

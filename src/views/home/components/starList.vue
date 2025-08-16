@@ -25,7 +25,7 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue';
-import PorkIcon from '@/assets/images/pork.png'
+import PorkIcon from '@/assets/images/icon-food.png'
 // 定义单个筛选项的类型
 interface FilterItem {
     text: string;        // 分类文字
