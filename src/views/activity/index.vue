@@ -97,7 +97,7 @@ const handleFavorite = async (flag) => {
     targetType: EnumCollectTargetType.ACTIVITY,
     targetId: activityInfo.value.id
   }
-  const [err, res] = flag ? await to(addCollect(params)) : await to(delColloect(params);)
+  const [err, res] = flag ? await to(addCollect(params)) : await to(delColloect(params))
   if (err) {
     showToast(err.message)
     return
@@ -128,14 +128,14 @@ const getCategory = async () => {
 }
 const getActivityList = async () => {
   const params = {
-    queryDTO: {
+    queryDTO: JSON.stringify({
       keyword: searchName.value,
       categoryId: tabList.value[tabIndex.value].id,
       timeFilter: activityTabMap.value[activityTabIndex.value].timeFilter,
       latitude: 30.22,
       longitude: 120.12,
       radius: 5000,
-    },
+    }),
     current: 1,
     size: 10,
   }
