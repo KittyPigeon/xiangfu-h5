@@ -79,7 +79,7 @@ const handleFavorite = () => {
     display: block;
     width: 100vw;
     height: 298px;
-    background: url('../../assets/images/bg.png') no-repeat center;
+    background: url('../../assets/images/bg.jpg') no-repeat center;
     background-size: cover;
   }
 

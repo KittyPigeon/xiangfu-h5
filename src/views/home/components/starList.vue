@@ -2,11 +2,12 @@
     <div class="favorite-filter">
         <!-- 内容区域：两行四列布局 -->
         <div class="filter-content" :class="{ expanded: isExpanded }">
-            <div class="filter-item" v-for="(item, index) in filterItems" :key="index"
+            <div class="filter-item" v-for="(item, index) in filterItemsList" :key="index"
                 :class="{ active: item.isActive }" @click="handleItemClick(item)">
                 <!-- 图标 -->
                 <div class="item-icon">
-                    <img :src="item.icon" :alt="item.text" />
+                    <!-- <img :src="item.icon" :alt="item.text" /> -->
+                     <div class="icon" :class="[item.icon]"></div>
                 </div>
                 <!-- 徽章数字 -->
                 <div class="badge" v-if="item.badge">
@@ -37,6 +38,12 @@ const props = defineProps({
     isExpanded: {
         type: Boolean,
         default: false
+    },
+    filterItemsList: {
+        type: Array<FilterItem>,
+        default() {
+            return []
+        }
     }
 });
 
@@ -110,10 +117,25 @@ const handleItemClick = (item: FilterItem) => {
                 border: 1px solid #FF6D23;
                 border-radius: 12px 0 12px 0;
 
-                img {
+                .icon {
                     width: 44px;
                     height: 44px;
-                    object-fit: contain;
+                    &.icon-food{
+                        background: url('../../../assets/images/icon-food.png') no-repeat center;
+                        background-size: cover;
+                    }
+                    &.icon-shopping{
+                        background: url('../../../assets/images/icon-food.png') no-repeat center;
+                        background-size: cover;
+                    }
+                    &.icon-entertainment{
+                        background: url('../../../assets/images/icon-food.png') no-repeat center;
+                        background-size: cover;
+                    }
+                    &.icon-hotel{
+                        background: url('../../../assets/images/icon-food.png') no-repeat center;
+                        background-size: cover;
+                    }
                 }
             }
 

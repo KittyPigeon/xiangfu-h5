@@ -61,6 +61,12 @@
         </div>
       </div>
     </van-cell-group>
+
+    <van-overlay :show="qrCodeVisible" @click="qrCodeVisible = false">
+      <div class="wrapper">
+        <van-image class="activity-qrcode-url" fit="cover" :src="qrcodeUrl" @click.stop /> >
+      </div>
+    </van-overlay>
   </div>
 </template>
 
@@ -68,7 +74,8 @@
 import { ref, onMounted } from 'vue';
 import { showToast } from 'vant';
 import { getUserData, queryUserCoupons } from '@/api/user';
-import { queryUserActivity } from '@/api/activity'
+import { queryCollectList } from '@/api/collect'
+import { EnumCollectTargetType } from '@/enums/collect'
 import dayjs from 'dayjs';
 import to from 'await-to-js';
 onMounted(async () => {
@@ -79,10 +86,11 @@ onMounted(async () => {
 
 
 // 响应式数据
-const avatarUrl = ref('https://example.com/avatar.jpg'); // 实际头像地址
-const nickname = ref('也曾指尖盛夏');
-const userId = ref('1588888888');
-
+const avatarUrl = ref(''); // 实际头像地址
+const nickname = ref('');
+const userId = ref('');
+const qrCodeVisible = ref(false)
+const qrcodeUrl = ref('')
 // 优惠券列表（模拟数据）
 const couponList = ref([
   { merchantName: '祥符茶馆', receiveTime: '2025.08.02', discountAmount: 18, couponCode: 'https://example.com/activity1.png' },
@@ -124,10 +132,10 @@ const getUserCoupon = async () => {
   couponList.value = res.data.records;
 }
 const getUserActivity = async () => {
-  const [err, res] = await to<any, any>(queryUserActivity({
+  const [err, res] = await to<any, any>(queryCollectList({
     current: 1,
     size: 9999,
-    status: 1
+    targetType: EnumCollectTargetType.ACTIVITY
   }));
   if (err) {
     showToast(err.message)
@@ -136,16 +144,19 @@ const getUserActivity = async () => {
   activityList.value = res.data.map((o) => {
     return {
       ...o,
-      startTime: dayjs(o.startTime).format('YYYY.MM.DD'),
+      startTime: dayjs(o.activityStartTime).format('YYYY.MM.DD'),
       amount: 8,
-      isHot: true
+      isHot: true,
+      title: o.targetName,
+      coverImage: o.targetImage
     }
   });
 }
 
 const showQrcode = (data) => {
-  console.log('data',data)
-  
+  console.log('data', data)
+  qrCodeVisible.value = true;
+  qrcodeUrl.value = data.couponCode;
 }
 </script>
 
@@ -328,6 +339,18 @@ const showQrcode = (data) => {
         }
       }
     }
+
   }
+}
+.wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+  }
+.activity-qrcode-url {
+  width: 360px;
+  height: auto;
+  margin: 0 auto;
 }
 </style>

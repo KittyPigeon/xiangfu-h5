@@ -8,9 +8,14 @@ import TeaHouseDetailPopup from './components/TeaHouseDetailPopup.vue'
 import CoverImage from '@/assets/images/s.png'
 // @ts-ignore
 import AMapLoader from '@amap/amap-jsapi-loader';
+import { queryHotMerchantCategory } from '@/api/shop'
+import to from 'await-to-js';
+import { showToast } from "vant";
+
 
 const isExpanded = ref(false)
 const showPopup = ref(false)
+const categoryList = ref([])
 const handleDrag = (t) => {
   isExpanded.value = t;
 }
@@ -33,7 +38,6 @@ const initMap = async () => {
   }).catch(e => {
     console.error(e)
   })
-
 }
 
 
@@ -47,12 +51,30 @@ onMounted(() => {
 
 onMounted(async () => {
   mapInstance = await initMap();
+  await getCategoryList();
 });
 onUnmounted(() => {
   if (mapInstance) {
     mapInstance.destroy(); // 销毁地图实例，释放资源
   }
 });
+
+const getCategoryList = async () => {
+  const [err, res] = await to<any, any>(queryHotMerchantCategory())
+  if (err) {
+    showToast(err.message)
+    return;
+  }
+  categoryList.value = res.data.map(item => {
+    return {
+      ...item,
+      icon: item.icon,
+      text: item.name,
+      badge: item.merchantCount,
+
+    }
+  });
+}
 </script>
 
 <template>
@@ -68,7 +90,7 @@ onUnmounted(() => {
       <SearchBar @search-input="handleSearchInput" @search="handleSearch" />
       <!-- 收藏弹窗 -->
       <DragExpandPanel class="drag-panel-container" title="分类筛选&收藏筛选" @drag="handleDrag">
-        <StartList :is-expanded="isExpanded"></StartList>
+        <StartList :is-expanded="isExpanded" :filter-items-list="categoryList"></StartList>
       </DragExpandPanel>
     </div>
 

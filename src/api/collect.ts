@@ -17,5 +17,9 @@ export const delColloect = (data) => {
 }
 
 
-// 
+// 分页查询收藏列表
+export const queryCollectList = (data) => {
+    return get('/api/user/favorite/page', data)
+}
+
 
