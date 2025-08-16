@@ -1,5 +1,5 @@
 <script setup lang="ts" name="Demo">
-import { onMounted, reactive, ref, onUnmounted } from "vue";
+import { onMounted, reactive, ref, onUnmounted, computed } from "vue";
 import DragExpandPanel from './components/drag.vue';
 import StartList from './components/starList.vue'
 import MyFavorite from './components/MyFavorite.vue';
@@ -11,7 +11,6 @@ import AMapLoader from '@amap/amap-jsapi-loader';
 import { queryHotMerchantCategory, queryMerchatPage } from '@/api/shop'
 import to from 'await-to-js';
 import { showToast } from "vant";
-import { flat } from "vant/lib/utils";
 
 const searchName = ref('')
 const isExpanded = ref(false)
@@ -19,10 +18,17 @@ const showPopup = ref(false)
 const categoryList = ref([])
 const categoryIndex = ref(0)
 const merchatList = ref([])
-const isFavorite = ref(false)
+const isFavorited = ref(false)
 const handleDrag = (t) => {
   isExpanded.value = t;
 }
+
+const merchantListFilter = computed(() => {
+  if (isFavorited.value) {
+    return merchatList.value.filter((o) => o.isFavoritedd)
+  }
+  return merchatList.value
+})
 // 初始化地图
 const initMap = async () => {
   AMapLoader.load({
@@ -91,7 +97,6 @@ const getMarchantData = async () => {
       latitude: 30.32526,
       longitude: 120.098838,
       radius: 5000,
-      isFavorite: isFavorite.value
     }),
     size: 9999,
     current: 1,
@@ -126,8 +131,7 @@ const handleCategoryClick = (item) => {
 }
 
 const handelFavorite = (flag) => {
-  isFavorite.value = flag
-  getMarchantData();
+  isFavorited.value = flag
 }
 </script>
 

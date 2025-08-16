@@ -14,8 +14,11 @@ export function useWechatSDK() {
     const error = ref<string | null>(null)
 
     // 初始化微信配置
+
     const initWxConfig = async (params: WxConfigParams) => {
         return new Promise((resolve, reject) => {
+            console.log('wx',wx)
+            //@ts-ignore
             wx.config({
                 debug: process.env.NODE_ENV === 'development', // 开发环境开启调试
                 appId: params.appId,
@@ -26,11 +29,13 @@ export function useWechatSDK() {
             })
 
             wx.ready(() => {
+                console.log('初始化完成')
                 isWxReady.value = true
                 resolve(true)
             })
 
             wx.error((err) => {
+                console.log('微信SDK初始化失败')
                 error.value = `微信SDK初始化失败: ${JSON.stringify(err)}`
                 reject(err)
             })
@@ -44,7 +49,7 @@ export function useWechatSDK() {
                 reject('微信SDK未初始化完成')
                 return
             }
-
+            console.log('isWxReady',isWxReady.value)
             wx.getLocation({
                 type: 'gcj02', // 返回可用于wx.openLocation的坐标
                 success: (res) => {
@@ -52,9 +57,12 @@ export function useWechatSDK() {
                         latitude: res.latitude,
                         longitude: res.longitude
                     }
+                    console.log('res',res)
                     resolve(location.value)
                 },
                 fail: (err) => {
+                    console.log('err',err)
+
                     error.value = `获取位置失败: ${JSON.stringify(err)}`
                     reject(err)
                 }
