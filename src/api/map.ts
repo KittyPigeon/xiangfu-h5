@@ -14,4 +14,9 @@ export const queryMapActivities = (data) => {
     return get(`/api/map/activities`, data)
 }
 
+// 根据js-sdk获取地理位置权限
+export const querymapIplocation = (data) => {
+    return get(`/api/map/ip-location`, data)
+}
+
 
