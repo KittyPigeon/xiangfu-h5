@@ -87,17 +87,18 @@ const submitParticipant = () => {
 
 <template>
   <div class="moment-container">
-    <!-- 搜索组件 -->
-    <div class="search-bar-group">
-      <!-- 搜索组件 -->
-      <SearchBar @search="handleSearch" />
-
-      <div class="search-filter">
-        <span class="icon-filter"></span>
-        <span class="filter">智能排序</span>
-      </div>
-    </div>
+    <div class="bg"></div>
     <div class="container-content">
+      <!-- 搜索组件 -->
+      <div class="search-bar-group">
+        <!-- 搜索组件 -->
+        <SearchBar @search="handleSearch" />
+
+        <div class="search-filter">
+          <span class="icon-filter"></span>
+          <span class="filter">智能排序</span>
+        </div>
+      </div>
       <div class="container-content-scroll">
         <!-- 日历组件 -->
         <Calendar></Calendar>
@@ -154,16 +155,8 @@ const submitParticipant = () => {
   position: relative;
   background: linear-gradient(180deg, #FF6D23 11.54%, rgba(255, 109, 35, 0) 100%);
   height: 100%;
-
-  .search-bar-group {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 156px 20px 0;
-    gap: 8px;
-    margin-bottom: 16px;
-    position: relative;
-
+  padding-top:152px;
+  .bg {
     &::after {
       content: '';
       position: absolute;
@@ -176,6 +169,21 @@ const submitParticipant = () => {
       background-size: cover;
       backdrop-filter: blur(4px)
     }
+  }
+
+  .search-bar-group {
+    position: absolute;
+    top: -52px;
+    left: 20px;
+    right: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    // padding: 0 20px 0;
+    gap: 8px;
+    margin-bottom: 16px;
+
+
 
     .search-bar {
       flex: 1;
@@ -209,6 +217,7 @@ const submitParticipant = () => {
   }
 
   .container-content {
+    position: relative;
     background: linear-gradient(180deg, rgba(255, 255, 255, 0.3) 0%, #FFFFFF 8.22%);
     border: 1px solid #FFFFFF;
     border-radius: 16px;

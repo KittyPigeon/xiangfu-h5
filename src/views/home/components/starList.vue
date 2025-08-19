@@ -126,19 +126,39 @@ const handleItemClick = (item: FilterItem) => {
                     }
 
                     &.icon-shopping {
-                        background: url('../../../assets/images/icon-food.png') no-repeat center;
+                        background: url('../../../assets/images/icon-shopping.png') no-repeat center;
                         background-size: cover;
                     }
 
                     &.icon-entertainment {
-                        background: url('../../../assets/images/icon-food.png') no-repeat center;
+                        background: url('../../../assets/images/icon-entertainment.png') no-repeat center;
                         background-size: cover;
                     }
 
                     &.icon-hotel {
-                        background: url('../../../assets/images/icon-food.png') no-repeat center;
+                        background: url('../../../assets/images/icon-hotel.png') no-repeat center;
                         background-size: cover;
                     }
+
+                    &.icon-fitness {
+                        background: url('../../../assets/images/icon-fitness.png') no-repeat center;
+                        background-size: cover;
+                    }
+
+                    &.icon-medical {
+                        background: url('../../../assets/images/icon-medical.png') no-repeat center;
+                        background-size: cover;
+                    }
+
+                    &.icon-park {
+                        background: url('../../../assets/images/icon-park.png') no-repeat center;
+                        background-size: cover;
+                    }
+                    &.icon-education {
+                        background: url('../../../assets/images/icon-education.png') no-repeat center;
+                        background-size: cover;
+                    }
+
                 }
             }
 
