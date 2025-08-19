@@ -2,16 +2,20 @@
     <div class="favorite-filter">
         <!-- 内容区域：两行四列布局 -->
         <div class="filter-content" :class="{ expanded: isExpanded }">
-            <div class="filter-item" v-for="(item, index) in filterItemsList" :key="index"
-                :class="{ active: item.isActive }" @click="handleItemClick(item)">
+            <div class="filter-item" v-for="(item, index) in filterItems" :key="index"
+                :class="{ active: activeIndex === item.id }" @click="handleItemClick(item)">
                 <!-- 图标 -->
                 <div class="item-icon">
                     <!-- <img :src="item.icon" :alt="item.text" /> -->
-                    <div class="icon" :class="[item.icon]"></div>
+                    <div class="icon" :class="[item.class]"></div>
                 </div>
                 <!-- 徽章数字 -->
                 <div class="badge" v-if="item.badge">
                     {{ item.badge }}
+                </div>
+                <!-- 点击选中 -->
+                <div class="label-check" v-if="activeIndex === item.id">
+                    <!-- <img src="@/assets/images/label-check.png" alt="选中"> -->
                 </div>
                 <!-- 文字描述 -->
                 <div class="item-text">
@@ -26,12 +30,21 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import PorkIcon from '@/assets/images/icon-food.png'
+import ShoppingIcon from '@/assets/images/icon-shopping.png'
+import EntertainmentIcon from '@/assets/images/icon-entertainment.png'
+import HotelIcon from '@/assets/images/icon-hotel.png'
+import EducationIcon from '@/assets/images/icon-education.png'
+import MedicalIcon from '@/assets/images/icon-medical.png'
+import FitnessIcon from '@/assets/images/icon-fitness.png'
+import SceneIcon from '@/assets/images/icon-scene.png'
 // 定义单个筛选项的类型
 interface FilterItem {
     text: string;        // 分类文字
-    icon: string;        // 图标路径
     badge: number;       // 徽章数字
+    id: number;       // 徽章数字
     isActive: boolean;   // 是否选中
+    icon: string;        // 图标路径
+    class: string;        // 图标路径
 }
 const emit = defineEmits(['item-click'])
 const props = defineProps({
@@ -40,27 +53,28 @@ const props = defineProps({
         type: Boolean,
         default: false
     },
-    filterItemsList: {
-        type: Array<FilterItem>,
-        default() {
-            return []
-        }
-    }
+    // filterItemsList: {
+    //     type: Array<FilterItem>,
+    //     default() {
+    //         return []
+    //     }
+    // }
 });
 
 // 响应式数据
 // const isExpanded = ref(false); // 控制内容展开/收起状态
+const activeIndex = ref(0)
 
 // 模拟筛选数据（与设计稿一致的 8 项）
 const filterItems = ref<FilterItem[]>([
-    { text: '餐饮美食', icon: PorkIcon, badge: 7, isActive: false },
-    { text: '购物商城', icon: PorkIcon, badge: 2, isActive: true },
-    { text: '景点名胜', icon: PorkIcon, badge: 3, isActive: false },
-    { text: '酒店住宿', icon: PorkIcon, badge: 5, isActive: false },
-    { text: '休闲娱乐', icon: PorkIcon, badge: 11, isActive: false },
-    { text: '教育培训', icon: PorkIcon, badge: 1, isActive: false },
-    { text: '医疗健康', icon: PorkIcon, badge: 3, isActive: false },
-    { text: '运动健身', icon: PorkIcon, badge: 9, isActive: false },
+    { id: 0, text: '餐饮美食', icon: PorkIcon, class:'icon-food', badge: 7, isActive: false },
+    { id: 1, text: '购物商城', icon: ShoppingIcon, class:'icon-shopping', badge: 2, isActive: true },
+    { id: 2, text: '景点名胜', icon: SceneIcon,class:'icon-scene', badge: 3, isActive: false },
+    { id: 3, text: '酒店住宿', icon: HotelIcon,class:'icon-hotel', badge: 5, isActive: false },
+    { id: 4, text: '休闲娱乐', icon: EntertainmentIcon, class:'icon-entertainment',badge: 11, isActive: false },
+    { id: 5, text: '教育培训', icon: EducationIcon, class:'icon-education',badge: 1, isActive: false },
+    { id: 6, text: '医疗健康', icon: MedicalIcon, class:'icon-medical',badge: 3, isActive: false },
+    { id: 7, text: '运动健身', icon: FitnessIcon, class:'icon-fitness',badge: 9, isActive: false },
 ]);
 
 // 切换展开/收起
@@ -71,16 +85,29 @@ const filterItems = ref<FilterItem[]>([
 // 点击筛选项事件
 const handleItemClick = (item: FilterItem) => {
     // 可在此处 emit 事件给父组件：
-    emit('item-click', item);
+    // emit('item-click', item);
+    // item.isActive = !item.isActive;
+    activeIndex.value = item.id;
 };
 </script>
 
 <style scoped lang="less">
+.active {
+    .item-text {
+        color: #FF6D23 !important;
+    }
+    .label-check {
+        position: absolute;
+        bottom: 30px;
+        right: 0;
+        width: 18px;
+        height: 18px;
+        background: url('../../../assets/images/label-check.png') no-repeat center;
+        background-size: cover;
+    }
+}
+
 .favorite-filter {
-
-    // height: 200px;
-    // 内容区域：默认收起，点击箭头展开
-
     .filter-content {
         display: grid;
         grid-template-columns: repeat(4, 1fr);
@@ -126,19 +153,42 @@ const handleItemClick = (item: FilterItem) => {
                     }
 
                     &.icon-shopping {
-                        background: url('../../../assets/images/icon-food.png') no-repeat center;
+                        background: url('../../../assets/images/icon-shopping.png') no-repeat center;
                         background-size: cover;
                     }
 
                     &.icon-entertainment {
-                        background: url('../../../assets/images/icon-food.png') no-repeat center;
+                        background: url('../../../assets/images/icon-entertainment.png') no-repeat center;
                         background-size: cover;
                     }
 
                     &.icon-hotel {
-                        background: url('../../../assets/images/icon-food.png') no-repeat center;
+                        background: url('../../../assets/images/icon-hotel.png') no-repeat center;
                         background-size: cover;
                     }
+
+                    &.icon-education {
+                        background: url('../../../assets/images/icon-education.png') no-repeat center;
+                        background-size: cover;
+                    }
+                    
+                    &.icon-medical {
+                        background: url('../../../assets/images/icon-medical.png') no-repeat center;
+                        background-size: cover;
+                    }
+                    
+                    
+                    &.icon-fitness {
+                        background: url('../../../assets/images/icon-fitness.png') no-repeat center;
+                        background-size: cover;
+                    }
+                    
+                    
+                    &.icon-scene {
+                        background: url('../../../assets/images/icon-scene.png') no-repeat center;
+                        background-size: cover;
+                    }
+                    
                 }
             }
 
@@ -156,6 +206,7 @@ const handleItemClick = (item: FilterItem) => {
                 z-index: 1;
                 min-width: 24px;
             }
+
 
             // 文字描述
             .item-text {

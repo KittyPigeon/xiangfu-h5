@@ -19,4 +19,7 @@ export const querymapIplocation = (data) => {
     return get(`/api/map/ip-location`, data)
 }
 
-
+// 地图key
+export const querymapMiniprogramKey = (data) => {
+    return get(`/api/map/miniprogram-key`, data)
+}
