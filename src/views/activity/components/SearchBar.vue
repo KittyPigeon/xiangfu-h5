@@ -25,9 +25,9 @@ const handleInput = (e: Event) => {
     background: #fff;
     border-radius: 20px;
     padding: 6px 12px;
-    width: 343px;
+    // width: 343px;
     height: 36px;
-    margin: 0 auto 24px;
+    // margin: 0 auto 24px;
     z-index: 2;
     .search-icon {
         width: 16px;

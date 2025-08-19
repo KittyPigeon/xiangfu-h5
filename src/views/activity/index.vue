@@ -197,6 +197,11 @@ const openActivityDetail = async (data) => {
   background: linear-gradient(180deg, #FF6D23 11.54%, rgba(255, 109, 35, 0) 100%);
   height: 100%;
 
+  .search-bar {
+    width: 343px;
+    margin: 0 auto 24px;
+  }
+
   &::after {
     content: '';
     position: absolute;
