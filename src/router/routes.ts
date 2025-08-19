@@ -54,6 +54,15 @@ const routes: Array<RouteRecordRaw> = [
         }
       },
       {
+        path: "intro2",
+        name: "Intro2",
+        component: () => import("@/views/intro2/index.vue"),
+        meta: {
+          title: "好推荐",
+          showTabBar: true // 需要显示tabBar
+        }
+      },
+      {
         path: "activity",
         name: "Activity",
         component: () => import("@/views/activity/index.vue"),
