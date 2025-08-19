@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useRoute } from "vue-router";
 import tabbar from "@/components/Tabbar/index.vue";
 import NavBar from "@/components/NavBar/index.vue";
 import { useCachedViewStoreHook } from "@/store/modules/cachedView";
@@ -6,6 +7,14 @@ import { useDarkMode } from "@/hooks/useToggleDarkMode";
 import { querymapIplocation } from '@/api/map'
 import { computed,ref } from "vue";
 import { useWechatSDK } from "@/utils/wechat";
+
+// 获取当前路由信息
+const route = useRoute();
+
+// 控制 tabbar 是否显示：根据路由 meta 中的 showTabBar 标识
+const isTabBarVisible = computed(() => {
+  return route.meta.showTabBar === true; 
+});
 
 const cachedViews = computed(() => {
   return useCachedViewStoreHook().cachedViewList;
@@ -71,7 +80,8 @@ querymapIplocation({ip: paramsUrl }).then(async (res: { data: any }) => {
       </router-view>
     </div>
 
-    <tabbar />
+    <!-- 根据路由 meta 中的 showTabBar 决定是否显示 tabbar -->
+    <tabbar v-if="isTabBarVisible" /> 
   </div>
 </template>
 
