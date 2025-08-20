@@ -41,3 +41,14 @@ export const del = (url, data) => {
         }
     })
 }
+
+export const uploadFile = (url, formData) => {
+    return http.request({
+        url: url,
+        method: 'post',
+        data: formData,
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
+    })
+}

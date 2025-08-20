@@ -3,7 +3,7 @@
         <!-- 内容区域：两行四列布局 -->
         <div class="filter-content" :class="{ expanded: isExpanded }">
             <div class="filter-item" v-for="(item, index) in filterItems" :key="index"
-                :class="{ active: activeIndex === item.id }" @click="handleItemClick(item)">
+                :class="{ active: activeIndex === item.index }" @click="handleItemClick(item)">
                 <!-- 图标 -->
                 <div class="item-icon">
                     <!-- <img :src="item.icon" :alt="item.text" /> -->
@@ -42,6 +42,7 @@ interface FilterItem {
     text: string;        // 分类文字
     badge: number;       // 徽章数字
     id: number;       // 徽章数字
+    index: number;       // 徽章数字
     isActive: boolean;   // 是否选中
     icon: string;        // 图标路径
     class: string;        // 图标路径
@@ -67,14 +68,14 @@ const activeIndex = ref(0)
 
 // 模拟筛选数据（与设计稿一致的 8 项）
 const filterItems = ref<FilterItem[]>([
-    { id: 0, text: '餐饮美食', icon: PorkIcon, class:'icon-food', badge: 7, isActive: false },
-    { id: 1, text: '购物商城', icon: ShoppingIcon, class:'icon-shopping', badge: 2, isActive: true },
-    { id: 2, text: '景点名胜', icon: SceneIcon,class:'icon-scene', badge: 3, isActive: false },
-    { id: 3, text: '酒店住宿', icon: HotelIcon,class:'icon-hotel', badge: 5, isActive: false },
-    { id: 4, text: '休闲娱乐', icon: EntertainmentIcon, class:'icon-entertainment',badge: 11, isActive: false },
-    { id: 5, text: '教育培训', icon: EducationIcon, class:'icon-education',badge: 1, isActive: false },
-    { id: 6, text: '医疗健康', icon: MedicalIcon, class:'icon-medical',badge: 3, isActive: false },
-    { id: 7, text: '运动健身', icon: FitnessIcon, class:'icon-fitness',badge: 9, isActive: false },
+    { id: 1, index: 0, text: '餐饮美食', icon: PorkIcon, class:'icon-food', badge: 7, isActive: false },
+    { id: 2, index: 1, text: '购物商城', icon: ShoppingIcon, class:'icon-shopping', badge: 2, isActive: true },
+    { id: 5, index: 2, text: '景点名胜', icon: SceneIcon,class:'icon-scene', badge: 3, isActive: false },
+    { id: 4, index: 3, text: '酒店住宿', icon: HotelIcon,class:'icon-hotel', badge: 5, isActive: false },
+    { id: 3, index: 4, text: '休闲娱乐', icon: EntertainmentIcon, class:'icon-entertainment',badge: 11, isActive: false },
+    { id: 8, index: 5, text: '教育培训', icon: EducationIcon, class:'icon-education',badge: 1, isActive: false },
+    { id: 7, index: 6, text: '医疗健康', icon: MedicalIcon, class:'icon-medical',badge: 3, isActive: false },
+    { id: 6, index: 7, text: '运动健身', icon: FitnessIcon, class:'icon-fitness',badge: 9, isActive: false },
 ]);
 
 // 切换展开/收起
@@ -85,9 +86,9 @@ const filterItems = ref<FilterItem[]>([
 // 点击筛选项事件
 const handleItemClick = (item: FilterItem) => {
     // 可在此处 emit 事件给父组件：
-    // emit('item-click', item);
+    emit('item-click', item);
     // item.isActive = !item.isActive;
-    activeIndex.value = item.id;
+    activeIndex.value = item.index;
 };
 </script>
 

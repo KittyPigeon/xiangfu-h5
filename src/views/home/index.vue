@@ -21,9 +21,12 @@ const categoryList = ref([])
 const categoryIndex = ref(0)
 const merchatList = ref([])
 const isFavorited = ref(false)
+const markerMap = ref(new Map())
+let gaodeAMap: any = null
 const handleDrag = (t) => {
   isExpanded.value = t;
 }
+let map: any = null;
 
 const merchantListFilter = computed(() => {
   if (isFavorited.value) {
@@ -38,7 +41,8 @@ const initMap = async () => {
     version: "2.0", // 指定要加载的 JSAPI 的版本
     // plugins: ['AMap.Scale', 'AMap.ToolBar'] // 需要使用的的插件列表
   }).then((AMap) => {
-    const map = new AMap.Map("map-container", {
+    gaodeAMap = AMap; // 保存AMap实例供markerListFn使用
+    map = new AMap.Map("map-container", {
       zoom: 11, // 级别
       center: JSON.parse(window.localStorage.getItem('mylocation') || '{}').locatonArr, // 中心点坐标
       // center: [120.098838, 30.32526], // 中心点坐标
@@ -57,8 +61,9 @@ const initMap = async () => {
         content: markerContent,
     });
 
-    // 将 markers 添加到地图
-    map.add(marker);
+    // 将 marker 添加到地图
+    map.add([marker]);
+    map.setFitView([marker]);
 
     // 添加插件
     // map.addControl(new AMap.Scale())
@@ -68,6 +73,62 @@ const initMap = async () => {
   })
 }
 
+const markerListFn = () => {
+      // console.log('markerListFn', markerMap.value.size && map);
+      if (markerMap.value.size && map) {
+        new Map(markerMap.value).forEach((value, key) => {
+          if (merchatList.value.findIndex((item) => item.id === key) === -1) {
+            // console.log('merchatList.value.findIndex((item) => item.id === key)', merchatList.value.findIndex((item) => item.id === key), key, value);
+            map.remove(value);
+            markerMap.value.delete(value);
+          }
+        });
+      }
+      // console.log('markerListFn2', merchatList.value.length > 0 && map && gaodeAMap, merchatList.value.length);
+
+      if (merchatList.value.length > 0 && map && gaodeAMap) {
+        console.log('markerListFn3',);
+
+        const markerList = [];
+        merchatList.value.forEach((item) => {
+          if (!markerMap.value.has(item.id)) {
+            // 首选视频地址，次选临时聊天地址，最后选场景地址；
+            const position = [item.longitude , item.latitude]
+            const title = item.address
+            const content = `<div class='map-label'>${title}</div>`;
+            console.log('markerListFn3', position, content);
+
+            const marker = new gaodeAMap.Marker({
+              position,
+              icon: iconMapMarker,
+              label: {
+                direction: 'right',
+                content, // 设置文本标注内容
+              }
+            });
+            markerList.push(marker);
+            markerMap.value.set(item.id, marker);
+          }
+        });
+        if (markerList.length) {
+          map.add(markerList);// 添加到地图
+        }
+        if (markerMap.value.size) {
+          const totalMarker = [];
+          markerMap.value.forEach((value) => {
+            totalMarker.push(value);
+          });
+          map.setFitView(totalMarker);
+        }
+      }
+      if (markerMap.value.size) {
+        const totalMarker = [];
+        markerMap.value.forEach((value) => {
+          totalMarker.push(value);
+        });
+        map.setFitView(totalMarker);
+      }
+    }
 
 let mapInstance: any = null;
 
@@ -80,6 +141,8 @@ onMounted(() => {
 onMounted(async () => {
   mapInstance = await initMap();
   await getCategoryList();
+  await getMarchantData();
+  markerListFn();
 });
 onUnmounted(() => {
   if (mapInstance) {
@@ -106,15 +169,16 @@ const getCategoryList = async () => {
 
 const getMarchantData = async () => {
   // 经纬度暂时固定
+console.log('pppp');
 
   const params = {
     queryDTO: JSON.stringify({
       keyword: searchName.value,
-      categoryId: categoryList.value[categoryIndex.value],
-      status: 1,
-      latitude: 30.32526,
-      longitude: 120.098838,
-      radius: 5000,
+      categoryId: categoryIndex.value,
+      // categoryId: categoryList.value[categoryIndex.value],
+      // status: 1,      // latitude: 30.32526,
+      // longitude: 120.098838,
+      // radius: 5000,
     }),
     size: 9999,
     current: 1,
@@ -124,6 +188,8 @@ const getMarchantData = async () => {
     showToast(err.message)
     return;
   }
+  console.log('shoplist', res);
+  
   merchatList.value = res.data.map(item => {
     return {
       ...item,
@@ -140,11 +206,12 @@ const handleSearch = (val) => {
 }
 
 const handleCategoryClick = (item) => {
-  categoryList.value.forEach(o => {
-    o.isActive = false;
-  })
-  categoryIndex.value = categoryList.value.findIndex((o) => o.id == item.id);
-  categoryList.value[categoryIndex.value].isActive = true;
+  // categoryList.value.forEach(o => {
+  //   o.isActive = false;
+  // })
+  // categoryIndex.value = categoryList.value.findIndex((o) => o.id == item.id);
+  // categoryList.value[categoryIndex.value].isActive = true;
+  categoryIndex.value = item.index;
   getMarchantData();
 }
 

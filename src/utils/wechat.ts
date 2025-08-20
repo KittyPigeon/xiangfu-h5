@@ -20,7 +20,7 @@ export function useWechatSDK() {
             console.log('wx', wx)
             //@ts-ignore
             wx.config({
-                debug: true, // 开发环境开启调试
+                debug: false, // 开发环境开启调试
                 appId: params.appId,
                 timestamp: params.timestamp,
                 nonceStr: params.nonceStr,
