@@ -155,7 +155,7 @@ const communityActivities = ref([
 
     .icon-good {
       display: inline-block;
-      .svg-mask('@/assets/icons/icon-good.svg', 12px, #fff);
+      .svg-mask('@/assets/icons/icon-good.svg', 14px, #fff);
     }
   }
 }

@@ -45,8 +45,8 @@ const routes: Array<RouteRecordRaw> = [
         }
       },
       {
-        path: "intro",
-        name: "Intro",
+        path: "intro2",
+        name: "Intro2",
         component: () => import("@/views/intro/index.vue"),
         meta: {
           title: "好推荐",
@@ -54,8 +54,8 @@ const routes: Array<RouteRecordRaw> = [
         }
       },
       {
-        path: "intro2",
-        name: "Intro2",
+        path: "intro",
+        name: "Intro",
         component: () => import("@/views/intro2/index.vue"),
         meta: {
           title: "好推荐",
