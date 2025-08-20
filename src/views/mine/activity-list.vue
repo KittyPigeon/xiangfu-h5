@@ -1,5 +1,5 @@
 <template>
-    <nav-bar></nav-bar>
+    <!-- <nav-bar></nav-bar> -->
     <div class="container">
         <van-list v-model:loading="loading" :finished="finished" finished-text="没有更多了" @load="loadingMore">
             <!-- 我参加的活动 -->
@@ -68,7 +68,7 @@ const getUserActivity = async () => {
         finished.value = true;
         return
     }
-    activityList.value = res.data.map((o) => {
+    activityList.value = res.data.records.map((o) => {
         return {
             ...o,
             startTime: dayjs(o.activityStartTime).format('YYYY.MM.DD'),
@@ -78,12 +78,13 @@ const getUserActivity = async () => {
             coverImage: o.targetImage
         }
     });
+     finished.value = !res.data.hasNext;
 }
 
 const loadingMore = () => {
     if (!finished.value) {
-        page.value++;
-        getUserActivity()
+        // page.value++;
+        // getUserActivity()
     }
 }
 </script>

@@ -145,7 +145,7 @@ const getUserActivity = async () => {
     showToast(err.message)
     return
   }
-  activityList.value = res.data.map((o) => {
+  activityList.value = res.data.records.map((o) => {
     return {
       ...o,
       startTime: dayjs(o.activityStartTime).format('YYYY.MM.DD'),

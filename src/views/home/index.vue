@@ -190,7 +190,7 @@ console.log('pppp');
   }
   console.log('shoplist', res);
   
-  merchatList.value = res.data.map(item => {
+  merchatList.value = res.data.records.map(item => {
     return {
       ...item,
       icon: item.icon,

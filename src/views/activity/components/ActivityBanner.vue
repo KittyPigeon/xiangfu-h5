@@ -7,7 +7,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-const bannerImage = ref('https://example.com/banner.jpg'); // 替换为实际图片
+// const bannerImage = ref('https://example.com/banner.jpg'); // 替换为实际图片
 
 const props = defineProps({
   bannerImage: {

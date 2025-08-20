@@ -73,7 +73,7 @@ const activityTabMap = ref([
   }
 ])
 const activityInfo = ref(null)
-const activityList = ref([{ coverImage: '', isRecommend: true, id: 22 }])
+const activityList = ref([])
 const handleSearch = (value: string) => {
   console.log('搜索内容：', value);
   searchName.value = value;
@@ -104,9 +104,12 @@ const handleFavorite = async (flag) => {
   }
   if (flag) {
     showToast('收藏成功')
+    activityInfo.value.isFavorited = true;
+    console.log('activityInfo',activityInfo.value)
   }
   if (!flag) {
     showToast('取消收藏成功')
+    activityInfo.value.isFavorited = false;
   }
 }
 
@@ -144,49 +147,17 @@ const getActivityList = async () => {
     return;
   }
   activityList.value = res.data.records;
+  console.log('activityList',activityList)
 }
 
 const openActivityDetail = async (data) => {
   // showPopup.value = true
   const [err, res] = await to<any, any>(queryActivityDetail(data.id));
-  // if (err) {
-  //   showToast(err.message)
-  //   return;
-  // }
-  showPopup.value = true;
-  activityInfo.value = {
-    "id": 1,
-    "title": "春节文化展览",
-    "categoryId": 1,
-    "categoryName": "文化活动",
-    "categoryIcon": "icon-culture",
-    "merchantId": 1,
-    "merchantName": "文化中心",
-    "merchantLogo": "https://example.com/logo.jpg",
-    "description": "传统文化展览，了解春节习俗",
-    "content": "传统文化展览，了解春节习俗传统文化展览，了解春节习俗传统文化展览，了解春节习俗传统文化展览，了解春节习俗",
-    "coverImage": "https://example.com/cover.jpg",
-    "images": "",
-    "imageList": [],
-    "startTime": "",
-    "endTime": "",
-    "address": "北京市朝阳区文化中心",
-    "longitude": 116.397428,
-    "latitude": 39.90923,
-    "maxParticipants": 100,
-    "currentParticipants": 50,
-    "tags": "",
-    "tagList": [],
-    "status": 1,
-    "statusDesc": "正常",
-    "activityStatusDesc": "进行中",
-    "distance": 500,
-    "distanceDesc": "500m",
-    "remainingParticipants": 50,
-    "canSignUp": true,
-    "isFavorited": false,
-    "createTime": ""
+  if (err) {
+    showToast(err.message)
+    return;
   }
+  showPopup.value = true;
   activityInfo.value = res.data;
 }
 </script>
@@ -260,12 +231,18 @@ const openActivityDetail = async (data) => {
     border-radius: 16px;
     padding: 12px 14px;
     position: absolute;
-    top: 332px;
+    bottom:0;
     left: 8px;
     right: 8px;
-    height: 430px;
-    overflow-y: scroll;
+    height: 50vh;
+    // overflow-y: scroll;
     z-index: 99;
+    display: flex;
+    flex-direction: column;
+  }
+  .activity-list{
+    flex:1;
+    overflow-y: scroll;
   }
 }
 </style>

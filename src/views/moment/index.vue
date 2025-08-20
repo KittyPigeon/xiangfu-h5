@@ -226,7 +226,7 @@ const submitParticipant = () => {
     bottom: 0;
     left: 0;
     right: 0;
-    height: 543px;
+    height: 62vh;
     z-index: 99;
     display: flex;
     flex-direction: column;
