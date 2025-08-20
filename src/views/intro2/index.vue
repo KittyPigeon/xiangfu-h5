@@ -19,7 +19,7 @@
         <h2 class="section-title">潮玩推荐的活动</h2>
 
         <div class="activity-card">
-          <h3 class="activity-title">劳逸结合的周末下午</h3>
+          <h3 class="activity-title">劳逸结合的周末下午<span class="icon-title"></span></h3>
           <div class="activity-content">
             <div class="activity-step" v-for="(step, index) in activitySteps" :key="index">
               <div class="step-number" :class="[`step${index + 1}`]">
@@ -42,7 +42,7 @@
       <div class="section">
         <h2 class="section-title">自由选择</h2>
         <div class="community-card" >
-          <h3 class="community-title">社区活动</h3>
+          <h3 class="community-title">社区活动<span class="icon-title"></span></h3>
 
           <div class="community-list" >
             <div class="community-list-item" v-for="(item, index) in communityActivities" :key="index">
@@ -181,6 +181,7 @@ const communityActivities = ref([
 }
 
 .activity-title {
+  position: relative;
   font-size: 16px;
   font-weight: bold;
   height: 44px;
@@ -295,8 +296,18 @@ const communityActivities = ref([
   background-color: #FFF5F0;
   border-radius: 16px;
 }
-
+.community-title .icon-title,.activity-title .icon-title{
+  position: absolute;
+  right:10px;
+  top:50%;
+  transform: translateY(-50%);
+  width: 33px;
+  height: 33px;
+  background: url('../../assets/images/icon-star.png') no-repeat;
+  background-size: cover;
+}
 .community-title {
+  position: relative;
   font-size: 16px;
   font-weight: bold;
   height: 44px;
