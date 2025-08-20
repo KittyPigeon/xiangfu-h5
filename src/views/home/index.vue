@@ -11,6 +11,8 @@ import AMapLoader from '@amap/amap-jsapi-loader';
 import { queryHotMerchantCategory, queryMerchatPage } from '@/api/shop'
 import to from 'await-to-js';
 import { showToast } from "vant";
+import iconMapMarker from '@/assets/icons/icon-map-marker.svg';
+
 
 const searchName = ref('')
 const isExpanded = ref(false)
@@ -32,19 +34,35 @@ const merchantListFilter = computed(() => {
 // 初始化地图
 const initMap = async () => {
   AMapLoader.load({
-    key: import.meta.env.VITE_AMAP_KEY, // 申请好的Web端开发者Key
+    key: window.localStorage.getItem('mapKey'),// 申请好的Web端开发者Key
     version: "2.0", // 指定要加载的 JSAPI 的版本
-    plugins: ['AMap.Scale', 'AMap.ToolBar'] // 需要使用的的插件列表
+    // plugins: ['AMap.Scale', 'AMap.ToolBar'] // 需要使用的的插件列表
   }).then((AMap) => {
     const map = new AMap.Map("map-container", {
       zoom: 11, // 级别
-      center: [120.098838, 30.32526], // 中心点坐标
+      center: JSON.parse(window.localStorage.getItem('mylocation') || '{}').locatonArr, // 中心点坐标
+      // center: [120.098838, 30.32526], // 中心点坐标
       viewMode: "2D" // 使用2D视图
     })
+    var markerContent = `
+        <div class="custom-content-marker">
+          <img src="${iconMapMarker}">
+          <div class="close-btn">地点</div>
+        </div>
+      `;
+
+    var marker = new AMap.Marker({
+        position: [120.091257,30.320526],
+        // 将 html 传给 content
+        content: markerContent,
+    });
+
+    // 将 markers 添加到地图
+    map.add(marker);
 
     // 添加插件
-    map.addControl(new AMap.Scale())
-    map.addControl(new AMap.ToolBar())
+    // map.addControl(new AMap.Scale())
+    // map.addControl(new AMap.ToolBar())
   }).catch(e => {
     console.error(e)
   })

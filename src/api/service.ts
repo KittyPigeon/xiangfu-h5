@@ -24,7 +24,7 @@ export const get = (url, data = {}) => {
 export const put = (url, data) => {
     return http.request({
         url: url,
-        method: 'pute',
+        method: 'put',
         data: data,
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded'

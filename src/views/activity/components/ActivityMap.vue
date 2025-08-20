@@ -28,13 +28,14 @@ let mapInstance: any = null;
 // 初始化地图
 const initMap = async () => {
   AMapLoader.load({
-    key: import.meta.env.VITE_AMAP_KEY, // 申请好的Web端开发者Key
+    key: window.localStorage.getItem('mapKey'), // 申请好的Web端开发者Key
     version: "2.0", // 指定要加载的 JSAPI 的版本
     // plugins: ['AMap.Scale', 'AMap.ToolBar'] // 需要使用的的插件列表
   }).then((AMap) => {
     const map = new AMap.Map("amap-container", {
       zoom: 16, // 级别
-      center: [120.091257,30.320526], // 取微信拿到的我的位置
+      // center: [120.091257,30.320526], // 取微信拿到的我的位置
+      center: JSON.parse(window.localStorage.getItem('mylocation') || '{}').locatonArr, // 中心点坐标
       // viewMode: "2D" // 使用2D视图
     })
     var markerContent = `

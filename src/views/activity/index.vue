@@ -260,7 +260,7 @@ const openActivityDetail = async (data) => {
     border-radius: 16px;
     padding: 12px 14px;
     position: absolute;
-    bottom: 0;
+    top: 332px;
     left: 8px;
     right: 8px;
     height: 430px;
