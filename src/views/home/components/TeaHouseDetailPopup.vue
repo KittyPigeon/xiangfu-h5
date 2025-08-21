@@ -3,29 +3,31 @@
     <van-popup v-model:show="showPopup" position="bottom" round @close="handleClose">
         <div class="detail-popup">
             <!-- 茶馆图片 -->
-            <van-image fit="cover" class="cover-image" :src="coverImage" />
+            <van-image fit="cover" class="cover-image" :src="props.coverImage" />
+            <!-- <van-icon name="close" class="close-icon" @click.stop="handleClose" /> -->
+            <van-icon name="clear" class="close-icon" @click.stop="handleClose" />
             <!-- 基础信息 -->
             <div class="info-section">
                 <div class="title-row">
-                    <span class="name">{{ name }}</span>
-                    <span class="location">
+                    <span class="name">{{ props.name }}</span>
+                    <span class="location" @click="navigateToGaode(props.longitude, props.latitude)">
                         <span class="icon-location"></span>
-                        <span class="distance">距离1km</span>
+                        <span class="distance">1km</span>
                     </span>
                     <div class="rating">
                         <!-- <van-rate v-model="rating" allow-half readonly size="14" color="#ffd100" /> -->
                         <span class="score-group">
-                            <span class="score">{{ rating }}</span>
+                            <span class="score">{{ props.rating }}</span>
                             <span class="unit">分</span>
                         </span>
-                        <span class="category">{{ category }}</span>
+                        <!-- <span class="category">{{ props.category }}</span> -->
                     </div>
                 </div>
-                <div class="desc">{{ desc }}</div>
+                <div class="desc">{{ props.desc }}</div>
                 <div class="meta-info">
-                    <div class="meta-info-item"><span class="label">地址：</span>{{ address }}</div>
-                    <div class="meta-info-item"><span class="label">营业时间：</span>{{ businessHours }}</div>
-                    <div class="meta-info-item rating"><span class="label">{{ commentCount }}条评论</span>{{ checkinCount
+                    <div class="meta-info-item"><span class="label">地址：</span>{{ props.address }}</div>
+                    <div class="meta-info-item"><span class="label">营业时间：</span>{{ props.businessHours }}</div>
+                    <div class="meta-info-item rating"><span class="label">{{ props.commentCount }}条评论</span>{{ props.checkinCount
                     }}次打卡</div>
                 </div>
             </div>
@@ -35,14 +37,14 @@
                 <div class="subsidy-card">
                     <div class="subsidy-desc">
                         <div class="subsidy-title">本店补贴【吃喝玩乐】神券</div>
-                        <div class="subsidy-expire">有效期至：{{ subsidyExpire }}</div>
+                        <div class="subsidy-expire">有效期至：{{ props.subsidyExpire }}</div>
                         <div class="claim-btn" @click="handleClaim">
                             去领取
                         </div>
                     </div>
                     <div class="subsidy-amount">
                         <span class="unit">¥</span>
-                        <span class="amount"> {{ subsidyAmount }}
+                        <span class="amount"> {{ props.subsidyAmount }}
                         </span>
                     </div>
 
@@ -60,27 +62,83 @@
 import { ref } from 'vue';
 import CoverImage from '@/assets/images/s.png'
 
-// 外部控制弹窗显示
-const showPopup = ref(false);
+// 使用 defineModel 来处理 v-model:show
+const showPopup = defineModel('show', { default: false });
 
-// 茶馆数据（可通过 props 传入）
-const name = ref('祥符茶馆');
-const coverImage = ref(CoverImage); // 替换为实际图片
-const rating = ref(3.7);
-const category = ref('娱乐');
-const desc = ref('传统茶馆，可欣赏杭州评话表演');
-const address = ref('杭州市拱墅区符祥街道332号');
-const businessHours = ref('09:00 - 12:00');
-const commentCount = ref(128);
-const checkinCount = ref(256);
-const subsidyExpire = ref('2025.08.02');
-const subsidyAmount = ref(50);
+// 定义 props
+const props = defineProps({
+  name: {
+    type: String,
+    default: '祥符茶馆'
+  },
+  coverImage: {
+    type: String,
+    default: CoverImage
+  },
+  rating: {
+    type: Number,
+    default: 0
+  },
+  longitude: {
+    type: Number,
+    default: 0
+  },
+  latitude: {
+    type: Number,
+    default: 3.7
+  },
+  category: {
+    type: String,
+    default: '娱乐'
+  },
+  desc: {
+    type: String,
+    default: '传统茶馆，可欣赏杭州评话表演'
+  },
+  address: {
+    type: String,
+    default: '杭州市拱墅区符祥街道332号'
+  },
+  businessHours: {
+    type: String,
+    default: '09:00 - 12:00'
+  },
+  commentCount: {
+    type: Number,
+    default: 128
+  },
+  checkinCount: {
+    type: Number,
+    default: 256
+  },
+  subsidyExpire: {
+    type: String,
+    default: '2025.08.02'
+  },
+  subsidyAmount: {
+    type: Number,
+    default: 50
+  }
+});
+
+const emit = defineEmits(['close'])
 
 // 关闭弹窗
 const handleClose = () => {
+    console.log('handleClose');
+    
     showPopup.value = false;
-    // 可触发父组件事件：emit('close');
+    emit('close');
 };
+
+const navigateToGaode = (longitude, latitude) => {
+    const mylocation = JSON.parse(window.localStorage.getItem('mylocation') || '{}').locatonArr
+    
+    window.location.href = `https://uri.amap.com/navigation?from=${mylocation.join(',')},startpoint&to=${longitude},${latitude},endpoint&mode=walk&policy=0&src=mypage&callnative=1`
+    const hhh = `https://uri.amap.com/navigation?from=${mylocation.join(',')},startpoint&to=${longitude},${latitude},endpoint&mode=walk&policy=0&src=mypage&callnative=1`
+    console.log('hhhh', hhh);
+    
+}
 
 // 领取补贴逻辑
 const handleClaim = () => {
@@ -96,7 +154,9 @@ const handleClaim = () => {
     left:8px;
     right:8px;
     width:auto;
+    height: 525px;
 }
+
 .van-overlay{
     display: none;
 }
@@ -104,8 +164,25 @@ const handleClaim = () => {
     border-radius: 12px;
 }
 .detail-popup {
+    position: relative;
     height: 100%;
+    height: 525px;
     padding-bottom: 12px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    
+    /* 隐藏滚动条，保留滚动功能 */
+    &::-webkit-scrollbar {
+        display: none;
+    }
+    
+    /* 兼容Firefox */
+    scrollbar-width: none;
+    .close-icon {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+    }
     // 封面图片
     .cover-image {
         width: 100%;

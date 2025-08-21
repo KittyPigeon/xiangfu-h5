@@ -1,6 +1,6 @@
 <template>
   <div class="home-page">
-    <div class="header">游祥符</div>
+    <!-- <div class="header">游祥符</div> -->
     <div class="header-top">
       <!-- 搜索组件 -->
       <SearchBar @search="handleSearch" />
@@ -170,13 +170,13 @@ const openActivityDetail = async (data) => {
 
   .search-bar {
     width: 343px;
-    margin: 0 auto 24px;
+    margin: 24px auto 24px; // 和54有关 54-24=30
   }
 
   &::after {
     content: '';
     position: absolute;
-    top: 90px;
+    top: 60px; // 原90-30
     left: 0;
     z-index: 1;
     display: block;
@@ -198,7 +198,7 @@ const openActivityDetail = async (data) => {
 
   .header-top {
     position: absolute;
-    top: 54px;
+    top: 0px; // 54
     left: 0;
     right: 0;
     z-index: 99;

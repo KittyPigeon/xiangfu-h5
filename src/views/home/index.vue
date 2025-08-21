@@ -22,6 +22,7 @@ const categoryIndex = ref(0)
 const merchatList = ref([])
 const isFavorited = ref(false)
 const markerMap = ref(new Map())
+const selectedMerchant = ref(null)
 let gaodeAMap: any = null
 const handleDrag = (t) => {
   isExpanded.value = t;
@@ -62,8 +63,8 @@ const initMap = async () => {
     });
 
     // 将 marker 添加到地图
-    map.add([marker]);
-    map.setFitView([marker]);
+    // map.add([marker]);
+    // map.setFitView([marker]);
 
     // 添加插件
     // map.addControl(new AMap.Scale())
@@ -93,18 +94,30 @@ const markerListFn = () => {
         merchatList.value.forEach((item) => {
           if (!markerMap.value.has(item.id)) {
             // 首选视频地址，次选临时聊天地址，最后选场景地址；
-            const position = [item.longitude , item.latitude]
-            const title = item.address
-            const content = `<div class='map-label'>${title}</div>`;
-            console.log('markerListFn3', position, content);
+                         const position = [item.longitude , item.latitude]
+             const title = item.name
+             const markerId = `marker-${item.id}`
+             const content = `
+               <div class="custom-content-marker" id="${markerId}" data-merchant-id="${item.id}">
+                 <img src="${iconMapMarker}">
+                 <div class="close-btn">${title}</div>
+               </div>
+             `;
+             console.log('markerListFn3', position, content);
 
             const marker = new gaodeAMap.Marker({
               position,
-              icon: iconMapMarker,
+              content,
+              // icon: iconMapMarker,
               label: {
                 direction: 'right',
-                content, // 设置文本标注内容
+                // content, // 设置文本标注内容
               }
+            });
+
+            // 添加点击事件
+            marker.on('click', () => {
+              showMerchantDetail(item)
             });
             markerList.push(marker);
             markerMap.value.set(item.id, marker);
@@ -118,7 +131,8 @@ const markerListFn = () => {
           markerMap.value.forEach((value) => {
             totalMarker.push(value);
           });
-          map.setFitView(totalMarker);
+          // 上下左右
+          map.setFitView(totalMarker, false, [100, 100, 100, 200]);
         }
       }
       if (markerMap.value.size) {
@@ -126,16 +140,16 @@ const markerListFn = () => {
         markerMap.value.forEach((value) => {
           totalMarker.push(value);
         });
-        map.setFitView(totalMarker);
+        map.setFitView(totalMarker, false, [100, 100, 100, 200]);
       }
     }
 
 let mapInstance: any = null;
 
 onMounted(() => {
-  document.body.addEventListener('click', (e) => {
-    showPopup.value = false
-  })
+  // document.body.addEventListener('click', (e) => {
+  //   showPopup.value = false
+  // })
 })
 
 onMounted(async () => {
@@ -162,7 +176,6 @@ const getCategoryList = async () => {
       icon: item.icon,
       text: item.name,
       badge: item.merchantCount,
-
     }
   });
 }
@@ -176,7 +189,7 @@ console.log('pppp');
       keyword: searchName.value,
       categoryId: categoryIndex.value,
       // categoryId: categoryList.value[categoryIndex.value],
-      // status: 1,      // latitude: 30.32526,
+      status: 1,      // latitude: 30.32526,
       // longitude: 120.098838,
       // radius: 5000,
     }),
@@ -190,7 +203,7 @@ console.log('pppp');
   }
   console.log('shoplist', res);
   
-  merchatList.value = res.data.records.map(item => {
+  merchatList.value = res.data.records.filter(item => item.id !== 4).map(item => {
     return {
       ...item,
       icon: item.icon,
@@ -218,10 +231,16 @@ const handleCategoryClick = (item) => {
 const handelFavorite = (flag) => {
   isFavorited.value = flag
 }
+
+const showMerchantDetail = (merchant) => {
+  selectedMerchant.value = merchant
+  showPopup.value = true
+}
 </script>
 
 <template>
   <div class="home-content">
+    <div class="gradient-modal"></div>
     <div id="map-container" class="map-container"></div>
     <!-- 我的收藏 -->
     <button @click.stop="showPopup = !showPopup">展示详情</button>
@@ -238,14 +257,67 @@ const handelFavorite = (flag) => {
       </DragExpandPanel>
     </div>
 
-    <TeaHouseDetailPopup v-model:show="showPopup" :name="'祥符茶馆'" :rating="3.7" :cover-image="CoverImage" />
+    <TeaHouseDetailPopup 
+      v-model:show="showPopup" 
+      :name="selectedMerchant?.name || '祥符茶馆'" 
+      :rating="selectedMerchant?.rating || 3.7"
+      :longitude="selectedMerchant?.longitude || 120.091257"
+      :latitude="selectedMerchant?.latitude || 30.320526"
+      :merchantId="selectedMerchant?.id || 1"
+      :cover-image="selectedMerchant?.icon || CoverImage"
+      :category="selectedMerchant?.categoryName || '娱乐'"
+      :desc="selectedMerchant?.description || '传统茶馆，可欣赏杭州评话表演'"
+      :address="selectedMerchant?.address || '杭州市拱墅区符祥街道332号'"
+      :business-hours="selectedMerchant?.businessHours || '09:00 - 12:00'"
+      :comment-count="selectedMerchant?.commentCount || 128"
+      :checkin-count="selectedMerchant?.checkinCount || 256"
+      :subsidy-expire="selectedMerchant?.subsidyExpire || '2025.08.02'"
+      :subsidy-amount="selectedMerchant?.subsidyAmount || 50"
+    />
 
   </div>
 </template>
 
 <style lang="less" scoped>
+.gradient-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 375px;
+  height: 179px;
+  background: linear-gradient(180deg, rgba(255, 109, 35, 0.5) 12%, rgba(255, 255, 255, 0) 100%);
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 999999;
+}
 :deep(.van-hairline--top-bottom:after) {
   border-color: rgba(0, 0, 0, 0.1);
+}
+:deep(.custom-content-marker) {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 120px;
+  height: 80px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: scale(1.1);
+  }
+  
+  .close-btn {
+    font-size: 14px;
+    color: #000;
+    font-weight: 500;
+    background: rgba(255, 255, 255, 0.9);
+    // padding: 2px 6px;
+    border-radius: 4px;
+    // margin-top: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
 }
 
 .home-content {
