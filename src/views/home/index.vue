@@ -132,7 +132,7 @@ const markerListFn = () => {
             totalMarker.push(value);
           });
           // 上下左右
-          map.setFitView(totalMarker, false, [100, 100, 100, 200]);
+          map.setFitView(totalMarker, false, [179, 100, 100, 200]);
         }
       }
       if (markerMap.value.size) {
@@ -140,7 +140,7 @@ const markerListFn = () => {
         markerMap.value.forEach((value) => {
           totalMarker.push(value);
         });
-        map.setFitView(totalMarker, false, [100, 100, 100, 200]);
+        map.setFitView(totalMarker, false, [179, 100, 100, 200]);
       }
     }
 
@@ -313,7 +313,7 @@ const showMerchantDetail = (merchant) => {
     color: #000;
     font-weight: 500;
     background: rgba(255, 255, 255, 0.9);
-    // padding: 2px 6px;
+    padding: 0px 4px;
     border-radius: 4px;
     // margin-top: 4px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
