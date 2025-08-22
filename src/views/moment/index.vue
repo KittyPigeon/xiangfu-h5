@@ -1,39 +1,42 @@
 <script setup lang="ts" name="Moment">
-
-import { ref, reactive } from 'vue';
-import { useRouter } from 'vue-router';
-import SearchBar from '../activity/components/SearchBar.vue';
-import Calendar from './components/Calendar.vue';
-import ActivityDetailPopup from './components/ActivityDetailPopup.vue'
-
+import { ref, reactive, onMounted } from "vue";
+import { useRouter } from "vue-router";
+import SearchBar from "../activity/components/SearchBar.vue";
+import Calendar from "./components/Calendar.vue";
+import ActivityDetailPopup from "./components/ActivityDetailPopup.vue";
+import { queryActivityList } from "@/api/group-activity";
+import to from 'await-to-js';
+import { showToast } from "vant";
+import dayjs from "dayjs";
 // import { showDialog } from 'vant';
 
 const router = useRouter();
 // 搜索关键词
-const searchValue = ref('');
+const searchValue = ref("");
 
 // 日期选择
 const showCalendar = ref(false);
-const selectedDate = ref('');
-
+const selectedDate = ref("");
+const page = ref(1)
+const size =ref(10)
 // 运动类型tabs
 const activeTab = ref(0);
 const tabs = reactive([
-  { name: 'AA制', type: 'aa' },
-  { name: '新手特惠', type: 'newbie' },
-  { name: '气氛组织', type: 'atmosphere' }
+  { name: "AA制", type: "aa" },
+  { name: "新手特惠", type: "newbie" },
+  { name: "气氛组织", type: "atmosphere" }
 ]);
 
 // 活动列表
-const activities = reactive([
+const activities = ref([
   {
     id: 1,
-    title: '周二出汗，有你更美点 🏀',
-    location: '亚运公园篮球馆',
-    time: '07/25日 19:00-21:00',
+    title: "周二出汗，有你更美点 🏀",
+    location: "亚运公园篮球馆",
+    time: "07/25日 19:00-21:00",
     price: 55,
-    tags: ['AA制', '新手特惠'],
-    coverImage: '',
+    tags: ["AA制", "新手特惠"],
+    coverImage: "",
     participants: {
       male: 1,
       female: 3
@@ -41,48 +44,76 @@ const activities = reactive([
     maxParticipants: 12
   }
 ]);
-const showPopup = ref(false)
-const popRef = ref(null)
+const showPopup = ref(false);
+const popRef = ref(null);
 const activityInfo = ref({
   id: 1,
-  title: '周二出汗，有你更美点 🏀',
-  location: '亚运公园篮球馆',
-  time: '07/25日 19:00-21:00',
+  title: "周二出汗，有你更美点 🏀",
+  location: "亚运公园篮球馆",
+  time: "07/25日 19:00-21:00",
   price: 55,
-  tags: ['AA制', '新手特惠'],
-  coverImage: '',
+  tags: ["AA制", "新手特惠"],
+  coverImage: "",
   participants: {
     male: 1,
     female: 3
   },
   maxParticipants: 12
-})
-// 打开活动详情
-const showActivityDetail = (activity) => {
+});
 
+
+onMounted(()=>{
+  getGroupActivityList()
+})
+
+// 获取活动列表
+const getGroupActivityList = async() => {
+  const [err, res] = await to<any, any>(queryActivityList({
+    date: '2025-02-01',
+    sortType: 'time',
+    latitude: '30.32526',
+    longitude:'120.098838',
+    page:page.value,
+    size:size.value
+  }));
+  if (err) {
+    showToast(err.message)
+    return
+  }
+    activities.value = res.data.records.map((o) => {
+    return {
+      ...o,
+      startTime: dayjs(o.activityStartTime).format('YYYY.MM.DD'),
+      amount: 8,
+      isHot: true,
+      title: o.targetName,
+      coverImage: o.targetImage
+    }
+  }).slice(0, 3);
 };
+// 打开活动详情
+const showActivityDetail = activity => {};
 
 const handleSearch = (value: string) => {
-  console.log('搜索内容：', value);
+  console.log("搜索内容：", value);
 };
 
 const handleAddActivity = () => {
-  console.log('测试')
+  console.log("测试");
   router.push({
-    path: '/add-activity'
-  })
-}
+    path: "/add-activity"
+  });
+};
 
 const handleSign = () => {
-  console.log('pop', popRef.value)
+  console.log("pop", popRef.value);
   if (popRef.value) {
-    popRef.value?.handleOpen()
+    popRef.value?.handleOpen();
   }
-
-}
+};
 const submitParticipant = () => {
-  popRef.value?.handleOpen()
-}
+  popRef.value?.handleOpen();
+};
 </script>
 
 <template>
@@ -104,15 +135,25 @@ const submitParticipant = () => {
         <Calendar></Calendar>
         <!-- 活动卡片列表 -->
         <div class="activity-list">
-          <div v-for="activity in activities" :key="activity.id" class="activity-card"
-            @click="showActivityDetail(activity)">
+          <div
+            v-for="activity in activities"
+            :key="activity.id"
+            class="activity-card"
+            @click="showActivityDetail(activity)"
+          >
             <div class="activity-image">
               <div class="organize-group">
                 <div class="organize-title">给力的浙BA加油者</div>
                 <div class="organize-count">已组织21场</div>
               </div>
-              <van-image fit="cover" class="header-image" :src="activity.coverImage" />
-              <div class="price"><span class="unit">¥</span>{{ activity.price }}</div>
+              <van-image
+                fit="cover"
+                class="header-image"
+                :src="activity.coverImage"
+              />
+              <div class="price">
+                <span class="unit">¥</span>{{ activity.price }}
+              </div>
             </div>
             <div class="activity-info">
               <h3>{{ activity.title }}</h3>
@@ -125,17 +166,30 @@ const submitParticipant = () => {
                 {{ activity.time }}
               </div>
               <div class="tags">
-                <van-tag v-for="tag in activity.tags" :key="tag" type="primary" plain round size="small">
+                <van-tag
+                  v-for="tag in activity.tags"
+                  :key="tag"
+                  type="primary"
+                  plain
+                  round
+                  size="small"
+                >
                   {{ tag }}
                 </van-tag>
               </div>
               <div class="participants">
-                <span>报名中… {{ activity.participants.male + activity.participants.female }}/<span class="total">{{
-                  activity.maxParticipants
-                    }}</span></span>
-                <span class="btn-submit" @click="submitParticipant">去报名</span>
+                <span
+                  >报名中…
+                  {{
+                    activity.participants.male + activity.participants.female
+                  }}/<span class="total">{{
+                    activity.maxParticipants
+                  }}</span></span
+                >
+                <span class="btn-submit" @click="submitParticipant"
+                  >去报名</span
+                >
               </div>
-
             </div>
           </div>
         </div>
@@ -143,31 +197,40 @@ const submitParticipant = () => {
     </div>
     <div class="icon-add" @click="handleAddActivity"></div>
     <!-- 活动详情弹窗 -->
-    <ActivityDetailPopup ref="popRef" :activity-info="activityInfo" @close="showPopup = !showPopup" @add="handleSign" />
+    <ActivityDetailPopup
+      ref="popRef"
+      :activity-info="activityInfo"
+      @close="showPopup = !showPopup"
+      @add="handleSign"
+    />
   </div>
 </template>
 
 <style lang="less" scoped>
-@import url('@/styles/mixin.less');
+@import url("@/styles/mixin.less");
 
 .moment-container {
   // min-height: 100vh;
   position: relative;
-  background: linear-gradient(180deg, #FF6D23 11.54%, rgba(255, 109, 35, 0) 100%);
+  background: linear-gradient(
+    180deg,
+    #ff6d23 11.54%,
+    rgba(255, 109, 35, 0) 100%
+  );
   height: 100%;
-  padding-top:152px;
+  padding-top: 152px;
   .bg {
     &::after {
-      content: '';
+      content: "";
       position: absolute;
       top: 0;
       left: 0;
       display: block;
       width: 100vw;
       height: 298px;
-      background: url('../../assets/images/bg-moment.png') no-repeat center;
+      background: url("../../assets/images/bg-moment.png") no-repeat center;
       background-size: cover;
-      backdrop-filter: blur(4px)
+      backdrop-filter: blur(4px);
     }
   }
 
@@ -183,8 +246,6 @@ const submitParticipant = () => {
     gap: 8px;
     margin-bottom: 16px;
 
-
-
     .search-bar {
       flex: 1;
     }
@@ -199,10 +260,14 @@ const submitParticipant = () => {
       border: 1px solid #fff;
       border-radius: 22px;
       gap: 6px;
-      background: linear-gradient(89.37deg, rgba(255, 148, 95, 0.7) 6.52%, rgba(255, 112, 39, 0.7) 90.88%);
+      background: linear-gradient(
+        89.37deg,
+        rgba(255, 148, 95, 0.7) 6.52%,
+        rgba(255, 112, 39, 0.7) 90.88%
+      );
 
       .icon-filter {
-        .svg-mask('@/assets/icons/icon-sort.svg', 16px, #fff);
+        .svg-mask("@/assets/icons/icon-sort.svg", 16px, #fff);
       }
 
       .filter {
@@ -218,8 +283,12 @@ const submitParticipant = () => {
 
   .container-content {
     position: relative;
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.3) 0%, #FFFFFF 8.22%);
-    border: 1px solid #FFFFFF;
+    background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.3) 0%,
+      #ffffff 8.22%
+    );
+    border: 1px solid #ffffff;
     border-radius: 16px;
     padding: 18px;
     position: absolute;
@@ -249,11 +318,10 @@ const submitParticipant = () => {
   }
 
   .activity-card {
-
     overflow: hidden;
     margin-bottom: 16px;
     border-radius: 12px;
-    background: #FFF6F2;
+    background: #fff6f2;
 
     .activity-image {
       position: relative;
@@ -274,14 +342,14 @@ const submitParticipant = () => {
         gap: 8px;
 
         .organize-title {
-          color: #FFFFFF;
+          color: #ffffff;
         }
 
         .organize-count {
-          background: #FEB14C;
+          background: #feb14c;
           border-radius: 20px;
           padding: 2px 3px;
-          color: #7B2900;
+          color: #7b2900;
           font-size: 10px;
         }
       }
@@ -301,7 +369,7 @@ const submitParticipant = () => {
         font-weight: bold;
         font-size: 24px;
         // display: flex;
-        color: #FF2020;
+        color: #ff2020;
         vertical-align: bottom;
         bottom: 0;
         padding: 4px 14px 4px 14px;
@@ -335,11 +403,11 @@ const submitParticipant = () => {
         gap: 4px;
 
         .icon-clock {
-          .svg-mask('@/assets/icons/icon-clock.svg', 14px, #666);
+          .svg-mask("@/assets/icons/icon-clock.svg", 14px, #666);
         }
 
         .icon-location {
-          .svg-mask('@/assets/icons/icon-location.svg', 14px, #666);
+          .svg-mask("@/assets/icons/icon-location.svg", 14px, #666);
         }
       }
 
@@ -349,15 +417,15 @@ const submitParticipant = () => {
         gap: 8px;
 
         .van-tag {
-          border-color: #FF6D23;
-          color: #FF6D23;
+          border-color: #ff6d23;
+          color: #ff6d23;
         }
       }
 
       .participants {
         display: flex;
         justify-content: space-between;
-        color: #FF6D23;
+        color: #ff6d23;
         font-size: 16px;
         font-weight: 600;
 
@@ -367,7 +435,12 @@ const submitParticipant = () => {
       }
 
       .btn-submit {
-        background: linear-gradient(270deg, #FF6D23 0%, #FF8B51 74.52%, #FF9560 100%);
+        background: linear-gradient(
+          270deg,
+          #ff6d23 0%,
+          #ff8b51 74.52%,
+          #ff9560 100%
+        );
         width: 74px;
         height: 29px;
         border-radius: 20px;
@@ -385,7 +458,7 @@ const submitParticipant = () => {
     right: 20px;
     width: 70px;
     height: 70px;
-    background: url('../../assets/images/add.png') no-repeat center;
+    background: url("../../assets/images/add.png") no-repeat center;
     background-size: cover;
     z-index: 222;
   }
