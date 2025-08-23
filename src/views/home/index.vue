@@ -283,7 +283,7 @@ const showMerchantDetail = (merchant) => {
   position: fixed;
   top: 0;
   left: 0;
-  width: 375px;
+  width: 100vw;
   height: 179px;
   background: linear-gradient(180deg, rgba(255, 109, 35, 0.5) 12%, rgba(255, 255, 255, 0) 100%);
   position: absolute;

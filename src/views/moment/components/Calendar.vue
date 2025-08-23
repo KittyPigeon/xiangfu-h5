@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { emit } from "process";
 import { ref } from "vue";
 
 interface SportType {
@@ -25,14 +26,15 @@ const currentDate = ref<Date>(today);
 const weekDays = ["周日", "周一", "周二", "周三", "周四", "周五", "周六"];
 const dateList = ref([]);
 
+const emits = defineEmits(["selectDate", "selectSport"]);
 // 初始化日期数据
 const initDates = (startDate = new Date()) => {
   dateList.value = [];
   const start = new Date(startDate);
   // 调整到本周第一天（周日）
-  start.setDate(start.getDate() - start.getDay());
+  // start.setDate(start.getDate() - start.getDay());
 
-  for (let i = 0; i < 7; i++) {
+  for (let i = 0; i < 10; i++) {
     const date = new Date(start);
     date.setDate(start.getDate() + i);
     dateList.value.push(date);
@@ -44,11 +46,14 @@ initDates();
 // 切换运动类型
 const handleSportSelect = sportId => {
   selectedSport.value = sportId;
+  const sportName = sportTypes.value.find(o => o.id == sportId).name;
+  emits("selectSport", sportName);
 };
 
 // 选择日期
 const handleDateSelect = date => {
   currentDate.value = new Date(date);
+  emits("selectDate", currentDate.value);
 };
 
 // 切换日期范围
@@ -98,9 +103,9 @@ const formatDate = date => {
 
     <!-- 日期选择 -->
     <div class="date-wrapper">
-      <div class="arrow left" @click="handleDateRangeChange('prev')">
+      <!-- <div class="arrow left" @click="handleDateRangeChange('prev')">
         <van-icon name="arrow-left" />
-      </div>
+      </div> -->
 
       <div class="date-section">
         <div
@@ -120,9 +125,9 @@ const formatDate = date => {
         </div>
       </div>
 
-      <div class="arrow right" @click="handleDateRangeChange('next')">
+      <!-- <div class="arrow right" @click="handleDateRangeChange('next')">
         <van-icon name="arrow" />
-      </div>
+      </div> -->
     </div>
   </div>
 </template>
@@ -149,7 +154,7 @@ const formatDate = date => {
       cursor: pointer;
       white-space: nowrap;
       padding: 2px 4px;
-      border:1px solid transparent;
+      border: 1px solid transparent;
       &.active {
         border: 1px solid #a6a6a6;
         border-radius: 8px;
@@ -197,6 +202,7 @@ const formatDate = date => {
   .date-wrapper {
     display: flex;
     align-items: center;
+    overflow-x: scroll;
     margin-top: 16px;
     border-top: 1px solid #e3e5eb;
     padding-top: 14px;
@@ -212,7 +218,8 @@ const formatDate = date => {
     display: flex;
     // gap: 24px;
     justify-content: space-between;
-    margin: 0 4px;
+    // margin: 0 4px;
+    gap: 10px;
     .date-item {
       display: flex;
       flex-direction: column;
