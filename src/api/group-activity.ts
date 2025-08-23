@@ -7,7 +7,7 @@ export const createGroupActivity = (data) => {
 }
 
 // 报名活动
-export const queryActivityCategory = (id) => {
+export const signUpActivity = (id) => {
     return post(`/api/group-activity/${id}/signup`,{})
 }
 
@@ -22,4 +22,8 @@ export const queryActivityList = (data) => {
     return get(`/api/group-activity/by-date`,data)
 }
 
+// 活动日期
+export const queryActivityDate = (data) => {
+    return get(`/api/group-activity/dates`,data)
+}
 

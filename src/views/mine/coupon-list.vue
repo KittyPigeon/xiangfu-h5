@@ -168,6 +168,11 @@ const loadingMore = () => {
       .merchant-row {
         font-size: 12px;
         color: #111111;
+        display: flex;
+        align-items: center;
+        .merchant{
+          flex: 1;
+        }
       }
 
       &:last-child {

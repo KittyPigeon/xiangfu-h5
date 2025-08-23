@@ -14,7 +14,7 @@ const routes: Array<RouteRecordRaw> = [
         name: "Home",
         component: () => import("@/views/home/index.vue"),
         meta: {
-          title: "主页",
+          title: "首页",
           showTabBar: true // 需要显示tabBar
         }
       },

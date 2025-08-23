@@ -1,21 +1,22 @@
 <template>
     <!-- Vant 弹窗组件 -->
-    <van-popup v-model:show="showPopup" position="bottom" round :style="{ height: '60%' }">
+    <van-popup v-model:show="showPopup" position="bottom" round>
         <!-- 弹窗内容容器 -->
         <div class="activity-popup">
             <van-icon name="close" class="close-icon" @click.stop="handleClose" />
 
             <!-- 顶部 Banner（含关闭按钮） -->
             <div class="popup-header">
-                <van-image fit="cover" class="header-image" :src="P1" />
+                <van-image fit="cover" class="header-image" :src="activityInfo.coverImage" />
             </div>
             <div class="popup-content">
                 <!-- 活动信息 -->
                 <div class="activity-info">
                     <div class="price-group">
-                        <div class="price"><span class="unit">¥</span><span>55</span></div>
+                        <div class="price"><span class="unit">¥</span><span>{{ activityInfo.price }}</span></div>
                         <div class="tags">
-                            <van-tag v-for="tag in ['hh', 'aa']" :key="tag" type="primary" plain round>
+                            <van-tag v-for="tag in activityInfo.tags" :key="tag" type="primary" plain round>
+                                {{ tag }}
                             </van-tag>
                         </div>
                     </div>
@@ -31,10 +32,12 @@
                 </div>
                 <!-- 人数 -->
                 <div class="participants">
-                    <div class="p1">已报名(<span>3</span>/12)</div>
+                    <div class="p1">已报名(<span>{{ activityInfo.currentParticipants }}</span>/{{
+                        activityInfo.maxParticipants }})</div>
                     <div class="p2">
-                        <span class="male"><span class="icon-male"></span> 10人</span>
-                        <span class="female"><span class="icon-female"></span>2人</span>
+                        <span class="male"><span class="icon-male"></span> {{ activityInfo.participants.male }}人</span>
+                        <span class="female"><span class="icon-female"></span>{{ activityInfo.participants.female
+                        }}人</span>
                     </div>
                     <van-icon name="arrow" class="arrow" />
                 </div>
@@ -42,11 +45,12 @@
                 <div class="activity-content">
                     <h3 class="title">活动描述</h3>
                     <div class="content">
-                        最美四来之肩天，正是读书时，在第三十个世界读书日社区际，符街道祥庆社区在社区书苑举办了以“书香渚:层不仅让爱伴同行”为主题的世界读书日活动。这场活动籍流转传递智慧，更以暖心服务拉近了邻里距让我]通过文字与画面，重温这场春日里的书香盛宴吧！
+                        {{ activityInfo.description }}
                     </div>
                 </div>
                 <!-- 报名 -->
-                <van-button block @click="addActivity">活动报名</van-button>
+                <van-button block @click="signUpActivity" :disabled="activityInfo.signupStatus != '可报名'">{{
+                    activityInfo.signupButtonText }}</van-button>
             </div>
 
 
@@ -77,9 +81,9 @@ const props = defineProps({
     }
 });
 
-const emit = defineEmits(['close', 'add']);
-const addActivity = () => {
-    emit('add')
+const emit = defineEmits(['close', 'sign']);
+const signUpActivity = () => {
+    emit('sign', props.activityInfo)
 }
 defineExpose({
     handleOpen

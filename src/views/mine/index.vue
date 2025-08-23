@@ -312,7 +312,11 @@ const goToCouponsList = () => {
         .merchant-row {
           font-size: 12px;
           color: #111111;
-
+          display: flex;
+          align-items: center;
+          .merchant{
+            flex:1;
+          }
         }
 
         &:last-child {
@@ -320,6 +324,7 @@ const goToCouponsList = () => {
         }
 
         .name-group {
+          flex:1;
           display: flex;
           flex-direction: column;
           justify-content: center;

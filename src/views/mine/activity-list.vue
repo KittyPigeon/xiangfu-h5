@@ -164,7 +164,7 @@ const loadingMore = () => {
                 display: flex;
                 flex-direction: column;
                 justify-content: center;
-
+                flex:1;
                 .hot {
                     // width: 32px;
                     height: 17px;

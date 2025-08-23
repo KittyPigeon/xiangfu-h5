@@ -1,3 +1,4 @@
+
 <template>
     <div class="search-bar">
         <span name="search" class="search-icon" ></span>

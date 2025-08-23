@@ -4,8 +4,12 @@ import { useRouter } from "vue-router";
 import SearchBar from "../activity/components/SearchBar.vue";
 import Calendar from "./components/Calendar.vue";
 import ActivityDetailPopup from "./components/ActivityDetailPopup.vue";
-import { queryActivityList } from "@/api/group-activity";
-import to from 'await-to-js';
+import {
+  queryActivityList,
+  queryActivityDate,
+  signUpActivity
+} from "@/api/group-activity";
+import to from "await-to-js";
 import { showToast } from "vant";
 import dayjs from "dayjs";
 // import { showDialog } from 'vant';
@@ -17,8 +21,10 @@ const searchValue = ref("");
 // 日期选择
 const showCalendar = ref(false);
 const selectedDate = ref("");
-const page = ref(1)
-const size =ref(10)
+const page = ref(1);
+const size = ref(10);
+const loading = ref(false);
+const finished = ref(false);
 // 运动类型tabs
 const activeTab = ref(0);
 const tabs = reactive([
@@ -28,11 +34,11 @@ const tabs = reactive([
 ]);
 
 // 活动列表
-const activities = ref([
+const activities: any = ref([
   {
     id: 1,
     title: "周二出汗，有你更美点 🏀",
-    location: "亚运公园篮球馆",
+    address: "亚运公园篮球馆",
     time: "07/25日 19:00-21:00",
     price: 55,
     tags: ["AA制", "新手特惠"],
@@ -46,73 +52,109 @@ const activities = ref([
 ]);
 const showPopup = ref(false);
 const popRef = ref(null);
-const activityInfo = ref({
-  id: 1,
-  title: "周二出汗，有你更美点 🏀",
-  location: "亚运公园篮球馆",
-  time: "07/25日 19:00-21:00",
-  price: 55,
-  tags: ["AA制", "新手特惠"],
-  coverImage: "",
-  participants: {
-    male: 1,
-    female: 3
-  },
-  maxParticipants: 12
+// const activityInfo = ref({
+//   id: 1,
+//   title: "周二出汗，有你更美点 🏀",
+//   location: "亚运公园篮球馆",
+//   time: "07/25日 19:00-21:00",
+//   price: 55,
+//   tags: ["AA制", "新手特惠"],
+//   coverImage: "",
+//   canSignup: false,
+//   participants: {
+//     male: 1,
+//     female: 3
+//   },
+//   maxParticipants: 12
+// });
+const activityInfo = ref(null);
+onMounted(async () => {
+  await getActivityDates();
+  await getGroupActivityList();
 });
 
-
-onMounted(()=>{
-  getGroupActivityList()
-})
-
-// 获取活动列表
-const getGroupActivityList = async() => {
-  const [err, res] = await to<any, any>(queryActivityList({
-    date: '2025-02-01',
-    sortType: 'time',
-    latitude: '30.32526',
-    longitude:'120.098838',
-    page:page.value,
-    size:size.value
-  }));
+// 获取活动日期
+const getActivityDates = async () => {
+  const [err, res] = await to<any, any>(
+    queryActivityDate({
+      days: 10
+    })
+  );
   if (err) {
-    showToast(err.message)
-    return
+    showToast(err.message);
+    return;
   }
-    activities.value = res.data.records.map((o) => {
-    return {
-      ...o,
-      startTime: dayjs(o.activityStartTime).format('YYYY.MM.DD'),
-      amount: 8,
-      isHot: true,
-      title: o.targetName,
-      coverImage: o.targetImage
-    }
-  }).slice(0, 3);
+  console.log("10", res);
+};
+// 获取活动列表
+const getGroupActivityList = async () => {
+  const [err, res] = await to<any, any>(
+    queryActivityList({
+      keyword: searchValue.value,
+      date: "2025-08-24",
+      sortType: "time",
+      // latitude: '30.32526',
+      // longitude:'120.098838',
+      page: page.value,
+      size: size.value
+    })
+  );
+  if (err) {
+    showToast(err.message);
+    return;
+  }
+  activities.value = res.data.records
+    .map(o => {
+      return {
+        ...o,
+        time: "07月25日 19:00～21:00",
+        tags: JSON.parse(o.tags),
+        location: o.address,
+        // signupStatus: 1,
+        // signupButtonText: "已报名",
+        participants: {
+          male: 1,
+          female: 3
+        }
+      };
+    })
+    .slice(0, 3);
 };
 // 打开活动详情
-const showActivityDetail = activity => {};
+const showActivityDetail = activity => {
+  activityInfo.value = activity;
+  popRef.value?.handleOpen();
+};
 
 const handleSearch = (value: string) => {
   console.log("搜索内容：", value);
+  page.value = 1;
+  searchValue.value = value;
+  getGroupActivityList();
 };
 
 const handleAddActivity = () => {
-  console.log("测试");
   router.push({
     path: "/add-activity"
   });
 };
 
-const handleSign = () => {
-  console.log("pop", popRef.value);
-  if (popRef.value) {
-    popRef.value?.handleOpen();
+const handleSign = async data => {
+  const [err, res] = await to(signUpActivity(data.id));
+  if (err) {
+    showToast(err.message);
+    return;
   }
+  showToast("报名成功");
 };
-const submitParticipant = () => {
+const submitParticipant = activity => {
+  activityInfo.value = activity;
   popRef.value?.handleOpen();
+};
+
+const loadMore = () => {
+  page.value += 1;
+  getGroupActivityList();
 };
 </script>
 
@@ -134,65 +176,76 @@ const submitParticipant = () => {
         <!-- 日历组件 -->
         <Calendar></Calendar>
         <!-- 活动卡片列表 -->
-        <div class="activity-list">
-          <div
-            v-for="activity in activities"
-            :key="activity.id"
-            class="activity-card"
-            @click="showActivityDetail(activity)"
-          >
-            <div class="activity-image">
-              <div class="organize-group">
-                <div class="organize-title">给力的浙BA加油者</div>
-                <div class="organize-count">已组织21场</div>
+        <van-list
+          v-model:loading="loading"
+          :finished="finished"
+          finished-text="没有更多了"
+          @load="loadMore"
+        >
+          <div class="activity-list">
+            <div
+              v-for="activity in activities"
+              :key="activity.id"
+              class="activity-card"
+              @click="showActivityDetail(activity)"
+            >
+              <div class="activity-image">
+                <div class="organize-group">
+                  <div class="organize-title">给力的浙BA加油者</div>
+                  <div class="organize-count">已组织21场</div>
+                </div>
+                <van-image
+                  fit="cover"
+                  class="header-image"
+                  :src="activity.coverImage"
+                />
+                <div class="price">
+                  <span class="unit">¥</span>{{ activity.price }}
+                </div>
               </div>
-              <van-image
-                fit="cover"
-                class="header-image"
-                :src="activity.coverImage"
-              />
-              <div class="price">
-                <span class="unit">¥</span>{{ activity.price }}
-              </div>
-            </div>
-            <div class="activity-info">
-              <h3>{{ activity.title }}</h3>
-              <div class="location">
-                <div class="icon-location"></div>
-                {{ activity.location }}
-              </div>
-              <div class="time">
-                <div class="icon-clock"></div>
-                {{ activity.time }}
-              </div>
-              <div class="tags">
-                <van-tag
-                  v-for="tag in activity.tags"
-                  :key="tag"
-                  type="primary"
-                  plain
-                  round
-                  size="small"
-                >
-                  {{ tag }}
-                </van-tag>
-              </div>
-              <div class="participants">
-                <span
-                  >报名中…
-                  {{
-                    activity.participants.male + activity.participants.female
-                  }}/<span class="total">{{
-                    activity.maxParticipants
-                  }}</span></span
-                >
-                <span class="btn-submit" @click="submitParticipant"
-                  >去报名</span
-                >
+              <div class="activity-info">
+                <h3>{{ activity.title }}</h3>
+                <div class="location">
+                  <div class="icon-location"></div>
+                  {{ activity.address }}
+                </div>
+                <div class="time">
+                  <div class="icon-clock"></div>
+                  {{ activity.time }}
+                </div>
+                <div class="tags">
+                  <van-tag
+                    v-for="tag in activity.tags"
+                    :key="tag"
+                    type="primary"
+                    plain
+                    round
+                  >
+                    {{ tag }}
+                  </van-tag>
+                </div>
+                <div class="participants">
+                  <span
+                    ><span class="status">{{ activity.userSignupStatus }}</span>
+                    {{
+                      activity.participants.male + activity.participants.female
+                    }}/<span class="total">{{
+                      activity.maxParticipants
+                    }}</span></span
+                  >
+                  <van-button
+                    class="btn-submit"
+                    v-if="activity.canSignup"
+                    :disabled="activity.signupStatus != '可报名'"
+                    @click="submitParticipant(activity)"
+                    >{{ activity.signupButtonText }}</van-button
+                  >
+                  <!-- <span class="btn-submit disabled" v-if="true">已报名</span> -->
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        </van-list>
       </div>
     </div>
     <div class="icon-add" @click="handleAddActivity"></div>
@@ -201,7 +254,7 @@ const submitParticipant = () => {
       ref="popRef"
       :activity-info="activityInfo"
       @close="showPopup = !showPopup"
-      @add="handleSign"
+      @sign="handleSign"
     />
   </div>
 </template>
@@ -219,6 +272,7 @@ const submitParticipant = () => {
   );
   height: 100%;
   padding-top: 152px;
+
   .bg {
     &::after {
       content: "";
@@ -302,7 +356,7 @@ const submitParticipant = () => {
 
     .container-content-scroll {
       flex: 1;
-      overflow-y: scroll;
+      // overflow-y: scroll;
       background: #fff;
       border-radius: 12px;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
@@ -441,7 +495,13 @@ const submitParticipant = () => {
           #ff8b51 74.52%,
           #ff9560 100%
         );
-        width: 74px;
+        border: none;
+        outline: none;
+        // &.disabled {
+        //   background: #f5f5f5;
+        //   color: #dcdde0;
+        // }
+        // width: 74px;
         height: 29px;
         border-radius: 20px;
         color: #fff;

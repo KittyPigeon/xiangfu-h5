@@ -105,6 +105,7 @@
               title="选择日期"
               :min-date="minDate"
               :max-date="maxDate"
+              @cancel="showTimePopup = false"
               @confirm="showTimePopup = false"
             />
             <van-time-picker
@@ -133,6 +134,7 @@
               title="选择日期"
               :min-date="minDate"
               :max-date="maxDate"
+              @cancel="showEndTimePopup = false"
               @confirm="handleEndDateConfirm"
             />
           </van-popup>
@@ -164,7 +166,13 @@
 import { ref, reactive, computed } from "vue";
 import { createGroupActivity } from "@/api/group-activity";
 import { showToast } from "vant";
+import { uploadFileApi } from "@/api/common";
 import to from "await-to-js";
+import dayjs from "dayjs";
+import { useRouter } from "vue-router";
+
+// hooks
+const router = useRouter();
 
 // 表单数据
 const form = reactive({
@@ -174,7 +182,8 @@ const form = reactive({
   venueNo: "",
   activityDates: "",
   startTime: "",
-  endTime: ""
+  endTime: "",
+  coverImage: ""
 });
 const formatter = day => {
   const month = day.date.getMonth() + 1;
@@ -202,8 +211,16 @@ const formatter = day => {
 const coverFileList = ref<any[]>([]);
 const beforeReadCover = (file: File) => {
   // 可在此处限制文件大小、格式等
-  console.log("上传封面：", file);
+  uploadFileApi({
+    file: file
+  }).then((res: any) => {
+    console.log("ers", res);
+    form.coverImage = res.fileUrl;
+  });
   return true;
+};
+const afterReadCover = (file: File) => {
+  console.log("file", file);
 };
 
 // 选择器数据
@@ -232,7 +249,9 @@ const currentTime = ref<any>([]);
 const currentEndTime = ref<any>([]);
 const showTimePopup = ref(false);
 const showEndTimePopup = ref(false);
-const minDate = ref(new Date(2020, 0, 1));
+const currentYear = new Date().getFullYear();
+
+const minDate = ref(new Date(currentYear, 0, 1));
 const maxDate = ref(new Date(2099, 0, 1));
 // 方法：选择器确认
 const handlePickerConfirm = (val: string, type: "organizer" | "location") => {
@@ -257,38 +276,42 @@ const handleTimeConfirm = (val: Date, type: "startTime" | "endTime") => {
 
 // 方法：提交表单
 const handleSubmit = async () => {
-  console.log("提交表单：", form);
-  const [err, res] = await to(
+  const [err, res] = await to<any, any>(
     createGroupActivity({
-      title: "周末篮球约战",
+      title: form.title,
+      organizer: form.organizer,
       activityType: "运动",
-      coverImage: "https://example.com/cover.jpg",
+      coverImage: form.coverImage,
       price: 50,
       tags: '["篮球","运动","健身"]',
-      venueName: "朝阳体育馆",
-      address: "北京市朝阳区朝阳公园南路8号",
+      venueName: form.venueNo,
+      address: form.location,
       longitude: 116.397428,
       latitude: 39.90923,
-      startTime: "2025-09-01 00:00:00",
-      endTime:  "2025-11-01 00:00:00",
+      startTime: dayjs(form.startTime).format("YYYY-MM-DD HH:mm:ss"),
+      endTime: dayjs(form.endTime).format("YYYY-MM-DD 23:59:59"),
       description: "周末篮球约战，欢迎篮球爱好者参加！",
-      images: '["https://example.com/img1.jpg","https://example.com/img2.jpg"]',
-      maxParticipants: 10,
-      signupFee: 20,
-      signupDeadline: "",
-      allowWaitlist: true,
-      maxWaitlist: 5,
-      contactInfo: "微信：zhangsan123",
-      requirements: "请自带运动装备和水",
-      endTimeAfterStartTime: true,
-      signupDeadlineBeforeStartTime: true,
-      maxWaitlistValidWhenAllowWaitlist: true
+      //   images: '["https://example.com/img1.jpg","https://example.com/img2.jpg"]',
+      maxParticipants: 10
+      //   signupFee: 20,
+      //   signupDeadline: "",
+      //   allowWaitlist: true,
+      //   maxWaitlist: 5,
+      //   contactInfo: "微信：zhangsan123",
+      //   requirements: "请自带运动装备和水",
+      //   endTimeAfterStartTime: true,
+      //   signupDeadlineBeforeStartTime: true,
+      //   maxWaitlistValidWhenAllowWaitlist: true
     })
   );
   if (err) {
+    showToast(err.message);
     return;
   }
-
+  showToast("创建活动成功");
+  setTimeout(() => {
+    router.back();
+  }, 500);
   // 可在此处调用接口提交数据
 };
 
@@ -311,7 +334,9 @@ const formatDate = (date: Date) => {
 
 // 工具函数：格式化时间
 const formatTime = (date: any) => {
-  return currentDate.value.join("-") + " " + date.selectedValues.join(":");
+  return (
+    currentDate.value.join("-") + " " + date.selectedValues.join(":") + ":00"
+  );
 };
 
 const handleEndDateConfirm = val => {

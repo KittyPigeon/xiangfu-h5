@@ -234,7 +234,7 @@ const openActivityDetail = async (data) => {
     bottom:0;
     left: 8px;
     right: 8px;
-    height: 50vh;
+    height: 60vh;
     // overflow-y: scroll;
     z-index: 99;
     display: flex;
@@ -243,6 +243,12 @@ const openActivityDetail = async (data) => {
   .activity-list{
     flex:1;
     overflow-y: scroll;
+    margin-top: 16px;
+    .activity-list-item{
+      &+.activity-list-item{
+        margin-top: 12px;
+      }
+    }
   }
 }
 </style>

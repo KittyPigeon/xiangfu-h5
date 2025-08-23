@@ -149,6 +149,7 @@ const formatDate = date => {
       cursor: pointer;
       white-space: nowrap;
       padding: 2px 4px;
+      border:1px solid transparent;
       &.active {
         border: 1px solid #a6a6a6;
         border-radius: 8px;

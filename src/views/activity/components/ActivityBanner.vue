@@ -6,14 +6,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref } from "vue";
 // const bannerImage = ref('https://example.com/banner.jpg'); // 替换为实际图片
 
 const props = defineProps({
   bannerImage: {
     type: String,
     default() {
-      return ''
+      return "";
     }
   },
   isRecommend: {
@@ -23,23 +23,24 @@ const props = defineProps({
     }
   }
 });
-
 </script>
 
 <style scoped lang="less">
-.van-image img,
-.van-image .van-image__error {
+:deep(.van-image img){
   border-radius: 8px;
 }
-
+:deep(.van-image .van-image__error){
+  border-radius: 8px;
+}
+:deep(.van-image .van-image__loading){
+  border-radius: 8px;
+}
 .activity-banner {
   position: relative;
-  margin-top: 16px;
-
+  border-radius: 8px;
   .banner-image {
     width: 100%;
     height: 188px;
-    border-radius: 8px;
 
     img {
       border-radius: 8px;
@@ -52,7 +53,7 @@ const props = defineProps({
     right: 10px;
     width: 50px;
     height: 45px;
-    background: url('../../../assets/images/recommend.png') no-repeat center;
+    background: url("../../../assets/images/recommend.png") no-repeat center;
     background-size: cover;
   }
 }
