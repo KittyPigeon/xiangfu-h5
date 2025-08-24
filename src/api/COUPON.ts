@@ -1,13 +1,13 @@
 import { post, get } from './service'
 import { API_ENDPOINTS } from './config'
 // 获取商户详情
-export const getMerchantData = (merchantId) => {
-    return get(`${API_ENDPOINTS.MERCHANT}/${merchantId}`)
+export const getMerchantCouponData = (merchantId) => {
+    return get(`${API_ENDPOINTS.COUPON}/merchant/${merchantId}`)
 }
 
 // 搜索商户
 export const searchMerchant = (data) => {
-    return get(`${API_ENDPOINTS.MERCHANT}/search`, data)
+    return get(`${API_ENDPOINTS.COUPON}/receive`, data)
 }
 
 // 获取热门商户

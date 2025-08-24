@@ -1,16 +1,19 @@
 <template>
     <!-- Vant 弹窗组件 -->
-    <van-popup v-model:show="showPopup" position="bottom" round @close="handleClose">
-        <div class="detail-popup">
+    <van-popup v-model:show="showPopup" position="bottom" round @click.stop>
+        <div class="close-icon-wrapper" @click.stop="handleClose" >
+            <van-icon name="clear" class="close-icon" />
+        </div>
+        <div class="detail-popup" @click.stop>
             <!-- 茶馆图片 -->
-            <van-image fit="cover" class="cover-image" :src="props.coverImage" />
+            <van-image fit="cover" class="cover-image" :src="props.coverImage" @click.stop />
             <!-- <van-icon name="close" class="close-icon" @click.stop="handleClose" /> -->
-            <van-icon name="clear" class="close-icon" @click.stop="handleClose" />
             <!-- 基础信息 -->
-            <div class="info-section">
+            <div class="info-section" @click.stop>
                 <div class="title-row">
+                    <span :class="[props.isFavorited?'active-favoriteIcon':'favoriteIcon']" @click.stop="handleFavoriteClick"></span>
                     <span class="name">{{ props.name }}</span>
-                    <span class="location" @click="navigateToGaode(props.longitude, props.latitude)">
+                    <span class="location" @click.stop="navigateToGaode(props.longitude, props.latitude)">
                         <span class="icon-location"></span>
                         <span class="distance">1km</span>
                     </span>
@@ -25,7 +28,7 @@
                 </div>
                 <div class="desc">{{ props.desc }}</div>
                 <div class="meta-info">
-                    <div class="meta-info-item"><span class="label">地址：</span>{{ props.address }}</div>
+                    <div class="meta-info-item"><span class="label address-label">地址：</span>{{ props.address }}</div>
                     <div class="meta-info-item"><span class="label">营业时间：</span>{{ props.businessHours }}</div>
                     <div class="meta-info-item rating"><span class="label">{{ props.commentCount }}条评论</span>{{ props.checkinCount
                     }}次打卡</div>
@@ -33,24 +36,24 @@
             </div>
 
             <!-- 补贴信息 -->
-            <div class="subsidy-section">
+            <div v-if="couponData.subsidyExpire" class="subsidy-section" @click.stop>
                 <div class="subsidy-card">
                     <div class="subsidy-desc">
                         <div class="subsidy-title">本店补贴【吃喝玩乐】神券</div>
-                        <div class="subsidy-expire">有效期至：{{ props.subsidyExpire }}</div>
-                        <div class="claim-btn" @click="handleClaim">
+                        <div class="subsidy-expire">有效期至：{{ couponData.subsidyExpire }}</div>
+                        <div class="claim-btn" @click.stop="handleClaim">
                             去领取
                         </div>
                     </div>
                     <div class="subsidy-amount">
                         <span class="unit">¥</span>
-                        <span class="amount"> {{ props.subsidyAmount }}
+                        <span class="amount"> {{ couponData.subsidyAmount }}
                         </span>
                     </div>
 
                 </div>
             </div>
-            <div class="subsidy-tip">
+            <div v-if="couponData.subsidyExpire" class="subsidy-tip" @click.stop>
                 领取后请至本店消费核销
             </div>
         </div>
@@ -59,11 +62,25 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import CoverImage from '@/assets/images/s.png'
+import { getMerchantCouponData } from '@/api/COUPON'
+import { showToast } from "vant";
+import to from 'await-to-js';
+import { addCollect , delColloect } from '@/api/collect'
+import { checkUserCoupon, userReceiveCoupon } from '@/api/user'
+
+const couponData = ref({
+  subsidyExpire: '',
+  subsidyAmount: 0,
+  id: 0,
+})
 
 // 使用 defineModel 来处理 v-model:show
-const showPopup = defineModel('show', { default: false });
+const showPopup = defineModel('show', { 
+  type: Boolean,
+  default: false 
+});
 
 // 定义 props
 const props = defineProps({
@@ -77,7 +94,7 @@ const props = defineProps({
   },
   rating: {
     type: Number,
-    default: 0
+    default: 4.8
   },
   longitude: {
     type: Number,
@@ -85,7 +102,11 @@ const props = defineProps({
   },
   latitude: {
     type: Number,
-    default: 3.7
+    default: 30.320526
+  },
+  merchantId: {
+    type: Number,
+    default: 1
   },
   category: {
     type: String,
@@ -107,6 +128,10 @@ const props = defineProps({
     type: Number,
     default: 128
   },
+  isFavorited: {
+    type: Boolean,
+    default: false,
+  },
   checkinCount: {
     type: Number,
     default: 256
@@ -121,14 +146,76 @@ const props = defineProps({
   }
 });
 
-const emit = defineEmits(['close'])
+const emit = defineEmits(['refreshList'])
+const userId = JSON.parse(window.localStorage.getItem('userInfo')).id
 
+onMounted(async () => {
+    // await getMerchantCouponDataFn();
+});
+
+// 监听 showPopup 的变化，当为 true 时刷新数据
+watch(showPopup, (newValue) => {
+    if (newValue) {
+        getMerchantCouponDataFn();
+    }
+});
+const getMerchantCouponDataFn = async () => {
+
+  const [err, res] = await to<any, any>(getMerchantCouponData(props.merchantId))
+  if (err) {
+    showToast(err.message)
+    return;
+  }
+  if (res.data.length > 0) {
+    couponData.value = res.data[0]
+
+    const checkUserCouponParams = {
+        userId: userId,
+        couponId: res.data[0].id,
+    }
+
+    const [err2, res2] = await to<any, any>(checkUserCoupon(checkUserCouponParams))
+    if (err2) {
+        showToast(err2.message)
+        return;
+    }
+    console.log('checkUserCoupon', res, res2);
+  }
+    // 确保在下一个 tick 中执行标记
+}
 // 关闭弹窗
 const handleClose = () => {
-    console.log('handleClose');
+    console.log('点击关闭');
     
     showPopup.value = false;
-    emit('close');
+};
+
+const handleFavoriteClick = async () => {
+    console.log('点击收藏', props.isFavorited);
+    if (!props.isFavorited) {
+        const [err, res] = await to<any, any>(addCollect({
+            userId: JSON.parse(window.localStorage.getItem('userInfo')).id,
+            targetType: 1,
+            targetId: props.merchantId,
+        }))
+        if (err) {
+            showToast(err.message)
+            return;
+        }
+        console.log('res====favorite', res);
+    }else{
+        const [err, res] = await to<any, any>(delColloect({
+            userId: JSON.parse(window.localStorage.getItem('userInfo')).id,
+            targetType: 1,
+            targetId: props.merchantId,
+        }))
+        if (err) {
+            showToast(err.message)
+            return;
+        }
+    }
+
+    emit('refreshList')
 };
 
 const navigateToGaode = (longitude, latitude) => {
@@ -141,9 +228,16 @@ const navigateToGaode = (longitude, latitude) => {
 }
 
 // 领取补贴逻辑
-const handleClaim = () => {
+const handleClaim = async () => {
     // 示例：调用领取接口或显示提示
     console.log('点击领取补贴');
+    const params = {
+        userId: JSON.parse(window.localStorage.getItem('userInfo')).id,
+        merchantId: props.merchantId,
+    }
+    const [err, res] = await to<any, any>(userReceiveCoupon(params))
+    console.log('getMerchantCouponData', res);
+    emit('refreshList')
     // 可扩展：emit('claim', { amount: subsidyAmount.value });
 };
 </script>
@@ -155,6 +249,20 @@ const handleClaim = () => {
     right:8px;
     width:auto;
     height: 525px;
+    z-index: 10000;
+    pointer-events: auto;
+}
+
+.close-icon-wrapper {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    z-index: 999999;
+    
+    .close-icon {
+        color: #666;
+        font-size: 20px;
+    }
 }
 
 .van-overlay{
@@ -178,11 +286,6 @@ const handleClaim = () => {
     
     /* 兼容Firefox */
     scrollbar-width: none;
-    .close-icon {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-    }
     // 封面图片
     .cover-image {
         width: 100%;
@@ -290,7 +393,10 @@ const handleClaim = () => {
                 align-items: center;
 
                 .label {
-                    width: 60px;
+                    min-width: 60px;
+                }
+                .address-label {
+                    align-self: flex-start;
                 }
             }
 
@@ -397,5 +503,22 @@ const handleClaim = () => {
         color: rgba(0, 0, 0, 0.3);
         text-align: center;
     }
+}
+.title-row {
+  .active-favoriteIcon {
+    display: inline-block;
+    margin-right: 8px;
+    width: 20px;
+    height: 20px;
+    background: url('../../../assets/icons/icon-love-active.svg') no-repeat center;
+  }
+
+  .favoriteIcon{
+    display: inline-block;
+    margin-right: 8px;
+    width: 20px;
+    height: 20px;
+    background: url('../../../assets/icons/icon-love.svg') no-repeat center;
+  }
 }
 </style>

@@ -1,9 +1,9 @@
 <template>
-    <div class="favorite-filter">
+    <div class="favorite-filter" @click.stop>
         <!-- 内容区域：两行四列布局 -->
         <div class="filter-content" :class="{ expanded: isExpanded }">
             <div class="filter-item" v-for="(item, index) in filterItems" :key="index"
-                :class="{ active: activeIndex === item.index }" @click="handleItemClick(item)">
+                :class="{ active: activeIndex === item.index }" @click.stop="handleItemClick(item)">
                 <!-- 图标 -->
                 <div class="item-icon">
                     <!-- <img :src="item.icon" :alt="item.text" /> -->
@@ -64,7 +64,7 @@ const props = defineProps({
 
 // 响应式数据
 // const isExpanded = ref(false); // 控制内容展开/收起状态
-const activeIndex = ref(0)
+const activeIndex = ref(-1)
 
 // 模拟筛选数据（与设计稿一致的 8 项）
 const filterItems = ref<FilterItem[]>([

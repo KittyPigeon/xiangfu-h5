@@ -50,7 +50,7 @@ class Http {
         NProgress.done();
         // 与后端协定的返回字段
         const { code, data } = response.data;
-        console.log('code',code)
+        console.log('code',code, data)
         // const { message } = response.data;
         // 判断请求是否成功
         const isSuccess =

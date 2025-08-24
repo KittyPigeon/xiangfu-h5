@@ -19,10 +19,10 @@ const isInWXServiceAccount = () =>{
   const ua = navigator.userAgent.toLowerCase();
   const isWechat = ua.indexOf('micromessenger') !== -1;
   const isServiceAccount = ua.indexOf('servicewechat') !== -1; // 服务号的标识
-  // return isWechat && isServiceAccount;
-  console.log('isWechat', navigator.userAgent);
+  return isWechat && isServiceAccount;
+  // console.log('isWechat', navigator.userAgent);
   
-  return true;
+  // return true;
 }
 
 // 获取当前路由信息
@@ -52,7 +52,13 @@ querymapMiniprogramKey({}).then(async (res: { data: any }) => {
 console.log('isInWXServiceAccount', isInWXServiceAccount());
 
 if (!isInWXServiceAccount()) {
-  window.localStorage.setItem('userInfo', JSON.stringify({id: '123456', name: '测试用户'}));
+  window.localStorage.setItem('userInfo', JSON.stringify({
+    "id": 1,
+    "username": "wx_o-gkj7b4",
+    "nickname": "12",
+    "avatar": "1",
+    "gender": 1,
+    "genderDesc": "男",}));
   window.localStorage.setItem('mylocation', JSON.stringify({ longitude: 120.098838, latitude: 30.32526 , locatonArr: [120.098838, 30.32526] }));
 } else {
   const paramsUrl = window.location.href.split('#')[0]
