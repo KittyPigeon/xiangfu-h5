@@ -22,8 +22,8 @@ export const queryUserCoupons = (data) => {
 }
 
 // 检查是否已领取
-export const checkUserCoupon = (couponId) => {
-    return get(`${API_ENDPOINTS.USER}/coupon/check/${couponId}`)
+export const checkUserCoupon = (data) => {
+    return get(`${API_ENDPOINTS.USER}/coupon/check/`, data)
 }
 
 // 获取用户信息

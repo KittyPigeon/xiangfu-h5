@@ -39,10 +39,14 @@
             <div v-if="couponData.subsidyExpire" class="subsidy-section" @click.stop>
                 <div class="subsidy-card">
                     <div class="subsidy-desc">
-                        <div class="subsidy-title">本店补贴【吃喝玩乐】神券</div>
+                        <!-- 本店补贴【吃喝玩乐】神券 -->
+                        <div class="subsidy-title">【吃喝玩乐】神券{{ couponData.name }}</div>
                         <div class="subsidy-expire">有效期至：{{ couponData.subsidyExpire }}</div>
-                        <div class="claim-btn" @click.stop="handleClaim">
+                        <div v-if="!couponData.isReceived" class="claim-btn" @click.stop="handleClaim">
                             去领取
+                        </div>
+                        <div v-else class="claimed-btn">
+                            已领取
                         </div>
                     </div>
                     <div class="subsidy-amount">
@@ -71,9 +75,12 @@ import { addCollect , delColloect } from '@/api/collect'
 import { checkUserCoupon, userReceiveCoupon } from '@/api/user'
 
 const couponData = ref({
-  subsidyExpire: '',
-  subsidyAmount: 0,
-  id: 0,
+    name: '',
+    subsidyExpire: '',
+    subsidyAmount: 0,
+    id: 0,
+    isReceived: true,
+
 })
 
 // 使用 defineModel 来处理 v-model:show
@@ -167,7 +174,8 @@ const getMerchantCouponDataFn = async () => {
     return;
   }
   if (res.data.length > 0) {
-    couponData.value = res.data[0]
+    const resData = res.data[0]
+
 
     const checkUserCouponParams = {
         userId: userId,
@@ -175,11 +183,30 @@ const getMerchantCouponDataFn = async () => {
     }
 
     const [err2, res2] = await to<any, any>(checkUserCoupon(checkUserCouponParams))
+        console.log('checkUserCoupon', res, res2, 123, err2);
+
     if (err2) {
         showToast(err2.message)
         return;
     }
-    console.log('checkUserCoupon', res, res2);
+    console.log('checkUserCoupon', res, res, 2555, resData);
+    if (res2.data.result) {
+        couponData.value = {
+            subsidyExpire: resData.endTime,
+            subsidyAmount: resData.discountAmount,
+            id: resData.id,
+            isReceived: res2.data.result,
+            name: resData.name,
+        } 
+    } else {
+        couponData.value = {
+            subsidyExpire: resData.endTime,
+            subsidyAmount: resData.discountAmount,
+            id: resData.id,
+            isReceived: res2.data.result,
+            name: resData.name,
+        }
+    }
   }
     // 确保在下一个 tick 中执行标记
 }
@@ -232,12 +259,18 @@ const handleClaim = async () => {
     // 示例：调用领取接口或显示提示
     console.log('点击领取补贴');
     const params = {
-        userId: JSON.parse(window.localStorage.getItem('userInfo')).id,
+        userId,
         merchantId: props.merchantId,
+        couponId: couponData.value.id,
     }
     const [err, res] = await to<any, any>(userReceiveCoupon(params))
     console.log('getMerchantCouponData', res);
-    emit('refreshList')
+    // emit('refreshList')
+
+    couponData.value = {
+        ...couponData.value,
+        isReceived: true,
+    }
     // 可扩展：emit('claim', { amount: subsidyAmount.value });
 };
 </script>
@@ -470,6 +503,17 @@ const handleClaim = async () => {
                     font-size: 12px;
                     text-align: center;
                     background: #FFE397;
+                    margin-top: 9px;
+                }
+                .claimed-btn{
+                    width:56px;
+                    height: 21px;
+                    line-height: 21px;
+                    border-radius: 100px;
+                    color: rgba(17, 17, 17, 1);
+                    font-size: 12px;
+                    text-align: center;
+                    background: #E3E5EB;
                     margin-top: 9px;
                 }
             }

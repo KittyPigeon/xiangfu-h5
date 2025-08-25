@@ -40,14 +40,17 @@ const activities: any = ref([
     title: "周二出汗，有你更美点 🏀",
     address: "亚运公园篮球馆",
     time: "07/25日 19:00-21:00",
+    description: "周二出汗，有你更美点",
     price: 55,
     tags: ["AA制", "新手特惠"],
-    coverImage: "",
+    coverImage: "http://120.27.151.154:8071/xfjd/group-activity.png",
     participants: {
       male: 1,
       female: 3
     },
-    maxParticipants: 12
+    canSignup: true,
+    maxParticipants: 12,
+    userSignupStatus: "报名中……"
   }
 ]);
 const showPopup = ref(false);
@@ -69,8 +72,8 @@ const popRef = ref(null);
 // });
 const activityInfo = ref(null);
 onMounted(async () => {
-  await getActivityDates();
-  await getGroupActivityList();
+  // await getActivityDates();
+  // await getGroupActivityList();
 });
 
 // 获取活动日期
@@ -110,8 +113,8 @@ const getGroupActivityList = async () => {
         time: "07月25日 19:00～21:00",
         tags: JSON.parse(o.tags),
         location: o.address,
-        // signupStatus: 1,
-        // signupButtonText: "已报名",
+        signupStatus: "可报名",
+        signupButtonText: "我要报名",
         participants: {
           male: 1,
           female: 3
@@ -154,7 +157,7 @@ const submitParticipant = activity => {
 
 const loadMore = () => {
   page.value += 1;
-  getGroupActivityList();
+  // getGroupActivityList();
 };
 </script>
 
@@ -240,7 +243,7 @@ const loadMore = () => {
                     @click="submitParticipant(activity)"
                     >{{ activity.signupButtonText }}</van-button
                   >
-                  <!-- <span class="btn-submit disabled" v-if="true">已报名</span> -->
+                  <span class="btn-submit disabled" v-if="true">已报名</span>
                 </div>
               </div>
             </div>

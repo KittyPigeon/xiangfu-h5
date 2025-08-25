@@ -69,6 +69,11 @@ export default defineConfig(({ mode }) => {
         "^/api": {
           target: "http://192.168.137.1:8076"
         },
+        "^/xfjd": {
+          target: "http://120.27.151.154:8071",
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/xfjd/, '/xfjd')
+        },
         "^/cpi": {
           target: "http://192.168.137.11:8074"
         },

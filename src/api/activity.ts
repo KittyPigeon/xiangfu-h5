@@ -13,7 +13,7 @@ export const queryActivityCategory = () => {
 
 // 分页查询活动列表
 export const queryActivityList = (data) => {
-    return get(`${API_ENDPOINTS.ACTIVITY}/page`, data)
+    return post(`${API_ENDPOINTS.ACTIVITY}/page?current=${data.current}&size=${data.size}`, data.queryDTO)
 }
 
 // 获取活动详情

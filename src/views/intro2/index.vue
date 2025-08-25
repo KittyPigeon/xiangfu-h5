@@ -3,8 +3,8 @@
 
 
     <div class="search-bar">
-      <div class="icon-search"></div>
-      <van-field v-model="searchValue" class="search-input" placeholder="搜索位置" @input="handleInput" />
+      <!-- <div class="icon-search"></div> -->
+      <van-field v-model="searchValue" class="search-input" placeholder="请输入你的请求" @input="handleInput" />
       <van-button class="btn-intro">
         <template #icon>
           <span class="icon-good"></span>
@@ -101,6 +101,9 @@ const communityActivities = ref([
     ],
   },
 ]);
+const handleInput = (value: string) => {
+  console.log(value);
+}
 </script>
 
 <style scoped lang="less">

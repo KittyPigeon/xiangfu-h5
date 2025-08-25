@@ -1,5 +1,5 @@
 // API配置文件
-export const routerPrefix = import.meta.env.VITE_ROUTER_PREFIX || '/cpi'
+export const routerPrefix = import.meta.env.VITE_ROUTER_PREFIX || '/api'
 
 // 统一的API前缀配置
 export const API_ENDPOINTS = {
