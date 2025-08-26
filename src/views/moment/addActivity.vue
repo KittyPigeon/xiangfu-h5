@@ -353,11 +353,8 @@ const handleEndDateConfirm = val => {
 // }
 
 .activity-container {
-  background: linear-gradient(
-    180deg,
-    rgba(255, 109, 35, 0.5) 11.54%,
-    rgba(255, 109, 35, 0) 100%
-  );
+ background: linear-gradient(180deg, rgba(255, 109, 35, 0.5) 11.54%, rgba(255, 109, 35, 0) 100%);
+
   height: 100%;
   display: flex;
   flex-direction: column;

@@ -6,6 +6,7 @@ import Calendar from "./components/Calendar.vue";
 import ActivityDetailPopup from "./components/ActivityDetailPopup.vue";
 import {
   queryActivityList,
+  searchActivityList,
   queryActivityDate,
   signUpActivity
 } from "@/api/group-activity";
@@ -18,14 +19,14 @@ import { objectToQueryString, objectToParams, addParamsToUrl } from "@/utils/url
 const router = useRouter();
 // 搜索关键词
 const searchValue = ref("");
-
+const activityType =ref("篮球")
 // 日期选择
 const showCalendar = ref(false);
-const selectedDate = ref("");
 const page = ref(1);
 const size = ref(10);
 const loading = ref(false);
 const finished = ref(false);
+const currentDate = ref(new Date());
 // 运动类型tabs
 const activeTab = ref(0);
 const tabs = reactive([
@@ -92,27 +93,18 @@ const getActivityDates = async () => {
 };
 // 获取活动列表
 const getGroupActivityList = async () => {
-  // 构建查询参数对象
-  const queryParams = {
-    keyword: searchValue.value,
-    date: "2025-08-24",
-    sortType: "time",
-    // latitude: '30.32526',
-    // longitude:'120.098838',
-    page: page.value,
-    size: size.value
-  };
-
-  // 演示：将对象转换为查询参数字符串
-  const queryString = objectToQueryString(queryParams);
-  console.log('查询参数字符串（带&前缀）:', queryString);
-  // 输出: &keyword=搜索词&date=2025-08-24&sortType=time&page=1&size=10
-
-  const paramsString = objectToParams(queryParams);
-  console.log('查询参数字符串（不带前缀）:', paramsString);
-  // 输出: keyword=搜索词&date=2025-08-24&sortType=time&page=1&size=10
-
-  const [err, res] = await to<any, any>(queryActivityList(queryParams));
+  const [err, res] = await to<any, any>(
+    searchActivityList({
+      keyword: searchValue.value,
+      date: dayjs(currentDate.value).format("YYYY-MM-DD"),
+      sortType: "time",
+      activityType:activityType.value,
+      // latitude: '30.32526',
+      // longitude:'120.098838',
+      page: page.value,
+      size: size.value
+    })
+  );
   if (err) {
     showToast(err.message);
     return;
@@ -133,6 +125,7 @@ const getGroupActivityList = async () => {
       };
     })
     .slice(0, 3);
+  finished.value = activities.value.length == res.data.total;
 };
 // 打开活动详情
 const showActivityDetail = activity => {
@@ -166,6 +159,16 @@ const submitParticipant = activity => {
   popRef.value?.handleOpen();
 };
 
+// 选择运动类型
+const handleSelectSport = (name)=>{
+  activityType.value = name
+}
+// 选择日期
+const handleSelectedDate = date => {
+  currentDate.value = date;
+  page.value = 1;
+  getGroupActivityList();
+};
 const loadMore = () => {
   page.value += 1;
   // getGroupActivityList();
@@ -188,15 +191,16 @@ const loadMore = () => {
       </div>
       <div class="container-content-scroll">
         <!-- 日历组件 -->
-        <Calendar></Calendar>
+        <Calendar @select-sport="handleSelectSport" @select-date="handleSelectedDate"></Calendar>
         <!-- 活动卡片列表 -->
         <van-list
           v-model:loading="loading"
           :finished="finished"
           finished-text="没有更多了"
           @load="loadMore"
+          class="activity-list"
         >
-          <div class="activity-list">
+          <div>
             <div
               v-for="activity in activities"
               :key="activity.id"
@@ -382,11 +386,12 @@ const loadMore = () => {
 
     .container-content-scroll {
       flex: 1;
-      // overflow-y: scroll;
+      overflow-y: scroll;
       background: #fff;
       border-radius: 12px;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-
+      display: flex;
+      flex-direction: column;
       &::-webkit-scrollbar {
         display: none;
       }
@@ -395,6 +400,7 @@ const loadMore = () => {
 
   .activity-list {
     padding: 0 16px;
+    flex:1;
   }
 
   .activity-card {

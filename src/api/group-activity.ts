@@ -20,6 +20,10 @@ export const fetchGoupActivityDetail = (id) => {
 export const queryActivityList = (data) => {
     return get(`${API_ENDPOINTS.GROUP_ACTIVITY}/by-date`, data)
 }
+// 搜索活动列表
+export const searchActivityList = (data) => {
+    return get(`/api/group-activity/search`,data)
+}
 
 // 活动日期
 export const queryActivityDate = (data) => {
