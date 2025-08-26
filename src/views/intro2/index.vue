@@ -1,10 +1,13 @@
 <template>
   <div class="invitation-page">
-
-
     <div class="search-bar">
       <div class="icon-search"></div>
-      <van-field v-model="searchValue" class="search-input" placeholder="搜索位置" @input="handleInput" />
+      <van-field
+        v-model="searchValue"
+        class="search-input"
+        placeholder="搜索位置"
+        @input="handleInput"
+      />
       <van-button class="btn-intro">
         <template #icon>
           <span class="icon-good"></span>
@@ -19,103 +22,138 @@
         <h2 class="section-title">潮玩推荐的活动</h2>
 
         <div class="activity-card">
-          <h3 class="activity-title">劳逸结合的周末下午<span class="icon-title"></span></h3>
+          <h3 class="activity-title" @click="handleClickActivity">
+            劳逸结合的周末下午<span class="icon-title"></span>
+          </h3>
           <div class="activity-content">
-            <div class="activity-step" v-for="(step, index) in activitySteps" :key="index">
-              <div class="step-number" :class="[`step${index + 1}`]">
-
-              </div>
+            <div
+              class="activity-step"
+              v-for="(step, index) in activitySteps"
+              :key="index"
+            >
+              <div class="step-number" :class="[`step${index + 1}`]"></div>
               <div class="step-info">
                 <div class="time-group">
                   <div class="step">{{ step.name }}</div>
-                  <div class="step-time">{{ step.time }}</div>
+                  <div class="step-time">{{ step.time }} {{ step.desc }}</div>
                 </div>
-                <div class="step-desc">{{ step.desc }}</div>
+                <div class="step-desc">{{ step.place }}</div>
               </div>
             </div>
           </div>
-
         </div>
       </div>
 
       <!-- 自由选择 - 社区活动 -->
       <div class="section">
         <h2 class="section-title">自由选择</h2>
-        <div class="community-card" >
-          <h3 class="community-title">社区活动<span class="icon-title"></span></h3>
+        <div class="community-card">
+          <h3 class="community-title">
+            社区活动<span class="icon-title"></span>
+          </h3>
 
-          <div class="community-list" >
-            <div class="community-list-item" v-for="(item, index) in communityActivities" :key="index">
+          <div class="community-list">
+            <div
+              class="community-list-item"
+              v-for="(item, index) in communityActivities"
+              :key="index"
+            >
               <div class="community-name">{{ item.title }}</div>
               <div class="community-tag">{{ item.tag }}</div>
               <p class="community-desc">{{ item.desc }}</p>
               <div class="image-list">
-                <img v-for="(img, imgIndex) in item.images" :key="imgIndex" :src="img" alt="activity"
-                  class="community-img" />
+                <img
+                  v-for="(img, imgIndex) in item.images"
+                  :key="imgIndex"
+                  :src="img"
+                  alt="activity"
+                  class="community-img"
+                />
               </div>
             </div>
           </div>
-
         </div>
       </div>
     </div>
-
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, defineComponent } from 'vue';
-import communityImage from '@/assets/images/community.png'
+import { ref, defineComponent } from "vue";
+import communityImage from "@/assets/images/community.png";
+import IntroData from "@/data/data.json";
+import { shuffleArray } from "@/utils/utils";
 // 搜索框数据
-const searchValue = ref('');
+const searchValue = ref("");
 
 // 活动步骤数据
 const activitySteps = ref([
-  { time: '12:00~13:00', name: "第一站", desc: '填饱肚子', place: '社区大食堂' },
-  { time: '13:00~14:00', name: "第二站", desc: '消食散步', place: '运河边风情游步道' },
-  { time: '14:30~15:30', name: "第三站", desc: '商务洽谈', place: '怡情小筑coffee' },
-  { time: '16:30~17:30', name: "第四站", desc: '来一场运动', place: '亚运拱苑篮球馆有约' },
+  {
+    time: "12:00~13:00",
+    name: "第一站",
+    desc: "填饱肚子",
+    place: IntroData.step1.slice(0, 2).join("、")
+  },
+  {
+    time: "13:00~14:00",
+    name: "第二站",
+    desc: "消食散步",
+    place: IntroData.step2.slice(0, 2).join("、")
+  },
+  {
+    time: "14:30~15:30",
+    name: "第三站",
+    desc: "商务洽谈",
+    place: IntroData.step3.slice(0, 2).join("、")
+  },
+  {
+    time: "16:30~17:30",
+    name: "第四站",
+    desc: "来一场运动",
+    place: IntroData.step4.slice(0, 2).join("、")
+  }
 ]);
-const stepColor = '#ff9933'; // 步骤数字背景色
+const stepColor = "#ff9933"; // 步骤数字背景色
 
 // 社区活动数据
 const communityActivities = ref([
   {
-    title: '书香溢社区 温暖伴同行',
-    tag: '社区活动文化',
-    desc: '在第三十个世界读书日到来之际，祥符街道祥庆社区书苑举办了以“书香溢社区，温暖伴同行为主题的世界读书日活动',
-    images: [
-      communityImage,
-      communityImage,
-     communityImage,
-    ],
+    title: "书香溢社区 温暖伴同行",
+    tag: "社区活动文化",
+    desc: "在第三十个世界读书日到来之际，祥符街道祥庆社区书苑举办了以“书香溢社区，温暖伴同行为主题的世界读书日活动",
+    images: [communityImage, communityImage, communityImage]
   },
   {
-    title: '书香溢社区 温暖伴同行',
-    tag: '社区活动文化',
-    desc: '在第三十个世界读书日到来之际，祥符街道祥庆社区书苑举办了以“书香溢社区，温暖伴同行为主题的世界读书日活动',
-    images: [
-      communityImage,
-      communityImage,
-     communityImage,
-    ],
-  },
+    title: "书香溢社区 温暖伴同行",
+    tag: "社区活动文化",
+    desc: "在第三十个世界读书日到来之际，祥符街道祥庆社区书苑举办了以“书香溢社区，温暖伴同行为主题的世界读书日活动",
+    images: [communityImage, communityImage, communityImage]
+  }
 ]);
+
+const handleClickActivity = () => {
+  activitySteps.value = activitySteps.value.map((o, index) => {
+    return {
+      ...o,
+      place: shuffleArray(IntroData[`step${index + 1}`])
+        .slice(0, 2)
+        .join("、")
+    };
+  });
+};
 </script>
 
 <style scoped lang="less">
-@import url('@/styles/mixin.less');
+@import url("@/styles/mixin.less");
 
 .invitation-page {
-  background: url('@/assets/images/bg2.png') no-repeat top;
+  background: url("@/assets/images/bg2.png") no-repeat top;
   background-size: contain;
   font-size: 14px;
   color: #333;
   padding-top: 296px;
   padding-bottom: 60px;
 }
-
-
 
 .search-bar {
   background: #fff;
@@ -129,7 +167,7 @@ const communityActivities = ref([
 
   .icon-search {
     margin-right: 4px;
-    .svg-mask('@/assets/icons/icon-write.svg', 24px, #808080);
+    .svg-mask("@/assets/icons/icon-write.svg", 24px, #808080);
   }
 
   .search-input {
@@ -145,7 +183,7 @@ const communityActivities = ref([
   }
 
   .btn-intro {
-    background: linear-gradient(253.43deg, #FF6D23 0%, #FFA375 100%);
+    background: linear-gradient(253.43deg, #ff6d23 0%, #ffa375 100%);
     border-radius: 4px;
     color: #fff;
     font-weight: 600;
@@ -155,13 +193,13 @@ const communityActivities = ref([
 
     .icon-good {
       display: inline-block;
-      .svg-mask('@/assets/icons/icon-good.svg', 14px, #fff);
+      .svg-mask("@/assets/icons/icon-good.svg", 14px, #fff);
     }
   }
 }
 
 .section-group {
-  background: linear-gradient(180deg, #C7EFFF 0%, #FFFFFF 13.85%);
+  background: linear-gradient(180deg, #c7efff 0%, #ffffff 13.85%);
   border-radius: 16px 16px 0 0;
   padding: 22px 18px;
 }
@@ -176,7 +214,7 @@ const communityActivities = ref([
 
 /* 活动卡片 */
 .activity-card {
-  background-color: #FFF5F0;
+  background-color: #fff5f0;
   border-radius: 16px;
 }
 
@@ -190,18 +228,17 @@ const communityActivities = ref([
   color: #fff;
   padding: 0 14px;
   border-radius: 16px 16px 0 0;
-  background: linear-gradient(270deg, #FF6D23 0%, #FF8B51 74.52%, #FF9560 100%);
-
+  background: linear-gradient(270deg, #ff6d23 0%, #ff8b51 74.52%, #ff9560 100%);
 }
 
 .activity-content {
   position: relative;
 
   &::after {
-    content: '';
+    content: "";
     height: 213px;
     width: 0;
-    border-left: 2px dashed #FFBFA6;
+    border-left: 2px dashed #ffbfa6;
     position: absolute;
     z-index: 0;
     left: 30px;
@@ -216,7 +253,7 @@ const communityActivities = ref([
   align-items: flex-start;
   z-index: 1;
 
-  &+.activity-step {
+  & + .activity-step {
     margin-top: 16px;
   }
 }
@@ -230,22 +267,22 @@ const communityActivities = ref([
   height: 38px;
 
   &.step1 {
-    background: url('../../assets/images/icon-no1.png') no-repeat center;
+    background: url("../../assets/images/icon-no1.png") no-repeat center;
     background-size: cover;
   }
 
   &.step2 {
-    background: url('../../assets/images/icon-no2.png') no-repeat center;
+    background: url("../../assets/images/icon-no2.png") no-repeat center;
     background-size: cover;
   }
 
   &.step3 {
-    background: url('../../assets/images/icon-no3.png') no-repeat center;
+    background: url("../../assets/images/icon-no3.png") no-repeat center;
     background-size: cover;
   }
 
   &.step4 {
-    background: url('../../assets/images/icon-no4.png') no-repeat center;
+    background: url("../../assets/images/icon-no4.png") no-repeat center;
     background-size: cover;
   }
 }
@@ -260,23 +297,22 @@ const communityActivities = ref([
 .time-group {
   display: flex;
   align-items: center;
-  background: #FDE7DE;
+  background: #fde7de;
   border-radius: 4px;
 
   .step {
-    background: linear-gradient(253.43deg, #FF6D23 0%, #FFA375 100%);
+    background: linear-gradient(253.43deg, #ff6d23 0%, #ffa375 100%);
     border-radius: 4px;
     padding: 4px 8px;
     font-weight: 600;
     font-size: 14px;
     color: #fff;
   }
-
 }
 
 .step-time {
   font-size: 14px;
-  color: #FF6D23;
+  color: #ff6d23;
   font-weight: 500;
   margin-left: 8px;
 }
@@ -287,25 +323,28 @@ const communityActivities = ref([
   color: #656668;
 }
 
-.section+.section {
+.section + .section {
   margin-top: 16px;
 }
 
 /* 社区活动卡片 */
 .community-card {
-  background-color: #FFF5F0;
+  background-color: #fff5f0;
   border-radius: 16px;
 }
-.community-title .icon-title,.activity-title .icon-title{
+
+.community-title .icon-title,
+.activity-title .icon-title {
   position: absolute;
-  right:10px;
-  top:50%;
+  right: 10px;
+  top: 50%;
   transform: translateY(-50%);
   width: 33px;
   height: 33px;
-  background: url('../../assets/images/icon-star.png') no-repeat;
+  background: url("../../assets/images/icon-star.png") no-repeat;
   background-size: cover;
 }
+
 .community-title {
   position: relative;
   font-size: 16px;
@@ -316,30 +355,33 @@ const communityActivities = ref([
   color: #fff;
   padding: 0 14px;
   border-radius: 16px 16px 0 0;
-  background: linear-gradient(270deg, #FF6D23 0%, #FF8B51 74.52%, #FF9560 100%);
+  background: linear-gradient(270deg, #ff6d23 0%, #ff8b51 74.52%, #ff9560 100%);
 }
-.community-list{
-  padding:17px 14px;
+
+.community-list {
+  padding: 17px 14px;
 }
-.community-list-item+.community-list-item{
+
+.community-list-item + .community-list-item {
   margin-top: 18px;
 }
-.community-name{
+
+.community-name {
   font-size: 16px;
   font-weight: 600;
-  color:#000000;
+  color: #000000;
 }
+
 .community-tag {
   font-size: 14px;
 
-  color: #D44700;
-  background-color: #FFE2D3;
+  color: #d44700;
+  background-color: #ffe2d3;
   display: inline-block;
   padding: 2px 6px;
   border-radius: 4px;
   margin-top: 9px;
   margin-bottom: 6px;
-  
 }
 
 .community-desc {
