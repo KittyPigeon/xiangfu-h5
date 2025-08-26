@@ -3,13 +3,12 @@
     <!-- 头部区域 -->
     <div class="header">
       <!-- 头像 -->
-      <!-- <van-image round fit="cover" class="avatar" :src="avatarUrl" />
-      <van-image round fit="cover" class="avatar" src="../../assets/images/avator1.png" />
-      <van-image round fit="cover" class="avatar" src="https://fastly.jsdelivr.net/npm/@vant/assets/cat.jpeg" /> -->
-      <van-image round fit="cover" class="avatar" src="http://120.27.151.154:8071/xfjd/avator1.png" />
+      <van-image round fit="cover" class="avatar" :src="avatarUrl" />
+      <!-- <van-image round fit="cover" class="avatar" src="../../assets/images/avator1.png" />
+      <van-image round fit="cover" class="avatar" src="http://120.27.151.154:8071/xfjd/avator1.png" /> -->
       <!-- 昵称 & ID -->
       <div class="user-info">
-        <span class="nickname">{{ nickname }}{{ avatarUrl }}</span>
+        <span class="nickname">{{ nickname }}</span>
         <span class="user-id"><span class="icon-id"></span> {{ userId }}</span>
       </div>
       <!-- <div class="icon-arrow"></div> -->
@@ -30,7 +29,7 @@
           <span class="table-row-column merchant-row">
             <div class="qrcode">
               <!-- 二维码占位（可替换为实际图片） -->
-              <van-image class="qrcode" fit="cover" :src="item.couponCode" @click="showQrcode(item)" />
+              <van-image class="qrcode" fit="cover" src="http://120.27.151.154:8071/xfjd/qrcode.png" @click="showQrcode(item)" />
             </div>
             <div class="merchant">{{ item.merchantName }}</div>
           </span>
@@ -125,7 +124,7 @@ const getUserInfo = async () => {
   const res = {
     data: {
       nickname: '张三',
-      avatar: '/xfjd/avatar1.png',
+      avatar: '/xfjd/avator1.png',
       userId: '1'
     }
   }
@@ -173,7 +172,7 @@ const getUserActivity = async () => {
 
 const showQrcode = (data) => {
   qrCodeVisible.value = true;
-  qrcodeUrl.value = data.couponCode;
+  qrcodeUrl.value = 'http://120.27.151.154:8071/xfjd/qrcode.png';
 }
 
 const goToActivityList = () => {

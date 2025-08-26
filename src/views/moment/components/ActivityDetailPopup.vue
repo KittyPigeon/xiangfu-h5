@@ -49,8 +49,10 @@
                     </div>
                 </div>
                 <!-- 报名 -->
-                <van-button block @click="signUpActivity" :disabled="activityInfo.signupStatus != '可报名'">{{
-                    activityInfo.signupButtonText }}</van-button>
+                <van-button block>{{
+                    activityInfo.signupButtonText  || '我要报名'}}</van-button>
+                <!-- <van-button block @click="signUpActivity" :disabled="activityInfo.signupStatus != '可报名'">{{
+                    activityInfo.signupButtonText }}</van-button> -->
             </div>
 
 

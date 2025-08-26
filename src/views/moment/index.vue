@@ -12,6 +12,7 @@ import {
 import to from "await-to-js";
 import { showToast } from "vant";
 import dayjs from "dayjs";
+import { objectToQueryString, objectToParams, addParamsToUrl } from "@/utils/url";
 // import { showDialog } from 'vant';
 
 const router = useRouter();
@@ -50,7 +51,7 @@ const activities: any = ref([
     },
     canSignup: true,
     maxParticipants: 12,
-    userSignupStatus: "报名中……"
+    userSignupStatus: "报名中…"
   }
 ]);
 const showPopup = ref(false);
@@ -91,17 +92,27 @@ const getActivityDates = async () => {
 };
 // 获取活动列表
 const getGroupActivityList = async () => {
-  const [err, res] = await to<any, any>(
-    queryActivityList({
-      keyword: searchValue.value,
-      date: "2025-08-24",
-      sortType: "time",
-      // latitude: '30.32526',
-      // longitude:'120.098838',
-      page: page.value,
-      size: size.value
-    })
-  );
+  // 构建查询参数对象
+  const queryParams = {
+    keyword: searchValue.value,
+    date: "2025-08-24",
+    sortType: "time",
+    // latitude: '30.32526',
+    // longitude:'120.098838',
+    page: page.value,
+    size: size.value
+  };
+
+  // 演示：将对象转换为查询参数字符串
+  const queryString = objectToQueryString(queryParams);
+  console.log('查询参数字符串（带&前缀）:', queryString);
+  // 输出: &keyword=搜索词&date=2025-08-24&sortType=time&page=1&size=10
+
+  const paramsString = objectToParams(queryParams);
+  console.log('查询参数字符串（不带前缀）:', paramsString);
+  // 输出: keyword=搜索词&date=2025-08-24&sortType=time&page=1&size=10
+
+  const [err, res] = await to<any, any>(queryActivityList(queryParams));
   if (err) {
     showToast(err.message);
     return;
@@ -133,7 +144,7 @@ const handleSearch = (value: string) => {
   console.log("搜索内容：", value);
   page.value = 1;
   searchValue.value = value;
-  getGroupActivityList();
+  // getGroupActivityList();
 };
 
 const handleAddActivity = () => {
@@ -228,6 +239,11 @@ const loadMore = () => {
                   </van-tag>
                 </div>
                 <div class="participants">
+                  <div class="participants-left">
+                    <img src="../../assets/images/ellipse1.png" alt="">
+                    <img src="../../assets/images/ellipse2.png" alt="">
+                    <img src="../../assets/images/ellipse3.png" alt="">
+                  </div>
                   <span
                     ><span class="status">{{ activity.userSignupStatus }}</span>
                     {{
@@ -239,11 +255,18 @@ const loadMore = () => {
                   <van-button
                     class="btn-submit"
                     v-if="activity.canSignup"
+                    
+                    @click="submitParticipant(activity)"
+                    >{{ activity.signupButtonText || '我要报名' }}</van-button
+                  >
+                  <!-- <van-button
+                    class="btn-submit"
+                    v-if="activity.canSignup"
                     :disabled="activity.signupStatus != '可报名'"
                     @click="submitParticipant(activity)"
-                    >{{ activity.signupButtonText }}</van-button
-                  >
-                  <span class="btn-submit disabled" v-if="true">已报名</span>
+                    >{{ activity.signupButtonText || '我要报名' }}</van-button
+                  > -->
+                  <!-- <span class="btn-submit disabled" v-if="true">已报名</span> -->
                 </div>
               </div>
             </div>
@@ -482,9 +505,39 @@ const loadMore = () => {
       .participants {
         display: flex;
         justify-content: space-between;
+        align-items: center;
         color: #ff6d23;
         font-size: 16px;
         font-weight: 600;
+
+        .participants-left {
+          display: flex;
+          align-items: center;
+          position: relative;
+
+          img {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 2px solid #fff;
+            object-fit: cover;
+            position: relative;
+
+            &:nth-child(1) {
+              z-index: 1;
+            }
+
+            &:nth-child(2) {
+              z-index: 2;
+              margin-left: -12.4px; /* 重叠20% = 32px * 0.2 = 6.4px */
+            }
+
+            &:nth-child(3) {
+              z-index: 3;
+              margin-left: -12.4px; /* 重叠20% = 32px * 0.2 = 6.4px */
+            }
+          }
+        }
 
         .total {
           color: #000;

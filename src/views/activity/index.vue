@@ -19,7 +19,7 @@
 
     <div class="home-content">
       <!-- 活动地图组件 -->
-      <ActivityMap />
+      <ActivityMap :activity-list="activityList" @marker-click="handleMarkerClick" />
 
       <!-- 活动 Tab 组件 -->
       <ActivityTab @change="handleActivityTabChange" />
@@ -146,10 +146,19 @@ const getActivityList = async () => {
   if (err) {
     return;
   }
-  activityList.value = res.data.records.map(item => {
+  activityList.value = res.data.records.map((item, index) => {
+    // 为每个活动添加经纬度信息（基于更新的数据库数据）
+    // 如果数据库中没有经纬度，可以使用默认值或随机生成
+    const baseLatitude = 30.3068760;
+    const baseLongitude = 120.0928410;
+    const offset = index * 0.01; // 为每个活动设置不同的偏移量
+    
     return {
       ...item,
       coverImageSrc: `${window.location.origin}${item.coverImage}` || item.coverImage,
+      // 使用数据库中的经纬度，如果没有则使用计算的默认值
+      latitude: item.latitude || (baseLatitude + offset),
+      longitude: item.longitude || (baseLongitude + offset),
     }
   });
   console.log('activityList',activityList)
@@ -164,6 +173,12 @@ const openActivityDetail = async (data) => {
   }
   showPopup.value = true;
   activityInfo.value = res.data;
+}
+
+// 处理地图marker点击事件
+const handleMarkerClick = async (activity) => {
+  console.log('地图marker被点击:', activity);
+  await openActivityDetail(activity);
 }
 </script>
 
@@ -239,7 +254,7 @@ const openActivityDetail = async (data) => {
     bottom:0;
     left: 8px;
     right: 8px;
-    height: 60vh;
+    height: 50vh;
     // overflow-y: scroll;
     z-index: 99;
     display: flex;
