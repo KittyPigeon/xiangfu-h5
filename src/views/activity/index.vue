@@ -28,7 +28,7 @@
         <div class="activity-list-item" v-for="(item, index) in activityList" :key="index"
           @click="openActivityDetail(item)">
           <!-- 活动 Banner 组件 -->
-          <ActivityBanner :banner-image="item.coverImage" :is-recommend="item.isRecommend" />
+          <ActivityBanner :banner-image="item.coverImageSrc" :is-recommend="item.isRecommend" />
         </div>
 
       </div>
@@ -58,15 +58,15 @@ import { showToast } from 'vant';
 // 
 const showPopup = ref(false)
 const tabList = ref([])
-const tabIndex = ref(0)
+const tabIndex = ref(-1)
 const searchName = ref('')
 const activityTabIndex = ref(0);
 const activityTabMap = ref([
   {
-    timeFilter: 'ongoing'
+    timeFilter: 'upcoming'
   },
   {
-    timeFilter: 'upcoming',
+    timeFilter: 'ongoing',
   },
   {
     timeFilter: 'past'
@@ -115,7 +115,7 @@ const handleFavorite = async (flag) => {
 
 onMounted(async () => {
   await getCategory();
-  await getActivityList();
+  getActivityList();
 })
 const getCategory = async () => {
   const [err, res] = await to<any, any>(queryActivityCategory())
@@ -131,14 +131,14 @@ const getCategory = async () => {
 }
 const getActivityList = async () => {
   const params = {
-    queryDTO: JSON.stringify({
+    queryDTO: {
       keyword: searchName.value,
-      categoryId: tabList.value[tabIndex.value].id,
+      categoryId: tabIndex.value === -1 ? null : tabList.value[tabIndex.value].id,
       timeFilter: activityTabMap.value[activityTabIndex.value].timeFilter,
-      latitude: 30.32526,
-      longitude: 120.098838,
-      radius: 5000,
-    }),
+      // latitude: 30.32526,
+      // longitude: 120.098838,
+      // radius: 5000,
+    },
     current: 1,
     size: 10,
   }
@@ -146,7 +146,12 @@ const getActivityList = async () => {
   if (err) {
     return;
   }
-  activityList.value = res.data.records;
+  activityList.value = res.data.records.map(item => {
+    return {
+      ...item,
+      coverImageSrc: `${window.location.origin}${item.coverImage}` || item.coverImage,
+    }
+  });
   console.log('activityList',activityList)
 }
 

@@ -3,13 +3,17 @@
     <!-- 头部区域 -->
     <div class="header">
       <!-- 头像 -->
-      <van-image round fit="cover" class="avatar" :src="avatarUrl" />
+      <!-- <van-image round fit="cover" class="avatar" :src="avatarUrl" />
+      <van-image round fit="cover" class="avatar" src="../../assets/images/avator1.png" />
+      <van-image round fit="cover" class="avatar" src="https://fastly.jsdelivr.net/npm/@vant/assets/cat.jpeg" /> -->
+      <van-image round fit="cover" class="avatar" src="http://120.27.151.154:8071/xfjd/avator1.png" />
       <!-- 昵称 & ID -->
       <div class="user-info">
-        <span class="nickname">{{ nickname }}</span>
+        <span class="nickname">{{ nickname }}{{ avatarUrl }}</span>
         <span class="user-id"><span class="icon-id"></span> {{ userId }}</span>
       </div>
-      <div class="icon-arrow"></div>
+      <!-- <div class="icon-arrow"></div> -->
+      <div class="div-holder"></div>
     </div>
 
     <!-- 优惠券列表 -->
@@ -31,7 +35,7 @@
             <div class="merchant">{{ item.merchantName }}</div>
           </span>
           <span class="table-row-column">{{ item.receiveTime }}</span>
-          <span class="table-row-column">{{ item.discountAmount }}</span>
+          <span class="table-row-column">{{ item.discountAmount || 20}}</span>
         </div>
       </div>
     </van-cell-group>
@@ -95,6 +99,7 @@ const nickname = ref('');
 const userId = ref('');
 const qrCodeVisible = ref(false)
 const qrcodeUrl = ref('')
+
 // 优惠券列表（模拟数据）
 const couponList = ref([
   { merchantName: '祥符茶馆', receiveTime: '2025.08.02', discountAmount: 18, couponCode: 'https://example.com/activity1.png' },
@@ -112,19 +117,27 @@ const activityList = ref([
 
 // 接口
 const getUserInfo = async () => {
-  const [err, res] = await to<any, any>(getUserData());
-  if (err) {
-    showToast(err.message)
-    return
+  // const [err, res] = await to<any, any>(getUserData());
+  // if (err) {
+  //   showToast(err.message)
+  //   return
+  // }
+  const res = {
+    data: {
+      nickname: '张三',
+      avatar: '/xfjd/avatar1.png',
+      userId: '1'
+    }
   }
   nickname.value = res.data.nickname;
-  avatarUrl.value = res.data.avatar;
+  avatarUrl.value = `${window.location.origin}${res.data.avatar}`;
   userId.value = res.data.userId;
   localStorage.setItem('user', JSON.stringify(res.data))
 }
 
 const getUserCoupon = async () => {
   const [err, res] = await to<any, any>(queryUserCoupons({
+    userId: userId.value,
     current: 1,
     size: 9999,
     status: 1
@@ -139,6 +152,7 @@ const getUserActivity = async () => {
   const [err, res] = await to<any, any>(queryCollectList({
     current: 1,
     size: 9999,
+    userId: userId.value,
     targetType: EnumCollectTargetType.ACTIVITY
   }));
   if (err) {
@@ -163,10 +177,10 @@ const showQrcode = (data) => {
 }
 
 const goToActivityList = () => {
-  router.push('/activityList')
+  // router.push('/activityList')
 }
 const goToCouponsList = () => {
-  router.push('/couponList')
+  // router.push('/couponList')
 }
 </script>
 
@@ -208,13 +222,14 @@ const goToCouponsList = () => {
       width: 62px;
       height: 62px;
       border: 2px solid #fff;
-      margin-right: 14px;
+      // margin-right: 14px;
     }
 
     .user-info {
       display: flex;
       flex-direction: column;
       flex: 1;
+      margin-left: 14px;
 
       .nickname {
         font-size: 16px;

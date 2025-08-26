@@ -1,32 +1,33 @@
 import { post, get } from './service'
+import { API_ENDPOINTS } from './config'
 
 // 使用优惠券
 export const userUseCoupon = (data) => {
-    return post(`/api/user/coupon/use`, data)
+    return post(`${API_ENDPOINTS.USER}/coupon/use`, data)
 }
 
 // 领取优惠券
 export const userReceiveCoupon = (data) => {
-    return post(`/api/user/coupon/receive`, data)
+    return post(`${API_ENDPOINTS.USER}/coupon/receive`, data)
 }
 
 // 获取用户优惠券详情
-export const queryMapActivities = (userCouponId) => {
-    return get(`/api/user/coupon/${userCouponId}`)
+export const queryUserCouponDetail = (userCouponId) => {
+    return get(`${API_ENDPOINTS.USER}/coupon/${userCouponId}`)
 }
 
 // 分页查询用户优惠券
 export const queryUserCoupons = (data) => {
-    return get(`/api/user/coupon/page`, data)
+    return get(`${API_ENDPOINTS.USER}/coupon/page`, data)
 }
 
 // 检查是否已领取
-export const checkUserCoupon = (couponId) => {
-    return get(`/api/user/coupon/check/${couponId}`)
+export const checkUserCoupon = (data) => {
+    return get(`${API_ENDPOINTS.USER}/coupon/check/`, data)
 }
 
 // 获取用户信息
 export const getUserData = () => {
-    return get(`/api/user/info`)
+    return get(`${API_ENDPOINTS.USER}/info`)
 }
 

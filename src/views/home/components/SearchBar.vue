@@ -1,5 +1,5 @@
 <template>
-  <div class="search-bar">
+  <div class="search-bar" @click.stop>
     <div class="icon-search"></div>
     <van-field
       v-model="searchValue"
@@ -7,7 +7,7 @@
       placeholder="搜索位置"
       @input="handleInput"
     />
-    <div class="search-button" @click="handleSearch">
+    <div class="search-button" @click.stop="handleSearch">
       搜索
     </div>
   </div>
@@ -26,11 +26,11 @@ const handleInput = (value: string) => {
 
 // 搜索按钮点击事件
 const handleSearch = () => {
-  if (!searchValue.value.trim()) {
-    showToast('请输入搜索内容');
-    return;
-  }
   emit('search', searchValue.value); // 触发搜索逻辑
+  // if (!searchValue.value.trim()) {
+  //   showToast('请输入搜索内容');
+  //   return;
+  // }
 };
 </script>
 

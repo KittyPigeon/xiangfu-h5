@@ -102,8 +102,8 @@ defineExpose({
 }
 
 .activity-popup {
-    height: 100%;
-    // overflow-y: auto;
+    height: 80vh; /* 设置固定高度 */
+    max-height: 80vh;
     padding: 0;
     border-radius: 24px 24px 0 0;
     position: relative;
@@ -157,7 +157,17 @@ defineExpose({
     margin-top: -460px;
     background: linear-gradient(180deg, rgba(255, 255, 255, 0.7) 0.25%, #FFFFFF 9.7%, #FFFFFF 100%);
     padding: 16px;
-    overflow-y: scroll;
+    overflow-y: auto;
+    max-height: calc(80vh - 177px); /* 基于容器高度减去header高度 */
+    min-height: 0; /* 允许flex子元素收缩 */
+    -webkit-overflow-scrolling: touch; /* iOS平滑滚动 */
+    
+    /* 隐藏滚动条但保持滚动功能 */
+    &::-webkit-scrollbar {
+        display: none;
+    }
+    -ms-overflow-style: none;
+    scrollbar-width: none;
 }
 
 .activity-info {

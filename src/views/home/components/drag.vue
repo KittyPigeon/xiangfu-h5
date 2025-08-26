@@ -1,8 +1,8 @@
 <template>
-    <div class="drag-expand-panel">
+    <div class="drag-expand-panel" @click.stop>
         <!-- 拖拽手柄区域（标题 + 箭头） -->
         <div class="drag-handle" @touchstart="onTouchStart" @touchmove="onTouchMove" @touchend="onTouchEnd"
-            @mousedown="onTouchStart" @mousemove="onTouchMove" @mouseup="onTouchEnd">
+            @mousedown="onTouchStart" @mousemove="onTouchMove" @mouseup="onTouchEnd" @click.stop>
             <span class="panel-title">{{ title }}</span>
             <!-- 箭头图标，通过旋转控制展开/收起状态 -->
             <div class="arrow-icon" :style="{ transform: `rotate(${arrowRotate}deg)` }"
@@ -16,7 +16,7 @@
             <div v-show="isPanelExpanded" class="content" :style="{
                 transform: `translateY(${contentTranslateY}px)`,
                 opacity: contentOpacity,
-            }">
+            }" @click.stop>
                 <slot></slot>
             </div>
         </transition>

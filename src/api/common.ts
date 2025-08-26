@@ -1,25 +1,25 @@
 // 获取
 import { post, get, uploadFile } from './service'
+import { API_ENDPOINTS } from './config'
 
-
-// 获取微信JS-SDK签名参数
+// 获取IP位置信息
 export const queryWxConfig = () => {
-    return get(`/api/map/ip-location`)
+    return get(`${API_ENDPOINTS.MAP}/ip-location`)
 }
 
-// 获取微信JS-SDK签名参数
+// 获取微信授权URL
 export const querywechatWebAuthUrl = (data) => {
-    return get(`/api/wechat/web/auth-url`, data)
+    return get(`${API_ENDPOINTS.WECHAT}/web/auth-url`, data)
 }
 
-// 领取用户id信息
+// 微信登录
 export const wechatWebLogin = (data) => {
-    return post(`/api/wechat/web/login`, data)
+    return post(`${API_ENDPOINTS.WECHAT}/web/login`, data)
 }
 
 // 上传文件
 export const uploadFileApi = (data) => {
-    return uploadFile(`/api/upload/image`, data)
+    return uploadFile(`${API_ENDPOINTS.UPLOAD}/image`, data)
 }
 
 

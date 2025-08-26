@@ -318,6 +318,7 @@ const handleSubmit = async () => {
 // 方法：存草稿
 const saveDraft = () => {
   console.log("保存草稿：", form);
+  router.go(-1)
   // 可在此处实现草稿保存逻辑
 };
 

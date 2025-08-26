@@ -1,5 +1,5 @@
 <template>
-  <div class="my-favorite" :class="{ active: isActive }" @click="handleFavoriteClick">
+  <div class="my-favorite" :class="{ active: isActive }" @click.stop="handleFavoriteClick">
     <!-- Vant 图标（需提前注册或按需引入） -->
     <span class="favorite-icon"></span>
     <span class="favorite-text">我的收藏</span>
