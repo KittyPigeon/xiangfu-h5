@@ -1,6 +1,6 @@
 <template>
     <!-- Vant 弹窗组件 -->
-    <van-popup v-model:show="showPopup" position="bottom" round :style="{ height: '60%' }">
+    <van-popup v-model:show="showPopup" position="bottom" round :style="{ minHeight: '70%' }">
         <!-- 弹窗内容容器 -->
         <div class="activity-popup">
             <!-- 顶部 Banner（含关闭按钮） -->
@@ -14,12 +14,21 @@
                 <div class="icon-star" :class="{ active: activityInfo.isFavorited }" @click="toggleFavorite"></div>
                 <h2 class="title">{{ activityInfo.title }}</h2>
                 <div class="address-group">
-                    <span class="icon-location"></span>
-                    <span class="distance">{{ activityInfo.distanceDesc }}</span>
+                    <span style="padding-right: 10px;">{{ activityInfo.address }}</span>
+                    <span class="icon-location" @click="navigateToGaode(activityInfo.longitude, activityInfo.latitude)"></span>
+                    <span class="distance">1km</span>
                 </div>
                 <div class="activity-tag">{{ activityInfo.categoryName }}</div>
                 <div class="date">{{ activityInfo.startTime }}</div>
                 <div class="content" v-html="activityInfo.content"></div>
+                <div class="activity-image-wrapper">
+                    <!-- <img v-for="ele in activityInfo.imagesSrcArr" fit="cover" class="activity-image" :src="ele" /> -->
+                    <van-image v-for="ele in activityInfo.imagesSrcArr" fit="cover" class="activity-image" :src="ele">
+                        <template #error>
+                            <img class="activity-image" src="https://fastly.picsum.photos/id/180/600/400.jpg?hmac=GWOD1KQ7oaGkR7Zpj4QJDXLC2XkaKZjoKZ3i824mdUE" alt="">
+                        </template>
+                    </van-image>
+                </div>
             </div>
 
             <!-- 正文内容 -->
@@ -73,10 +82,34 @@ const props = defineProps({
 });
 
 const emit = defineEmits(['close', 'favorite-change']);
+const navigateToGaode = (longitude, latitude) => {
+    const mylocation = JSON.parse(window.localStorage.getItem('mylocation') || '{}').locatonArr
+    
+    window.location.href = `https://uri.amap.com/navigation?from=${mylocation.join(',')},startpoint&to=${longitude},${latitude},endpoint&mode=walk&policy=0&src=mypage&callnative=1`
+    const hhh = `https://uri.amap.com/navigation?from=${mylocation.join(',')},startpoint&to=${longitude},${latitude},endpoint&mode=walk&policy=0&src=mypage&callnative=1`
+    console.log('hhhh', hhh);
+    
+}
 
 </script>
 
 <style scoped lang="less">
+.activity-image-wrapper{
+    display: flex;
+    flex-wrap: wrap;
+    .activity-image{
+        width: 100px;
+        height: 100px;
+        padding: 10px 10px 0 10px;
+    }
+    // .van-image{
+    //     width: 100px;
+    //     height: 100px;
+    // }
+}
+:deep(.van-image__error) {
+    background-color: transparent !important;
+}
 .van-popup--bottom.van-popup--round {
     border-radius: 24px 24px 0 0;
 }
@@ -193,8 +226,8 @@ const emit = defineEmits(['close', 'favorite-change']);
 
         .icon-star {
             position: absolute;
-            top: 49px;
-            right: 15px;
+            top: 10px;
+            left: 15px;
             display: inline-block;
             width: 20px;
             height: 20px;

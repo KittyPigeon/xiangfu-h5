@@ -25,6 +25,10 @@ export const queryUserCoupons = (data) => {
 export const checkUserCoupon = (data) => {
     return get(`${API_ENDPOINTS.USER}/coupon/check/`, data)
 }
+// 检查是否已收藏
+export const checkUseFavorite = (data) => {
+    return get(`${API_ENDPOINTS.USER}/favorite/check/`, data)
+}
 
 // 获取用户信息
 export const getUserData = () => {

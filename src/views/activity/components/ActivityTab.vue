@@ -7,7 +7,8 @@
             </div>
         </div>
 
-        <span class="more">更多 <van-icon name="arrow" size="12" color="rgba(0, 0, 0, 0.35)" /></span>
+        <!-- <span class="more">更多 <van-icon name="arrow" size="12" color="rgba(0, 0, 0, 0.35)" /></span> -->
+         <div></div>
     </div>
 
 </template>

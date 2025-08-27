@@ -17,14 +17,22 @@
     </div> -->
 
 
-    <div class="home-content">
+    <div class="home-content" :class="{ 'expanded': isExpanded }">
+      <!-- 活动 Tab 组件 - 在展开状态下移到顶部 -->
+      <ActivityTab v-if="isExpanded" @change="handleActivityTabChange" class="activity-tab-top" />
+      
       <!-- 活动地图组件 -->
-      <ActivityMap :activity-list="activityList" @marker-click="handleMarkerClick" />
+      <ActivityMap v-if="!isExpanded" :activity-list="activityList" @marker-click="handleMarkerClick" />
 
-      <!-- 活动 Tab 组件 -->
-      <ActivityTab @change="handleActivityTabChange" />
+      <!-- 活动 Tab 组件 - 正常位置 -->
+      <ActivityTab v-if="!isExpanded" @change="handleActivityTabChange" />
 
-      <div class="activity-list">
+      <div 
+        class="activity-list"
+        @touchstart="handleTouchStart"
+        @touchmove="handleTouchMove"
+        @touchend="handleTouchEnd"
+      >
         <div class="activity-list-item" v-for="(item, index) in activityList" :key="index"
           @click="openActivityDetail(item)">
           <!-- 活动 Banner 组件 -->
@@ -46,6 +54,7 @@
 import { ref, onMounted } from 'vue'
 import { queryActivityCategory, queryActivityList, queryActivityDetail } from '@/api/activity';
 import { addCollect, delColloect } from '@/api/collect'
+import { checkUseFavorite } from '@/api/user'
 import SearchBar from './components/SearchBar.vue';
 import CategoryTab from './components/CategoryTab.vue';
 import ActivityMap from './components/ActivityMap.vue';
@@ -56,6 +65,7 @@ import { EnumCollectTargetType } from '@/enums/collect'
 import to from 'await-to-js'
 import { showToast } from 'vant';
 // 
+const userId = JSON.parse(window.localStorage.getItem('userInfo')).id
 const showPopup = ref(false)
 const tabList = ref([])
 const tabIndex = ref(-1)
@@ -74,6 +84,14 @@ const activityTabMap = ref([
 ])
 const activityInfo = ref(null)
 const activityList = ref([])
+
+// 触屏手势相关状态
+const isExpanded = ref(false) // ActivityTab是否展开到顶部
+const touchStartY = ref(0)
+const touchCurrentY = ref(0)
+const isDragging = ref(false)
+const DRAG_THRESHOLD = 50 // 触发切换的拖拽阈值
+
 const handleSearch = (value: string) => {
   console.log('搜索内容：', value);
   searchName.value = value;
@@ -94,6 +112,7 @@ const handleActivityTabChange = (index: number) => {
 
 const handleFavorite = async (flag) => {
   const params = {
+    userId,
     targetType: EnumCollectTargetType.ACTIVITY,
     targetId: activityInfo.value.id
   }
@@ -155,7 +174,7 @@ const getActivityList = async () => {
     
     return {
       ...item,
-      coverImageSrc: `${window.location.origin}${item.coverImage}` || item.coverImage,
+      coverImageSrc: !item.coverImage.includes('http')?`${window.location.origin}${item.coverImage}` : item.coverImage,
       // 使用数据库中的经纬度，如果没有则使用计算的默认值
       latitude: item.latitude || (baseLatitude + offset),
       longitude: item.longitude || (baseLongitude + offset),
@@ -171,7 +190,22 @@ const openActivityDetail = async (data) => {
     showToast(err.message)
     return;
   }
+  const [err2, res2] = await to<any, any>(checkUseFavorite({
+    userId,
+    targetType: EnumCollectTargetType.ACTIVITY,
+    targetId: data.id
+  }))
+  if (err) {
+    showToast(err.message)
+    return;
+  }
+  console.log('res2',res2, 567, res, res.data.images);
+  res.data.imagesSrcArr = (res.data.imageList?res.data.imageList: []).map(o => {
+    return  !o.includes('http')?`${window.location.origin}${o}` : o
+  })
+  console.log('res.data.imagesSrcArr',res.data.imagesSrcArr);
   showPopup.value = true;
+  res.data.isFavorited = res2 && res2.data ? res2.data.checkResult : false;
   activityInfo.value = res.data;
 }
 
@@ -179,6 +213,57 @@ const openActivityDetail = async (data) => {
 const handleMarkerClick = async (activity) => {
   console.log('地图marker被点击:', activity);
   await openActivityDetail(activity);
+}
+
+// 触屏手势处理函数
+const handleTouchStart = (event: TouchEvent) => {
+  if (event.touches.length === 1) {
+    touchStartY.value = event.touches[0].clientY
+    isDragging.value = true
+  }
+}
+
+const handleTouchMove = (event: TouchEvent) => {
+  if (!isDragging.value || event.touches.length !== 1) return
+  
+  touchCurrentY.value = event.touches[0].clientY
+  const deltaY = touchStartY.value - touchCurrentY.value
+  const activityListElement = event.currentTarget as HTMLElement
+  const scrollTop = activityListElement.scrollTop
+  
+  // 只有在满足特定条件时才阻止默认行为和触发手势
+  const shouldPreventDefault = 
+    (deltaY > 0 && !isExpanded.value && scrollTop === 0) || // 向上拉且在顶部且未展开
+    (deltaY < 0 && isExpanded.value && scrollTop === 0)     // 向下拉且在顶部且已展开
+  
+  if (shouldPreventDefault) {
+    event.preventDefault()
+  }
+}
+
+const handleTouchEnd = (event: TouchEvent) => {
+  if (!isDragging.value) return
+  
+  const deltaY = touchStartY.value - touchCurrentY.value
+  const activityListElement = event.currentTarget as HTMLElement
+  const scrollTop = activityListElement.scrollTop
+  
+  // 只有在列表顶部时才允许切换状态
+  if (scrollTop === 0) {
+    // 上拉超过阈值且当前未展开，则展开
+    if (deltaY > DRAG_THRESHOLD && !isExpanded.value) {
+      isExpanded.value = true
+    }
+    // 下拉超过阈值且当前已展开，则收起
+    else if (deltaY < -DRAG_THRESHOLD && isExpanded.value) {
+      isExpanded.value = false
+    }
+  }
+  
+  // 重置状态
+  isDragging.value = false
+  touchStartY.value = 0
+  touchCurrentY.value = 0
 }
 </script>
 
@@ -251,23 +336,38 @@ const handleMarkerClick = async (activity) => {
     border-radius: 16px;
     padding: 12px 14px;
     position: absolute;
-    bottom:0;
+    bottom: 0;
     left: 8px;
     right: 8px;
     height: 50vh;
-    // overflow-y: scroll;
     z-index: 99;
     display: flex;
     flex-direction: column;
+    transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
   }
   .activity-list{
-    flex:1;
-    overflow-y: scroll;
+    flex: 1;
+    overflow-y: auto;
     margin-top: 16px;
+    -webkit-overflow-scrolling: touch; // iOS 平滑滚动
+    
     .activity-list-item{
       &+.activity-list-item{
         margin-top: 12px;
       }
+    }
+  }
+  
+  // ActivityTab在顶部时的样式
+  .activity-tab-top {
+    margin-bottom: 12px;
+  }
+  
+  // 展开状态下的特殊样式
+  .home-content.expanded {
+    .activity-list {
+      margin-top: 8px; // 减少顶部间距，因为ActivityTab已经在顶部了
+      padding-bottom: 20px;
     }
   }
 }
