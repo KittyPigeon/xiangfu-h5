@@ -1,5 +1,11 @@
 <template>
   <div class="activity-banner">
+    <div class="title">
+      <span class="title-text">{{ activityInfo.title }}</span>
+    </div>
+    <div class="tag">
+      <span class="tag-text">{{ activityInfo.tagList.join(' ') }}</span>
+    </div>
     <van-image fit="cover" class="banner-image" :src="bannerImage" />
     <div class="banner-tag" v-if="isRecommend"></div>
   </div>
@@ -20,6 +26,12 @@ const props = defineProps({
     type: Boolean,
     default() {
       return false;
+    }
+  },
+  activityInfo: {
+    type: Object,
+    default() {
+      return {};
     }
   }
 });
@@ -45,6 +57,36 @@ const props = defineProps({
     img {
       border-radius: 8px;
     }
+  }
+  .title{
+    position: absolute;
+    bottom: 20px;
+    left: 10px;
+    font-size: 16px;
+    color: #fff;
+    font-weight: bold;
+    letter-spacing: 3px;
+    z-index: 1;
+    font-family: 'PingFang SC';
+
+  }
+  .tag{
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    font-size: 12px;
+    font-family: 'PingFang SC';
+
+    color: #fff;
+    height: 22px;
+    line-height: 22px;
+    text-align: center;
+    border-radius: 8px;
+    padding-right: 10px;
+    padding-left: 10px;
+    letter-spacing: 2px;
+    background:rgba(0, 115, 255, 0.7);
+    z-index: 1;
   }
 
   .banner-tag {

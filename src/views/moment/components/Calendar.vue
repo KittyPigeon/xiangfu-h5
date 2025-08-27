@@ -18,11 +18,11 @@ const sportTypes = ref<SportType[]>([
 ]);
 
 // 当前选中的运动类型
-const selectedSport = ref<number>(1);
+const selectedSport = ref<number>(-1);
 
 // 日期相关
-const today = new Date();
-const currentDate = ref<Date>(today);
+const today = '';
+const currentDate = ref<Date>(new Date());
 const weekDays = ["周日", "周一", "周二", "周三", "周四", "周五", "周六"];
 const dateList = ref([]);
 

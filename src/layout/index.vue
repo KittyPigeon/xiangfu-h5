@@ -155,9 +155,9 @@ window.localStorage.setItem('mylocation', JSON.stringify({ longitude: 120.098838
     <!-- <nav-bar /> -->
     <div class="router-view">
       <router-view v-slot="{ Component }">
-        <keep-alive :include="cachedViews">
+        <!-- <keep-alive :include="cachedViews"> -->
           <component :is="Component" />
-        </keep-alive>
+        <!-- </keep-alive> -->
       </router-view>
     </div>
 

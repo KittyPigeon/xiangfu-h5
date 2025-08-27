@@ -25,7 +25,7 @@ const props = defineProps({
     }
 });
 
-const current = ref(0);
+const current = ref(-1);
 const emit = defineEmits(['change'])
 const handleTabClick = (index: number) => {
     current.value = index;
@@ -48,7 +48,7 @@ const getCategory = async () => {
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
-    gap: 20px;
+    // gap: 20px;
     margin: 0 20px;
 
     .tab-item {
@@ -56,6 +56,35 @@ const getCategory = async () => {
         flex-direction: column;
         align-items: center;
         cursor: pointer;
+        padding: 4px;
+        border-radius: 12px;
+        transition: all 0.3s ease;
+        position: relative;
+
+        &.active {
+            background: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        // 活跃状态的虚化光晕效果
+        &.active::before {
+            content: '';
+            position: absolute;
+            top: -4px;
+            left: -4px;
+            right: -4px;
+            bottom: -4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            z-index: -1;
+            animation: pulseWhiteGlow 2s ease-in-out infinite;
+        }
+
+        // 点击时的反馈效果
+        &:active {
+            transform: scale(0.95);
+        }
 
         .tab-icon {
             font-size: 12px;
@@ -91,6 +120,30 @@ const getCategory = async () => {
             font-size: 12px;
             color: rgba(255, 255, 255, 0.9);
         }
+
+        // 活跃状态下的文字和图标增强
+        &.active {
+            .tab-icon, .tab-text {
+                color: #fff;
+                font-weight: 600;
+            }
+        }
+    }
+}
+
+// 白色脉冲发光动画
+@keyframes pulseWhiteGlow {
+    0% {
+        opacity: 0.5;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.7;
+        transform: scale(1.03);
+    }
+    100% {
+        opacity: 0.5;
+        transform: scale(1);
     }
 }
 </style>

@@ -64,12 +64,12 @@ export default defineConfig(({ mode }) => {
       // 仅在 proxy 中配置的代理前缀， mock-dev-server 才会拦截并 mock
       // doc: https://github.com/pengzhanbo/vite-plugin-mock-dev-server
       proxy: {
-        "^/api": {
-          target: "http://120.27.151.154:8076"
-        },
         // "^/api": {
-        //   target: "http://192.168.137.1:8076"
+        //   target: "http://120.27.151.154:8076"
         // },
+        "^/api": {
+          target: "http://192.168.137.1:8076"
+        },
         "^/xfjd": {
           target: "http://120.27.151.154:8071",
           changeOrigin: true,

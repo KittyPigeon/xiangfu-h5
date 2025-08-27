@@ -38,17 +38,21 @@ const handleTabClick = (index: number) => {
     .tab-item {
         // width: 88px;
         text-align: center;
-        padding: 8px 16px;
+        padding: 6px 12px;
         font-size: 14px;
         font-weight: 600;
         color: rgba(0, 0, 0, 0.3);
         cursor: pointer;
         white-space: nowrap;
+        transition: all 0.3s ease;
+        position: relative;
 
         &.active {
             color: #fff;
             background: linear-gradient(270deg, #FF6D23 0%, #FF9560 100%);
             border-radius: 20px;
+            // box-shadow: 0 4px 12px rgba(255, 109, 35, 0.3);
+            // transform: translateY(-1px);
         }
     }
 }
@@ -57,4 +61,5 @@ const handleTabClick = (index: number) => {
     font-weight: 600;
     color:rgba(0, 0, 0, 0.35);
 }
+
 </style>

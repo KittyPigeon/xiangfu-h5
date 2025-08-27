@@ -32,22 +32,12 @@
             :rules="[{ required: true, message: '请输入活动标题' }]"
           />
 
-          <!-- 组织者活动 -->
-          <van-field
-            v-model="form.organizer"
-            name="organizer"
-            label="组织者活动"
-            placeholder="请选择"
-            required
-          >
-          </van-field>
-
           <!-- 活动地点 -->
           <van-field
             v-model="form.location"
             name="location"
             label="活动地点"
-            placeholder="请选择"
+            placeholder="请输入活动地点"
             required
           >
           </van-field>
@@ -61,9 +51,26 @@
             required
             :rules="[{ required: true, message: '请输入场地号' }]"
           />
+          <!-- 组织者活动 -->
+          <van-field
+            v-model="form.price"
+            name="price"
+            label="价格"
+            placeholder="请输入价格"
+            required
+          >
+          </van-field>
+          <van-field
+            v-model="form.maxParticipants"
+            name="maxParticipants"
+            label="人数"
+            placeholder="请输入人数"
+            required
+          >
+          </van-field>
 
           <!-- 活动日期（可多选） -->
-          <van-field
+          <!-- <van-field
             v-model="form.activityDates"
             name="activityDates"
             label="活动日期 (可多选)"
@@ -74,7 +81,7 @@
             <template #button>
               <van-button size="mini" type="primary">选择</van-button>
             </template>
-          </van-field>
+          </van-field> -->
           <van-popup v-model:show="showDatePopup" position="bottom">
             <van-calendar
               v-model:show="showDatePopup"
@@ -138,6 +145,11 @@
               @confirm="handleEndDateConfirm"
             />
           </van-popup>
+          <!-- <van-time-picker
+            v-model="currentTime"
+            @confirm="val => handleTimeConfirm(val, 'endTime')"
+            @cancel="showEndTimePopup = false"
+          /> -->
         </div>
 
         <!-- 操作按钮 -->
@@ -183,7 +195,9 @@ const form = reactive({
   activityDates: "",
   startTime: "",
   endTime: "",
-  coverImage: ""
+  coverImage: "",
+  price: "",
+  maxParticipants: ""
 });
 const formatter = day => {
   const month = day.date.getMonth() + 1;
@@ -278,18 +292,20 @@ const handleTimeConfirm = (val: Date, type: "startTime" | "endTime") => {
 const handleSubmit = async () => {
   const [err, res] = await to<any, any>(
     createGroupActivity({
-      title: form.title,
-      organizer: form.organizer,
+      title: form.title || "活动标题",
+      organizer: form.organizer || "张三",
       activityType: "运动",
-      coverImage: form.coverImage,
+      coverImage: form.coverImage || "/xfjd/huodng.png",
       price: 50,
       tags: '["篮球","运动","健身"]',
-      venueName: form.venueNo,
-      address: form.location,
-      longitude: 116.397428,
-      latitude: 39.90923,
-      startTime: dayjs(form.startTime).format("YYYY-MM-DD HH:mm:ss"),
-      endTime: dayjs(form.endTime).format("YYYY-MM-DD 23:59:59"),
+      venueName: form.venueNo || "场地1",
+      address: form.location || "北京",
+      longitude: 120.271428,
+      latitude: 30.299235,
+      startTime: dayjs('2025-08-27 23:30:00').format("YYYY-MM-DD HH:mm:ss"),
+      endTime: dayjs('2025-08-27 23:57:00').format("YYYY-MM-DD 23:59:59"),
+      // startTime: dayjs(form.startTime).format("YYYY-MM-DD HH:mm:ss"),
+      // endTime: dayjs(form.endTime).format("YYYY-MM-DD 23:59:59"),
       description: "周末篮球约战，欢迎篮球爱好者参加！",
       //   images: '["https://example.com/img1.jpg","https://example.com/img2.jpg"]',
       maxParticipants: 10

@@ -36,7 +36,7 @@
         <div class="activity-list-item" v-for="(item, index) in activityList" :key="index"
           @click="openActivityDetail(item)">
           <!-- 活动 Banner 组件 -->
-          <ActivityBanner :banner-image="item.coverImageSrc" :is-recommend="item.isRecommend" />
+          <ActivityBanner :banner-image="item.coverImageSrc" :is-recommend="item.isRecommend" :activity-info="item"/>
         </div>
 
       </div>

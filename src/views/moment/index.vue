@@ -19,7 +19,7 @@ import { objectToQueryString, objectToParams, addParamsToUrl } from "@/utils/url
 const router = useRouter();
 // 搜索关键词
 const searchValue = ref("");
-const activityType =ref("篮球")
+const activityType =ref("")
 // 日期选择
 const showCalendar = ref(false);
 const page = ref(1);
@@ -75,7 +75,7 @@ const popRef = ref(null);
 const activityInfo = ref(null);
 onMounted(async () => {
   // await getActivityDates();
-  // await getGroupActivityList();
+  await getGroupActivityList();
 });
 
 // 获取活动日期
@@ -96,7 +96,7 @@ const getGroupActivityList = async () => {
   const [err, res] = await to<any, any>(
     searchActivityList({
       keyword: searchValue.value,
-      date: dayjs(currentDate.value).format("YYYY-MM-DD"),
+      date: currentDate.value ? dayjs(currentDate.value).format("YYYY-MM-DD") : "",
       sortType: "time",
       activityType:activityType.value,
       // latitude: '30.32526',
@@ -184,10 +184,10 @@ const loadMore = () => {
         <!-- 搜索组件 -->
         <SearchBar @search="handleSearch" />
 
-        <div class="search-filter">
+        <!-- <div class="search-filter">
           <span class="icon-filter"></span>
           <span class="filter">智能排序</span>
-        </div>
+        </div> -->
       </div>
       <div class="container-content-scroll">
         <!-- 日历组件 -->
