@@ -3,7 +3,7 @@
     <div class="search-bar">
       <!-- <div class="icon-search"></div> -->
       <van-field v-model="searchValue" class="search-input" placeholder="请输入你的请求" @input="handleInput" />
-      <van-button class="btn-intro">
+      <van-button class="btn-intro" @click="handleClickActivity">
         <template #icon>
           <span class="icon-good"></span>
         </template>
@@ -17,7 +17,7 @@
         <h2 class="section-title">潮玩推荐的活动</h2>
 
         <div class="activity-card">
-          <h3 class="activity-title" @click="handleClickActivity">
+          <h3 class="activity-title">
             劳逸结合的周末下午<span class="icon-title"></span>
           </h3>
           <div class="activity-content">
@@ -28,7 +28,7 @@
             >
               <div class="step-number" :class="[`step${index + 1}`]"></div>
               <div class="step-info">
-                <div class="time-group">
+                <div class="time-group" @click="handleStepClick(step.class, step.desc)">
                   <div class="step">{{ step.name }}</div>
                   <div class="step-time">{{ step.time }} {{ step.desc }}</div>
                 </div>
@@ -42,9 +42,9 @@
       <!-- 自由选择 - 社区活动 -->
       <div class="section">
         <h2 class="section-title">自由选择</h2>
-        <div class="community-card">
+        <div v-if="communityActivities.length > 0" class="community-card">
           <h3 class="community-title">
-            社区活动<span class="icon-title"></span>
+            {{ chooseStepDesc }}<span class="icon-title"></span>
           </h3>
 
           <div class="community-list">
@@ -57,13 +57,21 @@
               <div class="community-tag">{{ item.tag }}</div>
               <p class="community-desc">{{ item.desc }}</p>
               <div class="image-list">
-                <img
+                <!-- <img
                   v-for="(img, imgIndex) in item.images"
                   :key="imgIndex"
                   :src="img"
                   alt="activity"
                   class="community-img"
-                />
+                /> -->
+                <ImageGallery 
+                  :images="item.images || []"
+                  :columns="2"
+                  gap="8px"
+                  aspect-ratio="4/3"
+                  :show-mask="true"
+                  error-image="https://fastly.picsum.photos/id/180/600/400.jpg?hmac=GWOD1KQ7oaGkR7Zpj4QJDXLC2XkaKZjoKZ3i824mdUE"
+              />
               </div>
             </div>
           </div>
@@ -80,6 +88,7 @@ import IntroData from "@/data/data.json";
 import { shuffleArray } from "@/utils/utils";
 // 搜索框数据
 const searchValue = ref("");
+const showItemCount = ref(3);
 
 // 活动步骤数据
 const activitySteps = ref([
@@ -87,56 +96,82 @@ const activitySteps = ref([
     time: "12:00~13:00",
     name: "第一站",
     desc: "填饱肚子",
-    place: IntroData.step1.slice(0, 2).join("、")
+    place: IntroData.step1.map(o => o.field).slice(0, showItemCount.value).join("、"),
+    class: "step1"
   },
   {
     time: "13:00~14:00",
     name: "第二站",
     desc: "消食散步",
-    place: IntroData.step2.slice(0, 2).join("、")
+    place: IntroData.step2.map(o => o.field).slice(0, showItemCount.value).join("、"),
+    class: "step2"
   },
   {
     time: "14:30~15:30",
     name: "第三站",
     desc: "商务洽谈",
-    place: IntroData.step3.slice(0, 2).join("、")
+    place: IntroData.step3.map(o => o.field).slice(0, showItemCount.value).join("、"),
+    class: "step3"
   },
   {
     time: "16:30~17:30",
     name: "第四站",
     desc: "来一场运动",
-    place: IntroData.step4.slice(0, 2).join("、")
+    place: IntroData.step4.map(o => o.field).slice(0, showItemCount.value).join("、"),
+    class: "step4"
   }
 ]);
 const stepColor = "#ff9933"; // 步骤数字背景色
 
 // 社区活动数据
 const communityActivities = ref([
-  {
-    title: "书香溢社区 温暖伴同行",
-    tag: "社区活动文化",
-    desc: "在第三十个世界读书日到来之际，祥符街道祥庆社区书苑举办了以“书香溢社区，温暖伴同行为主题的世界读书日活动",
-    images: [communityImage, communityImage, communityImage]
-  },
-  {
-    title: "书香溢社区 温暖伴同行",
-    tag: "社区活动文化",
-    desc: "在第三十个世界读书日到来之际，祥符街道祥庆社区书苑举办了以“书香溢社区，温暖伴同行为主题的世界读书日活动",
-    images: [communityImage, communityImage, communityImage]
-  }
+  // {
+  //   title: "书香溢社区 温暖伴同行",
+  //   tag: "社区活动文化",
+  //   desc: "在第三十个世界读书日到来之际，祥符街道祥庆社区书苑举办了以“书香溢社区，温暖伴同行为主题的世界读书日活动",
+  //   images: [communityImage, communityImage, communityImage]
+  // },
+  // {
+  //   title: "书香溢社区 温暖伴同行",
+  //   tag: "社区活动文化",
+  //   desc: "在第三十个世界读书日到来之际，祥符街道祥庆社区书苑举办了以“书香溢社区，温暖伴同行为主题的世界读书日活动",
+  //   images: [communityImage, communityImage, communityImage]
+  // }
 ]);
+const chooseStepDesc = ref('');
 
 const handleClickActivity = () => {
+  console.log('showItemCount', showItemCount.value);
+  
+  showItemCount.value = showItemCount.value > 9 ? 3 : showItemCount.value + 3;
   activitySteps.value = activitySteps.value.map((o, index) => {
     return {
       ...o,
-      place: shuffleArray(IntroData[`step${index + 1}`])
-        .slice(0, 2)
+      place: IntroData[o.class]
+        .map(o => o.field)
+        .slice(showItemCount.value - 3, showItemCount.value)
         .join("、")
     };
   });
+  console.log('activitySteps', activitySteps.value);
+  communityActivities.value = [];
 };
 const handleInput = () => {}
+const handleStepClick = (step, desc) => {
+  chooseStepDesc.value = desc;
+  console.log(123,step, IntroData[step].slice(showItemCount.value - 3, showItemCount.value));
+  communityActivities.value = IntroData[step].slice(showItemCount.value - 3, showItemCount.value).map(o => {
+    return {
+      ...o.value,
+      mainTitle: o.field,
+      imageList: o.value?.images?.map(img => {
+        return {
+          img: img.includes('http') ? img : window.location.origin + '/xfjd/community.png'
+        }
+      })
+    }
+  });
+}
 </script>
 
 <style scoped lang="less">

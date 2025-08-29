@@ -111,6 +111,8 @@ const handleActivityTabChange = (index: number) => {
 };
 
 const handleFavorite = async (flag) => {
+  console.log('flag',flag, '测试取消收藏');
+  
   const params = {
     userId,
     targetType: EnumCollectTargetType.ACTIVITY,

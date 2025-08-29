@@ -4,7 +4,7 @@
       <span class="title-text">{{ activityInfo.title }}</span>
     </div>
     <div class="tag">
-      <span class="tag-text">{{ activityInfo.tagList.join(' ') }}</span>
+      <span class="tag-text">{{ activityInfo.tagList && activityInfo.tagList.join(' ') }}</span>
     </div>
     <van-image fit="cover" class="banner-image" :src="bannerImage" />
     <div class="banner-tag" v-if="isRecommend"></div>

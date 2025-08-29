@@ -25,7 +25,7 @@ const markerMap = ref(new Map())
 const selectedMerchant = ref(null)
 let gaodeAMap: any = null
 const setFitViewOptions = {
-  padding: [179, 100, 100, 200] //上、下、左、右
+  padding: [109, 200, 100, 200] //上、下、左、右
 }
 const handleDrag = (t) => {
   isExpanded.value = t;
@@ -303,8 +303,8 @@ const handleCategoryClick = (item) => {
   // })
   // categoryIndex.value = categoryList.value.findIndex((o) => o.id == item.id);
   // categoryList.value[categoryIndex.value].isActive = true;
-  categoryIndex.value = item.index;
-  setFitViewOptions.padding = [179, 350, 100, 200]
+  categoryIndex.value = item.id;
+  // setFitViewOptions.padding = [179, 350, 100, 200]
   getMarchantData();
 }
 

@@ -24,10 +24,8 @@
                 <div class="activity-image-wrapper">
                     <ImageGallery 
                         :images="activityInfo.imagesSrcArr || []"
-                        :columns="2"
-                        gap="8px"
-                        aspect-ratio="4/3"
-                        :show-mask="true"
+                        gap="10px"
+                        :show-mask="false"
                         error-image="https://fastly.picsum.photos/id/180/600/400.jpg?hmac=GWOD1KQ7oaGkR7Zpj4QJDXLC2XkaKZjoKZ3i824mdUE"
                     />
                 </div>
@@ -97,17 +95,9 @@ const navigateToGaode = (longitude, latitude) => {
 
 <style scoped lang="less">
 .activity-image-wrapper{
-    display: flex;
-    flex-wrap: wrap;
-    .activity-image{
-        width: 100px;
-        height: 100px;
-        padding: 10px 10px 0 10px;
-    }
-    // .van-image{
-    //     width: 100px;
-    //     height: 100px;
-    // }
+    margin-top: 16px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
 }
 :deep(.van-image__error) {
     background-color: transparent !important;

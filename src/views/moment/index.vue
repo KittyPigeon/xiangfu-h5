@@ -109,23 +109,23 @@ const getGroupActivityList = async () => {
     showToast(err.message);
     return;
   }
-  activities.value = res.data.records
-    .map(o => {
-      return {
-        ...o,
-        time: "07月25日 19:00～21:00",
-        tags: JSON.parse(o.tags),
-        location: o.address,
-        signupStatus: "可报名",
-        signupButtonText: "我要报名",
-        participants: {
-          male: 1,
-          female: 3
-        }
-      };
-    })
-    .slice(0, 3);
-  finished.value = activities.value.length == res.data.total;
+  // activities.value = res.data.records
+  //   .map(o => {
+  //     return {
+  //       ...o,
+  //       time: "07月25日 19:00～21:00",
+  //       tags: JSON.parse(o.tags),
+  //       location: o.address,
+  //       signupStatus: "可报名",
+  //       signupButtonText: "我要报名",
+  //       participants: {
+  //         male: 1,
+  //         female: 3
+  //       }
+  //     };
+  //   })
+  //   .slice(0, 3);
+  // finished.value = activities.value.length == res.data.total;
 };
 // 打开活动详情
 const showActivityDetail = activity => {

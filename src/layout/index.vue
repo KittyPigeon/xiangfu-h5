@@ -8,6 +8,7 @@ import { querymapIplocation, querymapMiniprogramKey } from '@/api/map'
 import { querywechatWebAuthUrl, wechatWebLogin } from '@/api/common'
 import { computed,ref } from "vue";
 import { useWechatSDK } from "@/utils/wechat";
+import { eventBus } from "@/utils/eventBus";
 
 
 const userInfoShow = ref('no')
@@ -146,7 +147,14 @@ window.localStorage.setItem('mylocation', JSON.stringify({ longitude: 120.098838
 //   })
 
 // }
+const qrCodeVisible = ref(false);
+const qrcodeUrl = ref('');
 
+// 监听图片点击事件
+eventBus.onImageClick((data) => {
+  qrcodeUrl.value = data.imageUrl;
+  qrCodeVisible.value = true;
+});
 </script>
 
 <template>
@@ -163,12 +171,42 @@ window.localStorage.setItem('mylocation', JSON.stringify({ longitude: 120.098838
 
     <!-- 根据路由 meta 中的 showTabBar 决定是否显示 tabbar -->
     <tabbar v-if="isTabBarVisible" /> 
+    <div class="qrcode-wrapper" v-if="qrCodeVisible" @click="qrCodeVisible = false">
+      <div class="wrapper">
+        <van-image
+          class="activity-qrcode-url"
+          fit="cover"
+          :src="qrcodeUrl"
+          @click.stop
+        />
+      </div>
+    </div>
   </div>
 </template>
 
 <style lang="less" scoped>
 @import "@/styles/mixin.less";
+.qrcode-wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+  z-index: 1000;
+}
+.wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
 
+.activity-qrcode-url {
+  width: 360px;
+  height: auto;
+  margin: 0 auto;
+}
 .app-wrapper {
   .clearfix();
   position: relative;

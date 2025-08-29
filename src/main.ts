@@ -11,9 +11,14 @@ import "virtual:svg-icons-register";
 
 import App from "./App.vue";
 import router from "./router";
+// 全局组件
+import ImageGallery from "./components/ImageGallery/index.vue";
 
 const app = createApp(App);
 app.use(store);
 app.use(router);
+
+// 注册全局组件
+app.component('ImageGallery', ImageGallery);
 
 app.mount("#app");
