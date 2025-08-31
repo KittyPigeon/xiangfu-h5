@@ -144,6 +144,11 @@
               @cancel="showEndTimePopup = false"
               @confirm="handleEndDateConfirm"
             />
+            <van-time-picker
+              v-model="currentTime"
+              @confirm="val => handleTimeConfirm(val, 'endTime')"
+              @cancel="showTimePopup = false"
+            />
           </van-popup>
           <!-- <van-time-picker
             v-model="currentTime"

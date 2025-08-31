@@ -28,7 +28,8 @@
             >
               <div class="step-number" :class="[`step${index + 1}`]"></div>
               <div class="step-info">
-                <div class="time-group" @click="handleStepClick(step.class, step.desc)">
+                <div class="time-group">
+                <!-- <div class="time-group" @click="handleStepClick(step.class, step.desc)"> -->
                   <div class="step">{{ step.name }}</div>
                   <div class="step-time">{{ step.time }} {{ step.desc }}</div>
                 </div>
@@ -44,7 +45,7 @@
         <h2 class="section-title">自由选择</h2>
         <div v-if="communityActivities.length > 0" class="community-card">
           <h3 class="community-title">
-            {{ chooseStepDesc }}<span class="icon-title"></span>
+            美食推荐<span class="icon-title"></span>
           </h3>
 
           <div class="community-list">
@@ -53,19 +54,47 @@
               v-for="(item, index) in communityActivities"
               :key="index"
             >
-              <div class="community-name">{{ item.title }}</div>
-              <div class="community-tag">{{ item.tag }}</div>
-              <p class="community-desc">{{ item.desc }}</p>
+              <div class="community-name">{{ item.value.title }}
+                <span class="location" @click.stop="navigateToGaode()">
+                    <span class="icon-location"></span>
+                    <span class="distance">1km</span>
+                </span></div>
+              <div class="community-tag">{{ item.value.tag }}</div>
+              <p class="community-desc">{{ item.value.desc }}</p>
               <div class="image-list">
-                <!-- <img
-                  v-for="(img, imgIndex) in item.images"
-                  :key="imgIndex"
-                  :src="img"
-                  alt="activity"
-                  class="community-img"
-                /> -->
                 <ImageGallery 
-                  :images="item.images || []"
+                  :images="item.value.images || []"
+                  :columns="2"
+                  gap="8px"
+                  aspect-ratio="4/3"
+                  :show-mask="true"
+                  error-image="https://fastly.picsum.photos/id/180/600/400.jpg?hmac=GWOD1KQ7oaGkR7Zpj4QJDXLC2XkaKZjoKZ3i824mdUE"
+              />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div v-if="step234Activities.length > 0" class="community-card">
+          <h3 class="community-title">
+            游玩推荐<span class="icon-title"></span>
+          </h3>
+
+          <div class="community-list">
+            <div
+              class="community-list-item"
+              v-for="(item, index) in step234Activities"
+              :key="index"
+            >
+              <div class="community-name">{{ item.value.title }}
+                <span class="location" @click.stop="navigateToGaode">
+                    <span class="icon-location"></span>
+                    <span class="distance">1km</span>
+                </span></div>
+              <div class="community-tag">{{ item.value.tag }}</div>
+              <p class="community-desc">{{ item.value.desc }}</p> 
+              <div class="image-list">
+                <ImageGallery 
+                  :images="item.value.images || []"
                   :columns="2"
                   gap="8px"
                   aspect-ratio="4/3"
@@ -82,7 +111,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, defineComponent } from "vue";
+import { ref, defineComponent, onMounted } from "vue";
 import communityImage from "@/assets/images/community.png";
 import IntroData from "@/data/data.json";
 import { shuffleArray } from "@/utils/utils";
@@ -125,21 +154,32 @@ const stepColor = "#ff9933"; // 步骤数字背景色
 
 // 社区活动数据
 const communityActivities = ref([
-  // {
-  //   title: "书香溢社区 温暖伴同行",
-  //   tag: "社区活动文化",
-  //   desc: "在第三十个世界读书日到来之际，祥符街道祥庆社区书苑举办了以“书香溢社区，温暖伴同行为主题的世界读书日活动",
-  //   images: [communityImage, communityImage, communityImage]
-  // },
-  // {
-  //   title: "书香溢社区 温暖伴同行",
-  //   tag: "社区活动文化",
-  //   desc: "在第三十个世界读书日到来之际，祥符街道祥庆社区书苑举办了以“书香溢社区，温暖伴同行为主题的世界读书日活动",
-  //   images: [communityImage, communityImage, communityImage]
-  // }
 ]);
 const chooseStepDesc = ref('');
 
+// step2 3 4 的游玩项目汇总
+const step234Activities = ref([]);
+
+onMounted(() => {
+  communityActivitiesRamdomFn();
+});
+
+const communityActivitiesRamdomFn = () => {
+  // step1 美食推荐. 1-5里随机抽1个数字，作为step1的索引
+  const step1Index = Math.floor(Math.random() * 5) + 1;
+  communityActivities.value =[...IntroData.step1.slice(step1Index, step1Index+4)];
+  // step2 3 4 的游玩项目汇总
+  step234Activities.value = [...IntroData.step2.slice(step1Index,step1Index+2), ...IntroData.step3.slice(step1Index,step1Index+2), ...IntroData.step4.slice(step1Index,step1Index+2)];
+}
+
+const navigateToGaode = () => {
+  const longitude = 120.0858410;
+  const latitude = 30.3098760;
+  const mylocation = JSON.parse(window.localStorage.getItem('mylocation') || '{}').locatonArr
+  window.location.href = `https://uri.amap.com/navigation?from=${mylocation.join(',')},startpoint&to=${longitude},${latitude},endpoint&mode=walk&policy=0&src=mypage&callnative=1`
+  const hhh = `https://uri.amap.com/navigation?from=${mylocation.join(',')},startpoint&to=${longitude},${latitude},endpoint&mode=walk&policy=0&src=mypage&callnative=1`
+  console.log('hhhh', hhh);
+}
 const handleClickActivity = () => {
   console.log('showItemCount', showItemCount.value);
   
@@ -154,7 +194,7 @@ const handleClickActivity = () => {
     };
   });
   console.log('activitySteps', activitySteps.value);
-  communityActivities.value = [];
+  communityActivitiesRamdomFn()
 };
 const handleInput = () => {}
 const handleStepClick = (step, desc) => {
@@ -398,6 +438,8 @@ const handleStepClick = (step, desc) => {
 }
 
 .community-name {
+  display: flex;
+  align-items: center;
   font-size: 16px;
   font-weight: 600;
   color: #000000;
@@ -434,5 +476,25 @@ const handleStepClick = (step, desc) => {
   height: 74px;
   flex-shrink: 0;
   border-radius: 4px;
+}
+
+.location {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    margin-left: 10px;
+
+    .icon-location {
+        width: 14px;
+        height: 14px;
+        background: url('@/assets/icons/icon-location.svg') no-repeat center;
+        background-size: cover;
+        margin-right: 4px;
+    }
+
+    .distance {
+        font-size: 12px;
+        color: #000;
+    }
 }
 </style>
