@@ -123,15 +123,18 @@ const handleFavorite = async (flag) => {
     showToast(err.message)
     return
   }
+  // openActivityDetail(activityInfo.value)
   if (flag) {
     showToast('收藏成功')
     activityInfo.value.isFavorited = true;
-    console.log('activityInfo',activityInfo.value)
   }
   if (!flag) {
     showToast('取消收藏成功')
     activityInfo.value.isFavorited = false;
   }
+  console.log('activityInfo---handleFavorite',activityInfo.value)
+
+  
 }
 
 onMounted(async () => {
@@ -207,7 +210,8 @@ const openActivityDetail = async (data) => {
   })
   console.log('res.data.imagesSrcArr',res.data.imagesSrcArr);
   showPopup.value = true;
-  res.data.isFavorited = res2 && res2.data ? res2.data.checkResult : false;
+  res.data.isFavorited = res2 && res2.data && res2.data.checkResult ? res2.data.checkResult : false;
+  console.log('res.data.isFavorited',res.data);
   activityInfo.value = res.data;
 }
 

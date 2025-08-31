@@ -71,11 +71,11 @@ const filterItems = ref<FilterItem[]>([
     { id: 1, index: 0, text: '餐饮美食', icon: PorkIcon, class:'icon-food', badge: 2, isActive: false },
     { id: 2, index: 1, text: '购物商城', icon: ShoppingIcon, class:'icon-shopping', badge: 1, isActive: true },
     { id: 5, index: 2, text: '景点名胜', icon: SceneIcon,class:'icon-scene', badge: 1, isActive: false },
-    { id: 4, index: 3, text: '酒店住宿', icon: HotelIcon,class:'icon-hotel', badge: 5, isActive: false },
-    { id: 3, index: 4, text: '休闲娱乐', icon: EntertainmentIcon, class:'icon-entertainment',badge: 11, isActive: false },
-    { id: 8, index: 5, text: '教育培训', icon: EducationIcon, class:'icon-education',badge: 1, isActive: false },
+    { id: 4, index: 3, text: '酒店住宿', icon: HotelIcon,class:'icon-hotel', badge: 3, isActive: false },
+    { id: 3, index: 4, text: '休闲娱乐', icon: EntertainmentIcon, class:'icon-entertainment',badge: 3, isActive: false },
+    { id: 8, index: 5, text: '教育培训', icon: EducationIcon, class:'icon-education',badge: 3, isActive: false },
     { id: 7, index: 6, text: '医疗健康', icon: MedicalIcon, class:'icon-medical',badge: 3, isActive: false },
-    { id: 6, index: 7, text: '运动健身', icon: FitnessIcon, class:'icon-fitness',badge: 9, isActive: false },
+    { id: 6, index: 7, text: '运动健身', icon: FitnessIcon, class:'icon-fitness',badge: 3, isActive: false },
 ]);
 
 // 切换展开/收起

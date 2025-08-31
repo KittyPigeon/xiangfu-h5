@@ -66,7 +66,7 @@ const handleClose = () => {
 
 // 收藏功能
 const toggleFavorite = () => {
-    emit('favorite-change', !props.activityInfo.isFavorite);
+    emit('favorite-change', !props.activityInfo.isFavorited);
 };
 
 // 定义 props 和 emits

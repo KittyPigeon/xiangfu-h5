@@ -323,6 +323,10 @@ const clickGradientModal = () => {
   showPopup.value = false
   isExpanded.value = false
 }
+
+const changeFavorite = () => {
+  selectedMerchant.value.isFavorited = !selectedMerchant.value.isFavorited
+}
 </script>
 
 <template>
@@ -361,6 +365,7 @@ const clickGradientModal = () => {
       :subsidy-expire="selectedMerchant?.subsidyExpire || '2025.08.02'"
       :subsidy-amount="selectedMerchant?.subsidyAmount || 50"
       :isFavorited="selectedMerchant?.isFavorited"
+      @refreshList="changeFavorite"
     />
 
   </div>

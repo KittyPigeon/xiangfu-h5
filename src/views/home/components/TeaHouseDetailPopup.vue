@@ -73,6 +73,7 @@ import { showToast } from "vant";
 import to from 'await-to-js';
 import { addCollect , delColloect } from '@/api/collect'
 import { checkUserCoupon, userReceiveCoupon } from '@/api/user'
+import { log } from 'console';
 
 const couponData = ref({
     name: '',
@@ -225,17 +226,20 @@ const handleFavoriteClick = async () => {
             targetType: 1,
             targetId: props.merchantId,
         }))
+        console.log('handleFavoriteClick', res, 123);
+        
         if (err) {
             showToast(err.message)
             return;
         }
-        console.log('res====favorite', res);
     }else{
         const [err, res] = await to<any, any>(delColloect({
             userId: JSON.parse(window.localStorage.getItem('userInfo')).id,
             targetType: 1,
             targetId: props.merchantId,
         }))
+        console.log('handleFavoriteClick', res, 456);
+
         if (err) {
             showToast(err.message)
             return;

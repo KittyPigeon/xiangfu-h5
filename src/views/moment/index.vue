@@ -14,6 +14,7 @@ import to from "await-to-js";
 import { showToast } from "vant";
 import dayjs from "dayjs";
 import { objectToQueryString, objectToParams, addParamsToUrl } from "@/utils/url";
+import groupActivityData from "@/data/group-activity-data.json";
 // import { showDialog } from 'vant';
 
 const router = useRouter();
@@ -33,6 +34,14 @@ const tabs = reactive([
   { name: "AA制", type: "aa" },
   { name: "新手特惠", type: "newbie" },
   { name: "气氛组织", type: "atmosphere" }
+]);
+
+const sportTypes = ref<any[]>([
+  { icon: "basketball", name: "篮球", id: 1 },
+  { icon: "badminton", name: "羽毛球", id: 2 },
+  { icon: "footerball", name: "足球", id: 3 },
+  { icon: "billiards", name: "台球", id: 4 },
+  { icon: "pingpong", name: "乒乓球", id: 5 }
 ]);
 
 // 活动列表
@@ -109,6 +118,25 @@ const getGroupActivityList = async () => {
     showToast(err.message);
     return;
   }
+  activities.value = [groupActivityData[0], groupActivityData[16], groupActivityData[32]].map(item => {
+    return {
+      ...item,
+      time: "07月25日 19:00～21:00",
+      tags: item.tags&&JSON.parse(item.tags).filter(o => o.length < 5),
+      location: item.address,
+      signupStatus: "可报名",
+      signupButtonText: "我要报名",
+      participants: {
+        male: 1,
+        female: 3
+      },
+      userSignupStatus: "报名中…",
+      images: JSON.parse(item.images),
+      icon: sportTypes.value.find(o => o.name == item.activityType).icon
+    }
+
+  });
+  finished.value = activities.value.length == res.data.total;
   // activities.value = res.data.records
   //   .map(o => {
   //     return {
@@ -162,6 +190,26 @@ const submitParticipant = activity => {
 // 选择运动类型
 const handleSelectSport = (name)=>{
   activityType.value = name
+  activities.value = groupActivityData.filter(item => item.activityType == name).map(item => {
+    return {
+      ...item,
+      time: "07月25日 19:00～21:00",
+      tags: item.tags&&JSON.parse(item.tags).filter(o => o.length < 5),
+      location: item.address,
+      signupStatus: "可报名",
+      signupButtonText: "我要报名",
+      participants: {
+        male: 1,
+        female: 3
+      },
+      userSignupStatus: "报名中…",
+      images: JSON.parse(item.images),
+      icon: sportTypes.value.find(o => o.name == item.activityType).icon
+    }
+
+  }).slice(0, 3);
+  // finished.value = activities.value.length == res.data.total;
+  
 }
 // 选择日期
 const handleSelectedDate = date => {
@@ -209,20 +257,30 @@ const loadMore = () => {
             >
               <div class="activity-image">
                 <div class="organize-group">
-                  <div class="organize-title">给力的浙BA加油者</div>
-                  <div class="organize-count">已组织21场</div>
+                  <div class="organize-title">{{ activity.organizer }}</div>
+                  <div class="organize-count">已组织{{ activity.organizingTimes }}场</div>
                 </div>
                 <van-image
                   fit="cover"
                   class="header-image"
                   :src="activity.coverImage"
-                />
+                >
+                  <template #error>
+                    <van-image
+                      fit="cover"
+                      class="header-image"
+                      src="http://120.27.151.154:8071/xfjd/group-activity.png"
+                    />
+                  </template>
+                </van-image>
                 <div class="price">
                   <span class="unit">¥</span>{{ activity.price }}
                 </div>
               </div>
               <div class="activity-info">
-                <h3>{{ activity.title }}</h3>
+                <h3>{{ activity.title }}
+                  <span class="sport-icon" :class="[activity.icon]"></span>
+                </h3>
                 <div class="location">
                   <div class="icon-location"></div>
                   {{ activity.address }}
@@ -248,14 +306,11 @@ const loadMore = () => {
                     <img src="../../assets/images/ellipse2.png" alt="">
                     <img src="../../assets/images/ellipse3.png" alt="">
                   </div>
-                  <span
-                    ><span class="status">{{ activity.userSignupStatus }}</span>
-                    {{
-                      activity.participants.male + activity.participants.female
-                    }}/<span class="total">{{
-                      activity.maxParticipants
-                    }}</span></span
-                  >
+                  <span>
+                    <span class="status">{{ activity.userSignupStatus }}</span>
+                    {{activity.participants.male || 2 + activity.participants.female || 1}}/
+                    <span class="total">{{activity.maxParticipants}}</span>
+                  </span>
                   <van-button
                     class="btn-submit"
                     v-if="activity.canSignup"
@@ -583,6 +638,38 @@ const loadMore = () => {
     background: url("../../assets/images/add.png") no-repeat center;
     background-size: cover;
     z-index: 222;
+  }
+}
+.sport-icon {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  margin-left: 4px;
+
+  // font-size: 24px;
+  &.badminton {
+    background: url("@/assets/icons/icon-badminton.png") no-repeat center;
+    background-size: cover;
+  }
+
+  &.basketball {
+    background: url("@/assets/icons/icon-basketball.png") no-repeat center;
+    background-size: cover;
+  }
+
+  &.billiards {
+    background: url("@/assets/icons/icon-billiards.png") no-repeat center;
+    background-size: cover;
+  }
+
+  &.footerball {
+    background: url("@/assets/icons/icon-footerball.png") no-repeat center;
+    background-size: cover;
+  }
+
+  &.pingpong {
+    background: url("@/assets/icons/icon-pingpong.png") no-repeat center;
+    background-size: cover;
   }
 }
 </style>
