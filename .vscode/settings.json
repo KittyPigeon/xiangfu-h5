@@ -1,14 +1,74 @@
+// {
+//   // "editor.formatOnSave": true,
+//   "eslint.format.enable": true,
+//   "[vue]": {
+//     "editor.defaultFormatter": "esbenp.prettier-vscode"
+//   },
+//   "[css]": {
+//     "editor.defaultFormatter": "esbenp.prettier-vscode"
+//   },
+//   "editor.codeActionsOnSave": {
+//     "source.fixAll.eslint": "explicit"
+//   },
+//   "typescript.tsdk": "node_modules/typescript/lib"  
+// }
+
 {
-  // "editor.formatOnSave": true,
-  "eslint.format.enable": true,
-  "[vue]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[css]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "explicit"
   },
-  "typescript.tsdk": "node_modules/typescript/lib"
+  "eslint.validate": ["javascript", "vue"],
+  "files.associations": {
+    "*.cjson": "jsonc",
+    "*.wxss": "css",
+    "*.vue": "vue"
+  },
+  "cssrem": { 
+    "rootFontSize": 75
+  },
+  "emmet.includeLanguages": {
+    "wxml": "html",
+    "vue": "html"
+  },
+  "emmet.syntaxProfiles": {
+    "vue-html": "html",
+    "vue": "html"
+  },
+  "editor.tabSize": 2,
+  "files.autoSaveDelay": 10000,
+  "git.enableSmartCommit": true,
+  "git.autofetch": true,
+  "emmet.triggerExpansionOnTab": true,
+  "emmet.showAbbreviationSuggestions": true,
+  //主题颜色
+  "editor.wordWrap": "on",
+  "editor.detectIndentation": false,
+  // #值设置为true时，每次保存的时候自动格式化；
+  "editor.formatOnSave": true,
+  //每120行就显示一条线
+  "editor.rulers": [],
+  // 在使用搜索功能时，将这些文件夹/文件排除在外
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/bower_components": true,
+    "**/target": true,
+    "**/logs": true
+  },
+  // 这些文件将不会显示在工作空间中
+  "files.exclude": {
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/CVS": true,
+    "**/.DS_Store": true,
+    "**/*.js": {
+      "when": "$(basename).ts" //ts编译后生成的js文件将不会显示在工作空中
+    },
+    "**/node_modules": false
+  },
+  "eslint.codeActionsOnSave.rules": null,
+  "eslint.nodeEnv": "",
+  "eslint.format.enable": true,
+  "files.autoSave": "afterDelay",
+  "javascript.updateImportsOnFileMove.enabled": "always",
 }
