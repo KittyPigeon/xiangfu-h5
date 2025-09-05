@@ -29,18 +29,18 @@ const {
 } = useWechatSDK()
 
 // 从后端获取微信配置
-const fetchWxConfig = async () => {
-  try {
-    // 注意：当前页面URL需要与后端签名时的URL一致
-    const currentUrl = encodeURIComponent(window.location.href.split('#')[0])
-    const response = await queryWxConfig();
-    console.log('response',response)
-    console.log('response',response.data)
-    await initWxConfig(response.data)
-  } catch (err) {
-    error.value = `获取微信配置失败: ${err.message}`
-  }
-}
+// const fetchWxConfig = async () => {
+//   try {
+//     // 注意：当前页面URL需要与后端签名时的URL一致
+//     const currentUrl = encodeURIComponent(window.location.href.split('#')[0])
+//     const response = await queryWxConfig();
+//     console.log('response',response)
+//     console.log('response',response.data)
+//     await initWxConfig(response.data)
+//   } catch (err) {
+//     error.value = `获取微信配置失败: ${err.message}`
+//   }
+// }
 
 // 获取位置
 const handleGetLocation = async () => {
@@ -53,6 +53,6 @@ const handleGetLocation = async () => {
 }
 
 onMounted(() => {
-  fetchWxConfig()
+  // fetchWxConfig()
 })
 </script>

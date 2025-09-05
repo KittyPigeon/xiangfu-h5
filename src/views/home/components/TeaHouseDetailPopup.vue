@@ -205,8 +205,7 @@ const getMerchantCouponDataFn = async () => {
       couponId: res.data[0].id,
     };
 
-    const [err2, res2] = await to<any, any>(
-      checkUserCoupon(checkUserCouponParams)
+    const [err2, res2] = await to<any, any>(checkUserCoupon(checkUserCouponParams))
       // console.log('checkUserCoupon', res, res2, 123, err2);
 
     if (err2) {
