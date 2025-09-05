@@ -1,6 +1,7 @@
 import Layout from "@/layout/index.vue";
 import type { RouteRecordRaw } from "vue-router";
 import Demo from "@/views/demo/index.vue";
+import ThreeDemo from "@/views/threeDemo/index.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -86,6 +87,14 @@ const routes: Array<RouteRecordRaw> = [
         component: () => import("@/views/moment/addActivity.vue"),
         meta: {
           title: "添加活动"
+        }
+      },
+      {
+        path: "threeDemo",
+        name: "ThreeDemo",
+        component: ThreeDemo,
+        meta: {
+          title: "threeDemo"
         }
       }
     ]
