@@ -2,27 +2,17 @@
 import { defineComponent, ref, onMounted } from 'vue'
 import { VOnboardingWrapper, VOnboardingStep, useVOnboarding } from 'v-onboarding'
 import 'v-onboarding/dist/style.css'
-// const wrapper = ref(null)
-// const { start, goToStep, finish } = useVOnboarding(wrapper)
-// const steps = ref([
-//   { attachTo: { element: '#foo' }, content: { title: "Welcome!" } }
-// ]);
 const wrapper= ref(null)
 const { start: start, goToStep: goToStep, finish: finish } = useVOnboarding(wrapper)
 const steps = ref([
-  { attachTo: { element: '#foo2' }, content: { title: "Welcome!" } }
+  { attachTo: { element: '#foo' }, content: { title: "Welcome2!" } }
 ]);
-// onMounted(() => start());
 onMounted(() => start());
 </script>
 
 <template>
   <div>
     threeDemo
-    <!-- <VOnboardingWrapper ref="wrapper" :steps="steps" /> -->
-    <div>
-      <button id="foo">Welcome</button>
-    </div>
     <VOnboardingWrapper ref="wrapper" :steps="steps">
 
       <template #default="{ previous, next, step, exit, isFirst, isLast, index }">
@@ -51,7 +41,7 @@ onMounted(() => start());
 
     </VOnboardingWrapper>
     <div>
-      <button id="foo2">Welcome</button>
+      <button id="foo">Welcome</button>
     </div>    
   </div>
 </template>

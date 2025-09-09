@@ -1,5 +1,6 @@
 <script setup lang="ts" name="Demo">
 import { onMounted, ref, onUnmounted } from "vue";
+import { storeToRefs } from 'pinia';
 import DragExpandPanel from "./components/drag.vue";
 import StartList from "./components/starList.vue";
 import MyFavorite from "./components/MyFavorite.vue";
@@ -16,6 +17,19 @@ import {
 import to from "await-to-js";
 import { showToast } from "vant";
 import iconMapMarker from "@/assets/icons/icon-map-marker.svg";
+import { useVisitedPagesStoreHook } from "@/store/modules/visitedPages";
+const { visitedPages } = storeToRefs(useVisitedPagesStoreHook()); 
+import { VOnboardingWrapper, VOnboardingStep, useVOnboarding } from 'v-onboarding'
+
+
+
+const wrapper= ref(null)
+const { start: start, goToStep: goToStep, finish: finish } = useVOnboarding(wrapper)
+// 引导1个demo的页面，让客户收藏。比如街道。
+const steps = ref([
+  { attachTo: { element: '#foo' }, content: { title: "Welcome2!" } }
+]);
+
 
 const searchName = ref("");
 const isExpanded = ref(false);
@@ -189,6 +203,9 @@ onMounted(() => {
   // document.body.addEventListener('click', (e) => {
   //   showPopup.value = false
   // })
+  console.log("visitedPages", visitedPages.value);
+  // 导览结束后增加页面的
+  // useVisitedPagesStoreHook().addVisitedPage("home");
 });
 
 onMounted(async () => {
