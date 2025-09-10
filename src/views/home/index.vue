@@ -23,13 +23,6 @@ import { VOnboardingWrapper, VOnboardingStep, useVOnboarding } from 'v-onboardin
 
 
 
-const wrapper= ref(null)
-const { start: start, goToStep: goToStep, finish: finish } = useVOnboarding(wrapper)
-// 引导1个demo的页面，让客户收藏。比如街道。
-const steps = ref([
-  { attachTo: { element: '#foo' }, content: { title: "Welcome2!" } }
-]);
-
 
 const searchName = ref("");
 const isExpanded = ref(false);
@@ -44,6 +37,26 @@ let gaodeAMap: any = null;
 const setFitViewOptions = {
   padding: [109, 200, 100, 200] //上、下、左、右
 };
+
+const wrapper= ref(null)
+const { start: start, goToStep: goToStep, finish: finish } = useVOnboarding(wrapper)
+// 引导1个demo的页面，让客户收藏。比如街道。
+const steps = ref([
+  { attachTo: { element: '#marker-8' }, content: { title: "Welcome1!" } },
+  { attachTo: { element: '#guide-name' }, content: { title: "Welcome2!" } },
+]);
+
+onMounted(async () => {
+  mapInstance = await initMap();
+
+  await getCategoryList();
+});
+onUnmounted(() => {
+  if (mapInstance) {
+    mapInstance.destroy(); // 销毁地图实例，释放资源
+  }
+});
+
 const handleDrag = t => {
   isExpanded.value = t;
 };
@@ -62,7 +75,7 @@ const initMap = async () => {
     version: "2.0" // 指定要加载的 JSAPI 的版本
     // plugins: ['AMap.Scale', 'AMap.ToolBar'] // 需要使用的的插件列表
   })
-    .then(AMap => {
+    .then(async AMap => {
       gaodeAMap = AMap; // 保存AMap实例供markerListFn使用
       map = new AMap.Map("map-container", {
         zoom: 11, // 级别
@@ -71,22 +84,6 @@ const initMap = async () => {
         // center: [120.098838, 30.32526], // 中心点坐标
         viewMode: "2D" // 使用2D视图
       });
-      // var markerContent = `
-      //     <div class="custom-content-marker">
-      //       <img src="${iconMapMarker}">
-      //       <div class="close-btn">地点</div>
-      //     </div>
-      //   `;
-
-      // var marker = new AMap.Marker({
-      //     position: [120.091257,30.320526],
-      //     // 将 html 传给 content
-      //     content: markerContent,
-      // });
-
-      // 将 marker 添加到地图
-      // map.add([marker]);
-      // map.setFitView([marker]);
 
       // 添加插件
       // map.addControl(new AMap.Scale())
@@ -96,15 +93,22 @@ const initMap = async () => {
         showPopup.value = false;
         isExpanded.value = false;
       });
-      markerListFn();
+        // 进入新手引导，则不显示其他的点位，只显示新手引导的点。
+      console.log("visitedPages", visitedPages.value.includes("home"));
+      if (!visitedPages.value.includes("home")) {
+        await getGuideData();
+      } else {
+        await getMarchantData();
+      }
+
     })
     .catch(e => {
       console.error(e);
     });
 };
 
-const markerListFn = () => {
-  console.log("markerListFn - 开始执行", {
+const markerListFn = (options = { isGuide: false }) => {
+  console.log("markerListFn - 开始执行--options", options, {
     merchantListLength: merchatList.value.length,
     markerMapSize: markerMap.value.size,
     hasMap: !!map,
@@ -194,30 +198,18 @@ const markerListFn = () => {
     map.setFitView(allMarkers, false, setFitViewOptions.padding);
   }
 
-  console.log("markerListFn - 执行完成，当前标记数量:", markerMap.value.size);
+  console.log("markerListFn - 执行完成，当前标记数量:", markerMap.value.size, options.isGuide);
+  if (options.isGuide) {
+    let timer = setTimeout(() => {
+      start();
+      clearTimeout(timer);
+    }, 1000);
+  }
 };
 
 let mapInstance: any = null;
 
-onMounted(() => {
-  // document.body.addEventListener('click', (e) => {
-  //   showPopup.value = false
-  // })
-  console.log("visitedPages", visitedPages.value);
-  // 导览结束后增加页面的
-  // useVisitedPagesStoreHook().addVisitedPage("home");
-});
 
-onMounted(async () => {
-  await getMarchantData();
-  mapInstance = await initMap();
-  await getCategoryList();
-});
-onUnmounted(() => {
-  if (mapInstance) {
-    mapInstance.destroy(); // 销毁地图实例，释放资源
-  }
-});
 
 const getCategoryList = async () => {
   // const [err, res] = await to<any, any>(queryHotMerchantCategory())
@@ -315,6 +307,54 @@ const getMarchantData = async () => {
     markerListFn();
   }, 0);
 };
+const getGuideData = async () => {
+
+  // 经纬度暂时固定
+  console.log("pppp");
+
+  const params = {
+    favorite: isFavorited.value ? 1 : 0,
+    userId: JSON.parse(window.localStorage.getItem("userInfo")).id,
+    nameKey: searchName.value,
+    category: categoryIndex.value,
+    size: 1,
+    current: 1
+  };
+  if (categoryIndex.value === -1) {
+    delete params.category;
+  }
+
+  const [err, res] = await to<any, any>(queryMerchantHomeSearch(params));
+  if (err) {
+    showToast(err.message);
+    return;
+  }
+  console.log("shoplist", res);
+
+  merchatList.value = res.data.map(item => {
+    return {
+      ...item,
+      icon: item.icon,
+      text: item.name,
+      badge: item.merchantCount,
+      isFavorited: item.isFavorited,
+      rating: Number(item.rating),
+      longitude: Number(item.longitude),
+      latitude: Number(item.latitude),
+      id: Number(item.id),
+      commentCount: Number(item.commentCount),
+      checkinCount: Number(item.checkinCount),
+      subsidyAmount: Number(item.subsidyAmount)
+    };
+  }).slice(0,1);
+
+  // 确保在下一个 tick 中执行标记更新
+  setTimeout(() => {
+    console.log('====markerListFn====getGuideData');
+    
+    markerListFn({ isGuide: true });
+  }, 0);
+};
 const handleSearchInput = () => {};
 const handleSearch = val => {
   searchName.value = val;
@@ -346,6 +386,9 @@ const clickGradientModal = () => {
   console.log("clickGradientModal");
   showPopup.value = false;
   isExpanded.value = false;
+  if (!visitedPages.value.includes("home")) {
+    useVisitedPagesStoreHook().addVisitedPage("home");
+  }
 };
 
 const changeFavorite = () => {
@@ -354,6 +397,35 @@ const changeFavorite = () => {
 </script>
 
 <template>
+  <!-- <div id="marker-9">ppppp</div> -->
+  <VOnboardingWrapper ref="wrapper" :steps="steps">
+
+  <template #default="{ previous, next, step, exit, isFirst, isLast, index }">
+    <VOnboardingStep>
+      <div class="bg-white shadow sm:rounded-lg">
+        <div class="px-4 py-5 sm:p-6">
+          <div class="sm:flex sm:items-center sm:justify-between">
+            <div v-if="step.content">
+              <h3 v-if="step.content.title" class="text-lg font-medium leading-6 text-gray-900">{{ step.content.title }}</h3>
+              <div v-if="step.content.description" class="mt-2 max-w-xl text-sm text-gray-500">
+                <p>{{ step.content.description }}</p>
+              </div>
+              <img src="@/assets/videos/guide-5.webp" alt="" style="width: 40px;height: 60pxpx;">
+            </div>
+            <div class="mt-5 space-x-4 sm:mt-0 sm:ml-6 sm:flex sm:flex-shrink-0 sm:items-center relative">
+              <span class="absolute right-0 bottom-full mb-2 mr-2 text-gray-600 font-medium text-xs">{{ `${index + 1}/${steps.length}` }}</span>
+              <template v-if="!isFirst">
+                <button @click="previous" type="button" class="inline-flex items-center justify-center rounded-md border border-transparent bg-yellow-100 px-4 py-2 font-medium text-yellow-700 hover:bg-yellow-200 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 sm:text-sm">Previous</button>
+              </template>
+              <button @click="next" type="button" class="inline-flex items-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:text-sm">{{ isLast ? 'Finish' : 'Next' }}</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </VOnboardingStep>
+  </template>
+
+  </VOnboardingWrapper>
   <div class="home-content">
     <div class="gradient-modal" @click.stop="clickGradientModal" />
     <div id="map-container" class="map-container" />

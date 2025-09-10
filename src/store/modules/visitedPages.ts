@@ -4,9 +4,7 @@ import { store } from "@/store";
 const initVisitedPages = () => {
   // 向后端添加新手访问页面； 每个用户有1个路由字符串，'home' 'mine' 'activity' 'intro' 'intro2' 'activityList' 'couponList'
   const res = 'mine,intro'
-  return {
-    visitedPages: res.split(',')
-  }
+  return res.split(',')
 }
 
 export const useVisitedPagesStore = defineStore({

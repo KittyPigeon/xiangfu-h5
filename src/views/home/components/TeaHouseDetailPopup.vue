@@ -22,7 +22,7 @@
             ]"
             @click.stop="handleFavoriteClick"
           ></span>
-          <span class="name">{{ props.name }}</span>
+          <span class="name" id="guide-name">{{ props.name }}</span>
           <span
             class="location"
             @click.stop="navigateToGaode(props.longitude, props.latitude)"
