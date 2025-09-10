@@ -21,13 +21,13 @@
               props.isFavorited ? 'active-favoriteIcon' : 'favoriteIcon'
             ]"
             @click.stop="handleFavoriteClick"
-          ></span>
-          <span class="name" id="guide-name">{{ props.name }}</span>
+          />
+          <span id="guide-name" class="name">{{ props.name }}</span>
           <span
             class="location"
             @click.stop="navigateToGaode(props.longitude, props.latitude)"
           >
-            <span class="icon-location"/>
+            <span class="icon-location" />
             <span class="distance">1km</span>
           </span>
           <div class="rating">
@@ -98,12 +98,11 @@ import { checkUserCoupon, userReceiveCoupon } from "@/api/user";
 import { log } from "console";
 
 const couponData = ref({
-  name: '',
-  subsidyExpire: '',
+  name: "",
+  subsidyExpire: "",
   subsidyAmount: 0,
   id: 0,
-  isReceived: true,
-
+  isReceived: true
 });
 
 // 使用 defineModel 来处理 v-model:show
@@ -202,14 +201,14 @@ const getMerchantCouponDataFn = async () => {
 
     const checkUserCouponParams = {
       userId: userId,
-      couponId: res.data[0].id,
+      couponId: res.data[0].id
     };
 
-    const [err2, res2] = await to<any, any>(checkUserCoupon(checkUserCouponParams))
-      // console.log('checkUserCoupon', res, res2, 123, err2);
-
+    const [err2, res2] = await to<any, any>(
+      checkUserCoupon(checkUserCouponParams)
+    );
     if (err2) {
-      showToast(err2.message)
+      showToast(err2.message);
       return;
     }
     console.log("checkUserCoupon", res, res, 2555, resData);
@@ -219,83 +218,89 @@ const getMerchantCouponDataFn = async () => {
         subsidyAmount: resData.discountAmount,
         id: resData.id,
         isReceived: res2.data.result,
-        name: resData.name,
-      } 
+        name: resData.name
+      };
     } else {
       couponData.value = {
         subsidyExpire: resData.endTime,
         subsidyAmount: resData.discountAmount,
         id: resData.id,
         isReceived: res2.data.result,
-        name: resData.name,
-      }
+        name: resData.name
+      };
     }
   }
   // 确保在下一个 tick 中执行标记
 };
 // 关闭弹窗
 const handleClose = () => {
-  console.log('点击关闭');
+  console.log("点击关闭");
 
   showPopup.value = false;
 };
 
 const handleFavoriteClick = async () => {
-  console.log('点击收藏', props.isFavorited);
+  console.log("点击收藏", props.isFavorited);
   if (!props.isFavorited) {
-    const [err, res] = await to<any, any>(addCollect({
-      userId: JSON.parse(window.localStorage.getItem('userInfo')).id,
+    const [err, res] = await to<any, any>(
+      addCollect({
+        userId: JSON.parse(window.localStorage.getItem("userInfo")).id,
         targetType: 1,
-      targetId: props.merchantId,
-    }))
-    console.log('handleFavoriteClick', res, 123);
+        targetId: props.merchantId
+      })
+    );
+    console.log("handleFavoriteClick", res, 123);
 
     if (err) {
-      showToast(err.message)
+      showToast(err.message);
       return;
     }
   } else {
-    const [err, res] = await to<any, any>(delColloect({
-      userId: JSON.parse(window.localStorage.getItem('userInfo')).id,
+    const [err, res] = await to<any, any>(
+      delColloect({
+        userId: JSON.parse(window.localStorage.getItem("userInfo")).id,
         targetType: 1,
-      targetId: props.merchantId,
-    }))
-    console.log('handleFavoriteClick', res, 456);
+        targetId: props.merchantId
+      })
+    );
+    console.log("handleFavoriteClick", res, 456);
 
     if (err) {
-      showToast(err.message)
+      showToast(err.message);
       return;
     }
   }
 
-  emit('refreshList')
+  emit("refreshList");
 };
 
 const navigateToGaode = (longitude, latitude) => {
-  const mylocation = JSON.parse(window.localStorage.getItem('mylocation') || '{}').locatonArr
+  const mylocation = JSON.parse(
+    window.localStorage.getItem("mylocation") || "{}"
+  ).locatonArr;
 
-  window.location.href = `https://uri.amap.com/navigation?from=${mylocation.join(',')},startpoint&to=${longitude},${latitude},endpoint&mode=walk&policy=0&src=mypage&callnative=1`
-  const hhh = `https://uri.amap.com/navigation?from=${mylocation.join(',')},startpoint&to=${longitude},${latitude},endpoint&mode=walk&policy=0&src=mypage&callnative=1`
-  console.log('hhhh', hhh);
-}
+  window.location.href = `https://uri.amap.com/navigation?from=${mylocation.join(",")},startpoint&to=${longitude},${latitude},endpoint&mode=walk&policy=0&src=mypage&callnative=1`;
+  const hhh = `https://uri.amap.com/navigation?from=${mylocation.join(",")},startpoint&to=${longitude},${latitude},endpoint&mode=walk&policy=0&src=mypage&callnative=1`;
+  console.log("hhhh", hhh);
+};
 
 // 领取补贴逻辑
 const handleClaim = async () => {
   // 示例：调用领取接口或显示提示
-  console.log('点击领取补贴');
+  console.log("点击领取补贴");
   const params = {
     userId,
     merchantId: props.merchantId,
-    couponId: couponData.value.id,
-  }
-  const [err, res] = await to<any, any>(userReceiveCoupon(params))
-  console.log('getMerchantCouponData', res);
+    couponId: couponData.value.id
+  };
+  const [err, res] = await to<any, any>(userReceiveCoupon(params));
+  console.log("getMerchantCouponData", res);
   // emit('refreshList')
 
   couponData.value = {
     ...couponData.value,
-    isReceived: true,
-  }
+    isReceived: true
+  };
   // 可扩展：emit('claim', { amount: subsidyAmount.value });
 };
 </script>
@@ -391,7 +396,7 @@ const handleClaim = async () => {
         }
       }
 
-            .rating {
+      .rating {
         display: flex;
         align-items: center;
 
@@ -561,8 +566,7 @@ const handleClaim = async () => {
           margin-right: 2px;
         }
       }
-            
-        }
+    }
   }
 
   .subsidy-tip {

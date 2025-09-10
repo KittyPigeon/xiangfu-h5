@@ -126,6 +126,8 @@ export default defineFlatConfig([
       ...pluginVue.configs.base.rules,
       ...pluginVue.configs["vue3-essential"].rules,
       ...pluginVue.configs["vue3-recommended"].rules,
+      "vue/multi-word-component-names": "off",
+      "vue/no-unused-vars": "off",
       "no-unused-vars": "off", // 变量 没有被使用 或者变量不应该使用 var let const
       "no-empty": "off",
       "no-console": process.env.NODE_ENV === "production" ? 2 : 0,

@@ -1,6 +1,6 @@
 <script setup lang="ts" name="Demo">
 import { onMounted, ref, onUnmounted } from "vue";
-import { storeToRefs } from 'pinia';
+import { storeToRefs } from "pinia";
 import DragExpandPanel from "./components/drag.vue";
 import StartList from "./components/starList.vue";
 import MyFavorite from "./components/MyFavorite.vue";
@@ -18,11 +18,12 @@ import to from "await-to-js";
 import { showToast } from "vant";
 import iconMapMarker from "@/assets/icons/icon-map-marker.svg";
 import { useVisitedPagesStoreHook } from "@/store/modules/visitedPages";
-const { visitedPages } = storeToRefs(useVisitedPagesStoreHook()); 
-import { VOnboardingWrapper, VOnboardingStep, useVOnboarding } from 'v-onboarding'
-
-
-
+const { visitedPages } = storeToRefs(useVisitedPagesStoreHook());
+import {
+  VOnboardingWrapper,
+  VOnboardingStep,
+  useVOnboarding
+} from "v-onboarding";
 
 const searchName = ref("");
 const isExpanded = ref(false);
@@ -38,12 +39,16 @@ const setFitViewOptions = {
   padding: [109, 200, 100, 200] //上、下、左、右
 };
 
-const wrapper= ref(null)
-const { start: start, goToStep: goToStep, finish: finish } = useVOnboarding(wrapper)
+const wrapper = ref(null);
+const {
+  start: start,
+  goToStep: goToStep,
+  finish: finish
+} = useVOnboarding(wrapper);
 // 引导1个demo的页面，让客户收藏。比如街道。
 const steps = ref([
-  { attachTo: { element: '#marker-8' }, content: { title: "Welcome1!" } },
-  { attachTo: { element: '#guide-name' }, content: { title: "Welcome2!" } },
+  { attachTo: { element: "#marker-8" }, content: { title: "Welcome1!" } },
+  { attachTo: { element: "#guide-name" }, content: { title: "Welcome2!" } }
 ]);
 
 onMounted(async () => {
@@ -93,14 +98,13 @@ const initMap = async () => {
         showPopup.value = false;
         isExpanded.value = false;
       });
-        // 进入新手引导，则不显示其他的点位，只显示新手引导的点。
+      // 进入新手引导，则不显示其他的点位，只显示新手引导的点。
       console.log("visitedPages", visitedPages.value.includes("home"));
       if (!visitedPages.value.includes("home")) {
         await getGuideData();
       } else {
         await getMarchantData();
       }
-
     })
     .catch(e => {
       console.error(e);
@@ -198,9 +202,13 @@ const markerListFn = (options = { isGuide: false }) => {
     map.setFitView(allMarkers, false, setFitViewOptions.padding);
   }
 
-  console.log("markerListFn - 执行完成，当前标记数量:", markerMap.value.size, options.isGuide);
+  console.log(
+    "markerListFn - 执行完成，当前标记数量:",
+    markerMap.value.size,
+    options.isGuide
+  );
   if (options.isGuide) {
-    let timer = setTimeout(() => {
+    const timer = setTimeout(() => {
       start();
       clearTimeout(timer);
     }, 1000);
@@ -208,8 +216,6 @@ const markerListFn = (options = { isGuide: false }) => {
 };
 
 let mapInstance: any = null;
-
-
 
 const getCategoryList = async () => {
   // const [err, res] = await to<any, any>(queryHotMerchantCategory())
@@ -308,7 +314,6 @@ const getMarchantData = async () => {
   }, 0);
 };
 const getGuideData = async () => {
-
   // 经纬度暂时固定
   console.log("pppp");
 
@@ -331,27 +336,29 @@ const getGuideData = async () => {
   }
   console.log("shoplist", res);
 
-  merchatList.value = res.data.map(item => {
-    return {
-      ...item,
-      icon: item.icon,
-      text: item.name,
-      badge: item.merchantCount,
-      isFavorited: item.isFavorited,
-      rating: Number(item.rating),
-      longitude: Number(item.longitude),
-      latitude: Number(item.latitude),
-      id: Number(item.id),
-      commentCount: Number(item.commentCount),
-      checkinCount: Number(item.checkinCount),
-      subsidyAmount: Number(item.subsidyAmount)
-    };
-  }).slice(0,1);
+  merchatList.value = res.data
+    .map(item => {
+      return {
+        ...item,
+        icon: item.icon,
+        text: item.name,
+        badge: item.merchantCount,
+        isFavorited: item.isFavorited,
+        rating: Number(item.rating),
+        longitude: Number(item.longitude),
+        latitude: Number(item.latitude),
+        id: Number(item.id),
+        commentCount: Number(item.commentCount),
+        checkinCount: Number(item.checkinCount),
+        subsidyAmount: Number(item.subsidyAmount)
+      };
+    })
+    .slice(0, 1);
 
   // 确保在下一个 tick 中执行标记更新
   setTimeout(() => {
-    console.log('====markerListFn====getGuideData');
-    
+    console.log("====markerListFn====getGuideData");
+
     markerListFn({ isGuide: true });
   }, 0);
 };
@@ -399,32 +406,59 @@ const changeFavorite = () => {
 <template>
   <!-- <div id="marker-9">ppppp</div> -->
   <VOnboardingWrapper ref="wrapper" :steps="steps">
-
-  <template #default="{ previous, next, step, exit, isFirst, isLast, index }">
-    <VOnboardingStep>
-      <div class="bg-white shadow sm:rounded-lg">
-        <div class="px-4 py-5 sm:p-6">
-          <div class="sm:flex sm:items-center sm:justify-between">
-            <div v-if="step.content">
-              <h3 v-if="step.content.title" class="text-lg font-medium leading-6 text-gray-900">{{ step.content.title }}</h3>
-              <div v-if="step.content.description" class="mt-2 max-w-xl text-sm text-gray-500">
-                <p>{{ step.content.description }}</p>
+    <template #default="{ previous, next, step, exit, isFirst, isLast, index }">
+      <VOnboardingStep>
+        <div class="bg-white shadow sm:rounded-lg">
+          <div class="px-4 py-5 sm:p-6">
+            <div class="sm:flex sm:items-center sm:justify-between">
+              <div v-if="step.content">
+                <h3
+                  v-if="step.content.title"
+                  class="text-lg font-medium leading-6 text-gray-900"
+                >
+                  {{ step.content.title }}
+                </h3>
+                <div
+                  v-if="step.content.description"
+                  class="mt-2 max-w-xl text-sm text-gray-500"
+                >
+                  <p>{{ step.content.description }}</p>
+                </div>
+                <img
+                  src="@/assets/videos/guide-5.webp"
+                  alt=""
+                  style="width: 40px; height: 60pxpx"
+                />
               </div>
-              <img src="@/assets/videos/guide-5.webp" alt="" style="width: 40px;height: 60pxpx;">
-            </div>
-            <div class="mt-5 space-x-4 sm:mt-0 sm:ml-6 sm:flex sm:flex-shrink-0 sm:items-center relative">
-              <span class="absolute right-0 bottom-full mb-2 mr-2 text-gray-600 font-medium text-xs">{{ `${index + 1}/${steps.length}` }}</span>
-              <template v-if="!isFirst">
-                <button @click="previous" type="button" class="inline-flex items-center justify-center rounded-md border border-transparent bg-yellow-100 px-4 py-2 font-medium text-yellow-700 hover:bg-yellow-200 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 sm:text-sm">Previous</button>
-              </template>
-              <button @click="next" type="button" class="inline-flex items-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:text-sm">{{ isLast ? 'Finish' : 'Next' }}</button>
+              <div
+                class="mt-5 space-x-4 sm:mt-0 sm:ml-6 sm:flex sm:flex-shrink-0 sm:items-center relative"
+              >
+                <span
+                  class="absolute right-0 bottom-full mb-2 mr-2 text-gray-600 font-medium text-xs"
+                  >{{ `${index + 1}/${steps.length}` }}</span
+                >
+                <template v-if="!isFirst">
+                  <button
+                    type="button"
+                    class="inline-flex items-center justify-center rounded-md border border-transparent bg-yellow-100 px-4 py-2 font-medium text-yellow-700 hover:bg-yellow-200 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 sm:text-sm"
+                    @click="previous"
+                  >
+                    Previous
+                  </button>
+                </template>
+                <button
+                  type="button"
+                  class="inline-flex items-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:text-sm"
+                  @click="next"
+                >
+                  {{ isLast ? "Finish" : "Next" }}
+                </button>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </VOnboardingStep>
-  </template>
-
+      </VOnboardingStep>
+    </template>
   </VOnboardingWrapper>
   <div class="home-content">
     <div class="gradient-modal" @click.stop="clickGradientModal" />
