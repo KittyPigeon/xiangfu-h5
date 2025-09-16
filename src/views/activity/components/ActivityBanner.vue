@@ -4,10 +4,12 @@
       <span class="title-text">{{ activityInfo.title }}</span>
     </div>
     <div class="tag">
-      <span class="tag-text">{{ activityInfo.tagList && activityInfo.tagList.join(' ') }}</span>
+      <span class="tag-text">{{
+        activityInfo.tagList && activityInfo.tagList.join(" ")
+      }}</span>
     </div>
     <van-image fit="cover" class="banner-image" :src="bannerImage" />
-    <div class="banner-tag" v-if="isRecommend"></div>
+    <div v-if="isRecommend" class="banner-tag" />
   </div>
 </template>
 
@@ -18,33 +20,27 @@ import { ref } from "vue";
 const props = defineProps({
   bannerImage: {
     type: String,
-    default() {
-      return "";
-    }
+    default: ""
   },
   isRecommend: {
     type: Boolean,
-    default() {
-      return false;
-    }
+    default: false
   },
   activityInfo: {
     type: Object,
-    default() {
-      return {};
-    }
+    default: () => ({})
   }
 });
 </script>
 
 <style scoped lang="less">
-:deep(.van-image img){
+:deep(.van-image img) {
   border-radius: 8px;
 }
-:deep(.van-image .van-image__error){
+:deep(.van-image .van-image__error) {
   border-radius: 8px;
 }
-:deep(.van-image .van-image__loading){
+:deep(.van-image .van-image__loading) {
   border-radius: 8px;
 }
 .activity-banner {
@@ -58,7 +54,7 @@ const props = defineProps({
       border-radius: 8px;
     }
   }
-  .title{
+  .title {
     position: absolute;
     bottom: 20px;
     left: 10px;
@@ -67,15 +63,14 @@ const props = defineProps({
     font-weight: bold;
     letter-spacing: 3px;
     z-index: 1;
-    font-family: 'PingFang SC';
-
+    font-family: "PingFang SC";
   }
-  .tag{
+  .tag {
     position: absolute;
     top: 10px;
     left: 10px;
     font-size: 12px;
-    font-family: 'PingFang SC';
+    font-family: "PingFang SC";
 
     color: #fff;
     height: 22px;
@@ -85,7 +80,7 @@ const props = defineProps({
     padding-right: 10px;
     padding-left: 10px;
     letter-spacing: 2px;
-    background:rgba(0, 115, 255, 0.7);
+    background: rgba(0, 115, 255, 0.7);
     z-index: 1;
   }
 

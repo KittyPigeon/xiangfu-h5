@@ -101,7 +101,8 @@ const initMap = async () => {
       // 进入新手引导，则不显示其他的点位，只显示新手引导的点。
       console.log("visitedPages", visitedPages.value.includes("home"));
       if (!visitedPages.value.includes("home")) {
-        await getGuideData();
+        // await getGuideData();
+        await getMarchantData();
       } else {
         await getMarchantData();
       }
@@ -207,12 +208,12 @@ const markerListFn = (options = { isGuide: false }) => {
     markerMap.value.size,
     options.isGuide
   );
-  if (options.isGuide) {
-    const timer = setTimeout(() => {
-      start();
-      clearTimeout(timer);
-    }, 1000);
-  }
+  // if (options.isGuide) {
+  //   const timer = setTimeout(() => {
+  //     start();
+  //     clearTimeout(timer);
+  //   }, 1000);
+  // }
 };
 
 let mapInstance: any = null;
@@ -238,14 +239,6 @@ const getMarchantData = async () => {
   console.log("pppp");
 
   const params = {
-    // queryDTO: JSON.stringify({
-    //   categoryId: categoryIndex.value !== -1 ? categoryList.value[categoryIndex.value].id : null,
-    //   status: 1,
-    //   nameKey: searchName.value,
-    //   favorite: isFavorited.value ? 1 : 0,
-    //   targetType: 1,
-    //   userId: JSON.parse(window.localStorage.getItem('userInfo')).id,
-    // }),
     favorite: isFavorited.value ? 1 : 0,
     userId: JSON.parse(window.localStorage.getItem("userInfo")).id,
     nameKey: searchName.value,
@@ -256,34 +249,6 @@ const getMarchantData = async () => {
   if (categoryIndex.value === -1) {
     delete params.category;
   }
-
-  // const [errcp, rescp] = await to<any, any>(queryMerchatPage(params))
-  // console.log('errcp', errcp, 'rescp', rescp);
-
-  // if (errcp) {
-  //   showToast(errcp.message)
-  //   return;
-  // }
-  // console.log('getMarchantData - 获取到数据:', rescp.data.records.length);
-
-  // merchatList.value = rescp.data.records.map(item => {
-  //   return {
-  //     ...item,
-  //     icon: item.icon,
-  //     text: item.name,
-  //     badge: item.merchantCount,
-  //     isFavorited: isFavorited.value,
-  //     rating: Number(item.rating),
-  //     longitude: Number(item.longitude),
-  //     latitude: Number(item.latitude),
-  //     id: Number(item.id),
-  //     commentCount: Number(item.commentCount),
-  //     checkinCount: Number(item.checkinCount),
-  //     subsidyAmount: Number(item.subsidyAmount),
-  //   }
-  // });
-
-  // console.log('getMarchantData - 处理后的商户列表:', merchatList.value.length);
 
   const [err, res] = await to<any, any>(queryMerchantHomeSearch(params));
   if (err) {
@@ -313,55 +278,55 @@ const getMarchantData = async () => {
     markerListFn();
   }, 0);
 };
-const getGuideData = async () => {
-  // 经纬度暂时固定
-  console.log("pppp");
+// const getGuideData = async () => {
+//   // 经纬度暂时固定
+//   console.log("pppp");
 
-  const params = {
-    favorite: isFavorited.value ? 1 : 0,
-    userId: JSON.parse(window.localStorage.getItem("userInfo")).id,
-    nameKey: searchName.value,
-    category: categoryIndex.value,
-    size: 1,
-    current: 1
-  };
-  if (categoryIndex.value === -1) {
-    delete params.category;
-  }
+//   const params = {
+//     favorite: isFavorited.value ? 1 : 0,
+//     userId: JSON.parse(window.localStorage.getItem("userInfo")).id,
+//     nameKey: searchName.value,
+//     category: categoryIndex.value,
+//     size: 1,
+//     current: 1
+//   };
+//   if (categoryIndex.value === -1) {
+//     delete params.category;
+//   }
 
-  const [err, res] = await to<any, any>(queryMerchantHomeSearch(params));
-  if (err) {
-    showToast(err.message);
-    return;
-  }
-  console.log("shoplist", res);
+//   const [err, res] = await to<any, any>(queryMerchantHomeSearch(params));
+//   if (err) {
+//     showToast(err.message);
+//     return;
+//   }
+//   console.log("shoplist", res);
 
-  merchatList.value = res.data
-    .map(item => {
-      return {
-        ...item,
-        icon: item.icon,
-        text: item.name,
-        badge: item.merchantCount,
-        isFavorited: item.isFavorited,
-        rating: Number(item.rating),
-        longitude: Number(item.longitude),
-        latitude: Number(item.latitude),
-        id: Number(item.id),
-        commentCount: Number(item.commentCount),
-        checkinCount: Number(item.checkinCount),
-        subsidyAmount: Number(item.subsidyAmount)
-      };
-    })
-    .slice(0, 1);
+//   merchatList.value = res.data
+//     .map(item => {
+//       return {
+//         ...item,
+//         icon: item.icon,
+//         text: item.name,
+//         badge: item.merchantCount,
+//         isFavorited: item.isFavorited,
+//         rating: Number(item.rating),
+//         longitude: Number(item.longitude),
+//         latitude: Number(item.latitude),
+//         id: Number(item.id),
+//         commentCount: Number(item.commentCount),
+//         checkinCount: Number(item.checkinCount),
+//         subsidyAmount: Number(item.subsidyAmount)
+//       };
+//     })
+//     .slice(0, 1);
 
-  // 确保在下一个 tick 中执行标记更新
-  setTimeout(() => {
-    console.log("====markerListFn====getGuideData");
+//   // 确保在下一个 tick 中执行标记更新
+//   setTimeout(() => {
+//     console.log("====markerListFn====getGuideData");
 
-    markerListFn({ isGuide: true });
-  }, 0);
-};
+//     markerListFn({ isGuide: true });
+//   }, 0);
+// };
 const handleSearchInput = () => {};
 const handleSearch = val => {
   searchName.value = val;
@@ -385,6 +350,8 @@ const handelFavorite = flag => {
 };
 
 const showMerchantDetail = merchant => {
+  console.log("showMerchantDetail", merchant, merchant.isFavorited);
+
   selectedMerchant.value = merchant;
   showPopup.value = true;
 };
