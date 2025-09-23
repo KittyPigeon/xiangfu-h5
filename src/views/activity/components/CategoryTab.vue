@@ -90,29 +90,37 @@ const getCategory = async () => {
             font-size: 12px;
             color: rgba(255, 255, 255, 0.9);
             margin-bottom: 4px;
+            display: block;
+            width: 40px;
+            height: 40px;
+            background-size: 100% 100%;
 
             &.icon-sports {
-                .svg-mask('@/assets/icons/icon-tab-bike.svg', 24px, #fff);
+                // .svg-mask('@/assets/icons/icon-tab-bike.svg', 24px, );
+                background-image: url('@/assets/icons/icon-tab-bike.png');
 
             }
 
             &.icon-festival {
-                .svg-mask('@/assets/icons/icon-tab-brush.svg', 24px, #fff);
-
+                // .svg-mask('@/assets/icons/icon-tab-brush.svg', 24px, #fff);
+                background-image: url('@/assets/icons/icon-tab-brush.png');
             }
 
             &.icon-exhibition {
-                .svg-mask('@/assets/icons/icon-tab-shop.svg', 24px, #fff);
-
+                // .svg-mask('@/assets/icons/icon-tab-shop.svg', 24px, #fff);
+                background-image: url('@/assets/icons/icon-tab-shop.png');
             }
 
             &.icon-music {
-                .svg-mask('@/assets/icons/icon-tab-community.svg', 24px, #fff);
+                
+                // .svg-mask('@/assets/icons/icon-tab-community.svg', 24px, #fff);
+                background-image: url('@/assets/icons/icon-tab-community.png');
 
             }
 
             &.icon-culture {
-                .svg-mask('@/assets/icons/icon-tab-book.svg', 24px, #fff);
+                // .svg-mask('@/assets/icons/icon-tab-book.svg', 24px, #fff);
+                background-image: url('@/assets/icons/icon-tab-book.png');
             }
         }
 

@@ -7,7 +7,7 @@ const routes: Array<RouteRecordRaw> = [
     path: "/",
     name: "root",
     component: Layout,
-    redirect: { name: "Home" },
+    redirect: { name: "Post" },
     children: [
       {
         path: "home",
@@ -68,6 +68,15 @@ const routes: Array<RouteRecordRaw> = [
         component: () => import("@/views/activity/index.vue"),
         meta: {
           title: "逛活动",
+          showTabBar: true // 需要显示tabBar
+        }
+      },
+      {
+        path: "post",
+        name: "Post",
+        component: () => import("@/views/post/index.vue"),
+        meta: {
+          title: "好推荐",
           showTabBar: true // 需要显示tabBar
         }
       },

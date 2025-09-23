@@ -78,12 +78,15 @@ export default defineConfig(({ mode }) => {
         // "^/cpi": {
         //   target: "http://192.168.137.11:8074"
         // },
-        "^/cpi": {
-          target: "http://120.27.151.154:8074"
-        },
+        // "^/cpi": {
+        //   target: "http://120.27.151.154:8074"
+        // },
         // "^/cpi": {
         //   target: "http://172.18.60.147:8074"
         // },
+        "^/cpi": {
+          target: "http://localhost:8074"
+        },
       }
     },
     build: {

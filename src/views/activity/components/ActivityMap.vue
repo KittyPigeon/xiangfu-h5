@@ -152,7 +152,7 @@ const handleViewMore = () => {
   // margin: 0 16px;
   .map-container {
     width: 100%;
-    height: 100px;
+    height: 140px;
     border-radius: 12px;
     overflow: hidden;
   }

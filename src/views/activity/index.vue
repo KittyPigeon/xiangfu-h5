@@ -16,11 +16,11 @@
 
     <div class="home-content" :class="{ expanded: isExpanded }">
       <!-- 活动 Tab 组件 - 在展开状态下移到顶部 -->
-      <ActivityTab
+      <!-- <ActivityTab
         v-if="isExpanded"
         class="activity-tab-top"
         @change="handleActivityTabChange"
-      />
+      /> -->
 
       <!-- 活动地图组件 -->
       <ActivityMap
@@ -30,14 +30,17 @@
       />
 
       <!-- 活动 Tab 组件 - 正常位置 -->
-      <ActivityTab v-if="!isExpanded" @change="handleActivityTabChange" />
-
+      <ActivityTab @change="handleActivityTabChange" @toggleArrow="handleToggleArrow" />
+      
       <div
+        class="activity-list"
+      >
+      <!-- <div
         class="activity-list"
         @touchstart="handleTouchStart"
         @touchmove="handleTouchMove"
         @touchend="handleTouchEnd"
-      >
+      > -->
         <div
           v-for="(item, index) in activityList"
           :key="index"
@@ -115,6 +118,12 @@ const handleSearch = (value: string) => {
   searchName.value = value;
   getActivityList();
 };
+
+const handleToggleArrow = (payload: boolean) => {
+  console.log("handleToggleArrow", payload);
+  
+  isExpanded.value = payload;
+}
 
 const handleCategoryChange = (index: number) => {
   console.log("分类 Tab 切换：", index);
@@ -321,7 +330,7 @@ const handleTouchEnd = (event: TouchEvent) => {
 
   .search-bar {
     width: 343px;
-    margin: 24px auto 24px; // 和54有关 54-24=30
+    margin: 24px auto 10px; // 和54有关 54-24=30
   }
 
   &::after {
@@ -386,10 +395,10 @@ const handleTouchEnd = (event: TouchEvent) => {
     border-radius: 16px;
     padding: 12px 14px;
     position: absolute;
-    bottom: 0;
+    top: 290px;
     left: 8px;
     right: 8px;
-    height: 50vh;
+    height: calc(100vh - 290px);
     z-index: 99;
     display: flex;
     flex-direction: column;

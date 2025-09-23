@@ -16,9 +16,9 @@
             <span>面额</span>
           </div>
           <div
-            class="table-row"
             v-for="(item, index) in couponList"
             :key="index"
+            class="table-row"
           >
             <span class="table-row-column merchant-row">
               <div class="qrcode">
@@ -90,7 +90,7 @@ const getUserCoupon = async () => {
     return;
   }
   couponList.value = couponList.value.concat(res.data.records);
-//   finished.value = true;
+  //   finished.value = true;
   finished.value = !res.data.hasNext;
 };
 
@@ -170,7 +170,7 @@ const loadingMore = () => {
         color: #111111;
         display: flex;
         align-items: center;
-        .merchant{
+        .merchant {
           flex: 1;
         }
       }

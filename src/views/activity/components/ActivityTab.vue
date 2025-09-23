@@ -10,6 +10,15 @@
       >
         {{ item }}
       </div>
+      <div
+        @click="toggleArrowClick"
+        class="arrow-icon"
+        :style="{ transform: `rotate(${arrowRotate}deg)` }"
+        transition="transform 0.3s ease"
+      >
+        <!-- <img class="icon" :src="IconArrow" /> -->
+        <img class="icon" :src="IconArrow" />
+      </div>
     </div>
 
     <!-- <span class="more">更多 <van-icon name="arrow" size="12" color="rgba(0, 0, 0, 0.35)" /></span> -->
@@ -19,14 +28,25 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
+import IconArrow from "@/assets/images/arrow.png";
 
+const arrowRotate = ref(0); // 箭头旋转角度
 const tabs = ref(["即将上线", "进行中", "往期活动"]);
 const current = ref(0);
-const emit = defineEmits(["change"]);
+const emit = defineEmits(["change", "toggleArrow"]);
 const handleTabClick = (index: number) => {
   current.value = index;
   emit("change", index);
 };
+const toggleArrowClick = () => {
+  console.log('arrowRotate1', arrowRotate.value);
+  // 第一次点击后返回true
+  
+  arrowRotate.value = arrowRotate.value === 0 ? 180 : 0;
+  console.log('arrowRotate2', arrowRotate.value);
+
+  emit('toggleArrow', !!arrowRotate.value)
+}
 </script>
 
 <style scoped lang="less">
@@ -63,5 +83,24 @@ const handleTabClick = (index: number) => {
   font-size: 12px;
   font-weight: 600;
   color: rgba(0, 0, 0, 0.35);
+}
+.up-or-down {
+  display: flex;
+}
+.arrow-icon {
+  // margin-left: 10px;
+  transition: transform 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-left: auto;
+  margin-right: 10px;
+
+  .icon {
+    display: inline-block;
+    width: 16px;
+    height: auto;
+  }
 }
 </style>

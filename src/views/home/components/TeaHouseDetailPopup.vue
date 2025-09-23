@@ -1,9 +1,10 @@
 <template>
   <!-- Vant 弹窗组件 -->
   <van-popup v-model:show="showPopup" position="bottom" round @click.stop>
-    <div class="close-icon-wrapper" @click.stop="handleClose">
-      <van-icon name="clear" class="close-icon" />
-    </div>
+    <!-- <div class="close-icon-wrapper" @click.stop="handleClose">
+      <van-icon name="clear" class="close-icon" />      
+    </div> -->
+    <van-icon name="close" class="close-icon close-icon-wrapper " @click.stop="handleClose" />
     <div class="detail-popup" @click.stop>
       <!-- 茶馆图片 -->
       <van-image
@@ -322,10 +323,22 @@ const handleClaim = async () => {
   right: 6px;
   z-index: 999999;
 
-  .close-icon {
-    color: #666;
-    font-size: 20px;
-  }
+  // .close-icon {
+  //   color: #666;
+  //   font-size: 20px;
+  // }
+}
+
+ .close-icon {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: #fff;
+  border-radius: 50%;
+  padding: 6px;
+  font-size: 20px;
+  color: #f00;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
 }
 
 .van-overlay {

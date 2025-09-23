@@ -9,55 +9,80 @@
       <!-- 昵称 & ID -->
       <div class="user-info">
         <span class="nickname">{{ nickname }}</span>
-        <span class="user-id"><span class="icon-id"></span> {{ userId }}</span>
+        <span class="user-id"><span class="icon-id" /> {{ userId }}</span>
       </div>
       <!-- <div class="icon-arrow"></div> -->
-      <div class="div-holder"></div>
+      <div class="div-holder" />
     </div>
 
     <!-- 优惠券列表 -->
     <van-cell-group class="coupon-list">
-      <van-cell title="我的优惠券" is-link :value="couponList.length" class="title" @click="goToCouponsList" />
+      <van-cell
+        title="我的优惠券"
+        is-link
+        :value="couponList.length"
+        class="title"
+        @click="goToCouponsList"
+      />
       <div class="coupon-table">
         <div class="table-header">
           <span>商户</span>
           <span>领取时间</span>
           <span>面额</span>
         </div>
-        <div class="table-row" v-for="(item, index) in couponList" :key="index">
-
+        <div v-for="(item, index) in couponList" :key="index" class="table-row">
           <span class="table-row-column merchant-row">
             <div class="qrcode">
-              <!-- 二维码占位（可替换为实际图片） -->
-              <van-image class="qrcode" fit="cover" src="http://120.27.151.154:8071/xfjd/qrcode.png" @click="showQrcode(item)" />
+              <!-- 二维码占位（可替换为实际图片）src="http://120.27.151.154:8071/xfjd/qrcode.png" -->
+               <!-- <img src="http://120.27.151.154:8071/xfjd/qrcode.png" alt=""/> -->
+               <img src="@/assets/images/qrcode.png" @click="showQrcode(item)" alt=""/>
+              <!-- <van-image
+                class="qrcode"
+                fit="cover"
+                src="@/assets/images/qrcode.png"
+                @click="showQrcode(item)"
+              /> -->
             </div>
             <div class="merchant">{{ item.merchantName }}</div>
           </span>
           <span class="table-row-column">{{ item.receiveTime }}</span>
-          <span class="table-row-column">{{ item.discountAmount || 20}}</span>
+          <span class="table-row-column">{{ item.discountAmount || 20 }}</span>
         </div>
       </div>
     </van-cell-group>
 
     <!-- 我参加的活动 -->
     <van-cell-group class="activity-list">
-      <van-cell title="我参加的活动" is-link :value="activityList.length" @click="goToActivityList" />
+      <van-cell
+        title="我参加的活动"
+        is-link
+        :value="activityList.length"
+        @click="goToActivityList"
+      />
       <div class="activity-table">
         <div class="table-header">
           <span>活动名称</span>
           <span>活动时间</span>
           <span>面额</span>
         </div>
-        <div class="table-row" v-for="(item, index) in activityList" :key="index">
+        <div
+          v-for="(item, index) in activityList"
+          :key="index"
+          class="table-row"
+        >
           <!-- 活动图标 -->
 
           <span class="table-row-column merchant-row">
-            <van-image class="activity-icon" fit="cover" :src="item.coverImage" />
+            <van-image
+              class="activity-icon"
+              fit="cover"
+              :src="item.coverImage"
+            />
             <span class="name-group">
               <span class="name">{{ item.title }}</span>
-              <span class="hot" v-if="item.isHot">热门</span></span>
+              <span v-if="item.isHot" class="hot">热门</span></span
+            >
           </span>
-
 
           <span class="table-row-column">{{ item.startTime }}</span>
           <span class="table-row-column">{{ item.amount }}</span>
@@ -67,51 +92,96 @@
 
     <van-overlay :show="qrCodeVisible" @click="qrCodeVisible = false">
       <div class="wrapper">
-        <van-image class="activity-qrcode-url" fit="cover" :src="qrcodeUrl" @click.stop /> >
+        <img src="@/assets/images/qrcode.png" alt=""/>
+        <!-- <van-image
+          class="activity-qrcode-url"
+          fit="cover"
+          :src="qrcodeUrl"
+          @click.stop
+        /> -->
+        >
       </div>
     </van-overlay>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import { showToast } from 'vant';
-import { getUserData, queryUserCoupons } from '@/api/user';
-import { queryCollectList } from '@/api/collect'
-import { EnumCollectTargetType } from '@/enums/collect'
-import dayjs from 'dayjs';
-import to from 'await-to-js';
-import { useRouter } from 'vue-router';
+import { ref, onMounted } from "vue";
+import { showToast } from "vant";
+import { getUserData, queryUserCoupons } from "@/api/user";
+import { queryCollectList } from "@/api/collect";
+import { EnumCollectTargetType } from "@/enums/collect";
+import dayjs from "dayjs";
+import to from "await-to-js";
+import { useRouter } from "vue-router";
 
 onMounted(async () => {
   await getUserInfo();
   await getUserCoupon();
   await getUserActivity();
-})
+});
 
 // hooks
 const router = useRouter();
 
 // 响应式数据
-const avatarUrl = ref(''); // 实际头像地址
-const nickname = ref('');
-const userId = ref('');
-const qrCodeVisible = ref(false)
-const qrcodeUrl = ref('')
+const avatarUrl = ref(""); // 实际头像地址
+const nickname = ref("");
+const userId = ref("");
+const qrCodeVisible = ref(false);
+const qrcodeUrl = ref("");
 
 // 优惠券列表（模拟数据）
 const couponList = ref([
-  { merchantName: '祥符茶馆', receiveTime: '2025.08.02', discountAmount: 18, couponCode: 'https://example.com/activity1.png' },
-  { merchantName: '祥符茶馆', receiveTime: '2025.08.02', discountAmount: 18, couponCode: 'https://example.com/activity1.png' },
-  { merchantName: '祥符茶馆', receiveTime: '2025.08.02', discountAmount: 18, couponCode: 'https://example.com/activity1.png' },
-  { merchantName: '祥符茶馆', receiveTime: '2025.08.02', discountAmount: 18, couponCode: 'https://example.com/activity1.png' },
+  // {
+  //   merchantName: "祥符茶馆",
+  //   receiveTime: "2025.08.02",
+  //   discountAmount: 18,
+  //   couponCode: "https://example.com/activity1.png"
+  // },
+  // {
+  //   merchantName: "祥符茶馆",
+  //   receiveTime: "2025.08.02",
+  //   discountAmount: 18,
+  //   couponCode: "https://example.com/activity1.png"
+  // },
+  // {
+  //   merchantName: "祥符茶馆",
+  //   receiveTime: "2025.08.02",
+  //   discountAmount: 18,
+  //   couponCode: "https://example.com/activity1.png"
+  // },
+  // {
+  //   merchantName: "祥符茶馆",
+  //   receiveTime: "2025.08.02",
+  //   discountAmount: 18,
+  //   couponCode: "https://example.com/activity1.png"
+  // }
 ]);
 
 // 活动列表（模拟数据）
 const activityList = ref([
-  { title: '跑行天下', startTime: '2025.08.02', amount: 7, isHot: true, coverImage: 'https://example.com/activity1.png' },
-  { title: '跑行天下', startTime: '2025.08.02', amount: 7, isHot: false, coverImage: 'https://example.com/activity2.png' },
-  { title: '跑行天下', startTime: '2025.08.02', amount: 5, isHot: false, coverImage: 'https://example.com/activity3.png' },
+  // {
+  //   title: "跑行天下",
+  //   startTime: "2025.08.02",
+  //   amount: 7,
+  //   isHot: true,
+  //   coverImage: "https://example.com/activity1.png"
+  // },
+  // {
+  //   title: "跑行天下",
+  //   startTime: "2025.08.02",
+  //   amount: 7,
+  //   isHot: false,
+  //   coverImage: "https://example.com/activity2.png"
+  // },
+  // {
+  //   title: "跑行天下",
+  //   startTime: "2025.08.02",
+  //   amount: 5,
+  //   isHot: false,
+  //   coverImage: "https://example.com/activity3.png"
+  // }
 ]);
 
 // 接口
@@ -123,64 +193,70 @@ const getUserInfo = async () => {
   // }
   const res = {
     data: {
-      nickname: '张三',
-      avatar: '/xfjd/avator1.png',
-      userId: '1'
+      nickname: "张三",
+      avatar: "/xfjd/avator1.png",
+      userId: "1"
     }
-  }
+  };
   nickname.value = res.data.nickname;
   avatarUrl.value = `${window.location.origin}${res.data.avatar}`;
   userId.value = res.data.userId;
-  localStorage.setItem('user', JSON.stringify(res.data))
-}
+  localStorage.setItem("user", JSON.stringify(res.data));
+};
 
 const getUserCoupon = async () => {
-  const [err, res] = await to<any, any>(queryUserCoupons({
-    userId: userId.value,
-    current: 1,
-    size: 9999,
-    status: 1
-  }));
+  const [err, res] = await to<any, any>(
+    queryUserCoupons({
+      userId: userId.value,
+      current: 1,
+      size: 9999,
+      status: 1
+    })
+  );
   if (err) {
-    showToast(err.message)
-    return
+    showToast(err.message);
+    return;
   }
   couponList.value = res.data.records.slice(0, 4);
-}
+};
 const getUserActivity = async () => {
-  const [err, res] = await to<any, any>(queryCollectList({
-    current: 1,
-    size: 9999,
-    userId: userId.value,
-    targetType: EnumCollectTargetType.ACTIVITY
-  }));
+  const [err, res] = await to<any, any>(
+    queryCollectList({
+      current: 1,
+      size: 9999,
+      userId: userId.value,
+      targetType: EnumCollectTargetType.ACTIVITY
+    })
+  );
   if (err) {
-    showToast(err.message)
-    return
+    showToast(err.message);
+    return;
   }
-  activityList.value = res.data.records.map((o) => {
-    return {
-      ...o,
-      startTime: dayjs(o.activityStartTime).format('YYYY.MM.DD'),
-      amount: 8,
-      isHot: true,
-      title: o.targetName,
-      coverImage: o.targetImage
-    }
-  }).slice(0, 3);
-}
+  activityList.value = res.data.records
+    .map(o => {
+      return {
+        ...o,
+        startTime: dayjs(o.activityStartTime).format("YYYY.MM.DD"),
+        amount: 8,
+        isHot: true,
+        title: o.targetName,
+        coverImage: o.targetImage
+      };
+    })
+    .slice(0, 3);
+};
 
-const showQrcode = (data) => {
+const showQrcode = data => {
   qrCodeVisible.value = true;
-  qrcodeUrl.value = 'http://120.27.151.154:8071/xfjd/qrcode.png';
-}
+  qrcodeUrl.value = "http://120.27.151.154:8071/xfjd/qrcode.png";
+};
 
 const goToActivityList = () => {
   // router.push('/activityList')
-}
+};
 const goToCouponsList = () => {
   // router.push('/couponList')
-}
+};
 </script>
 
 <style scoped lang="less">
@@ -190,16 +266,20 @@ const goToCouponsList = () => {
 }
 
 .my-page {
-  background: linear-gradient(180deg, #FF6D23 11.54%, rgba(255, 109, 35, 0) 100%);
+  background: linear-gradient(
+    180deg,
+    #ff6d23 11.54%,
+    rgba(255, 109, 35, 0) 100%
+  );
   position: relative;
 
   // background: url('../../assets/images/carton2.png') no-repeat top right;
   // background-size: contain;
   &::before {
-    content: '';
+    content: "";
     width: 291px;
     height: 231px;
-    background: url('../../assets/images/carton2.png') no-repeat top right;
+    background: url("../../assets/images/carton2.png") no-repeat top right;
     background-size: cover;
     display: block;
     // z-index: -1;
@@ -249,7 +329,7 @@ const goToCouponsList = () => {
           width: 24px;
           height: 16px;
           margin-right: 3px;
-          background: url('../../assets/icons/icon-id.svg') no-repeat center;
+          background: url("../../assets/icons/icon-id.svg") no-repeat center;
         }
       }
     }
@@ -258,7 +338,7 @@ const goToCouponsList = () => {
       display: inline-block;
       width: 16px;
       height: 16px;
-      background: url('../../assets/icons/icon-arrow.svg') no-repeat center;
+      background: url("../../assets/icons/icon-arrow.svg") no-repeat center;
     }
   }
 
@@ -293,11 +373,11 @@ const goToCouponsList = () => {
       .table-header {
         display: flex;
         justify-content: space-between;
-        background-color: #FFE2D3;
+        background-color: #ffe2d3;
         padding: 5px 0;
         font-weight: bold;
         font-size: 12px;
-        color: #D44700;
+        color: #d44700;
         border-radius: 8px;
         margin-bottom: 10px;
 
@@ -328,8 +408,8 @@ const goToCouponsList = () => {
           color: #111111;
           display: flex;
           align-items: center;
-          .merchant{
-            flex:1;
+          .merchant {
+            flex: 1;
           }
         }
 
@@ -338,7 +418,7 @@ const goToCouponsList = () => {
         }
 
         .name-group {
-          flex:1;
+          flex: 1;
           display: flex;
           flex-direction: column;
           justify-content: center;
@@ -353,10 +433,8 @@ const goToCouponsList = () => {
             padding: 0 4px;
             font-size: 12px;
             display: inline-block;
-            background: #FF6D23;
+            background: #ff6d23;
           }
-
-
         }
 
         .qrcode,
@@ -368,7 +446,6 @@ const goToCouponsList = () => {
         }
       }
     }
-
   }
 }
 

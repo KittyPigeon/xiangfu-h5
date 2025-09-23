@@ -1,5 +1,6 @@
 <script setup lang="ts" name="Demo">
 import { onMounted, ref, onUnmounted } from "vue";
+import { useRouter } from "vue-router";
 import { storeToRefs } from "pinia";
 import DragExpandPanel from "./components/drag.vue";
 import StartList from "./components/starList.vue";
@@ -25,6 +26,7 @@ import {
   useVOnboarding
 } from "v-onboarding";
 
+const router = useRouter();
 const searchName = ref("");
 const isExpanded = ref(false);
 const showPopup = ref(false);
@@ -368,10 +370,32 @@ const clickGradientModal = () => {
 const changeFavorite = () => {
   selectedMerchant.value.isFavorited = !selectedMerchant.value.isFavorited;
 };
+const toIntro = () => {
+  router.push({ path: "/intro" });
+};
 </script>
 
 <template>
   <!-- <div id="marker-9">ppppp</div> -->
+  <!-- <img
+    src="@/assets/videos/guide-5.webp"
+    alt=""
+    style="width: 40px; height: 60pxpx"
+  /> -->
+  <img
+    src="@/assets/videos/guide-8-vidio.gif"
+    alt=""
+    style="
+      width: 60px;
+      height: 90px;
+      position: fixed;
+      top: 50%;
+      right: 0;
+      z-index: 9999;
+    "
+    @click="toIntro"
+  />
+  <MyFavorite style="position: fixed; top: 10px; left: 10px;z-index: 9999;" @favorite="handelFavorite" />
   <VOnboardingWrapper ref="wrapper" :steps="steps">
     <template #default="{ previous, next, step, exit, isFirst, isLast, index }">
       <VOnboardingStep>
@@ -428,14 +452,14 @@ const changeFavorite = () => {
     </template>
   </VOnboardingWrapper>
   <div class="home-content">
-    <div class="gradient-modal" @click.stop="clickGradientModal" />
+    <!-- <div class="gradient-modal" @click.stop="clickGradientModal" /> -->
     <div id="map-container" class="map-container" />
     <!-- 我的收藏 -->
     <!-- <button @click.stop="showPopup = !showPopup">展示详情</button> -->
 
     <div class="activity-control" @click.stop>
       <!-- 我的收藏 -->
-      <MyFavorite @favorite="handelFavorite" />
+      <!-- <MyFavorite @favorite="handelFavorite" /> -->
       <!-- 搜索栏 -->
       <SearchBar @search-input="handleSearchInput" @search="handleSearch" />
       <!-- 收藏弹窗 -->

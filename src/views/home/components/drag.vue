@@ -170,7 +170,7 @@ onMounted(() => {
 
 .panel-title {
   font-size: 12px;
-  color: rgba(0, 0, 0, 0.3);
+  color: rgba(0, 0, 0, 0.6);
   margin-bottom: 10px;
   text-align: center;
 }
@@ -187,6 +187,7 @@ onMounted(() => {
     display: inline-block;
     width: 8px;
     height: auto;
+
   }
 }
 
