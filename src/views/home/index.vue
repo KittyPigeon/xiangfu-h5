@@ -28,6 +28,7 @@ import {
 
 const router = useRouter();
 const searchName = ref("");
+// const showDiv = ref(false);
 const isExpanded = ref(false);
 const showPopup = ref(false);
 const categoryList = ref([]);
@@ -40,6 +41,7 @@ let gaodeAMap: any = null;
 const setFitViewOptions = {
   padding: [109, 200, 100, 200] //上、下、左、右
 };
+const showSearchBar = ref(false)
 
 const wrapper = ref(null);
 const {
@@ -371,7 +373,8 @@ const changeFavorite = () => {
   selectedMerchant.value.isFavorited = !selectedMerchant.value.isFavorited;
 };
 const toIntro = () => {
-  router.push({ path: "/intro" });
+  showSearchBar.value = !showSearchBar.value;
+  // router.push({ path: "/intro" });
 };
 </script>
 
@@ -382,7 +385,7 @@ const toIntro = () => {
     alt=""
     style="width: 40px; height: 60pxpx"
   /> -->
-  <img
+  <!-- <img
     src="@/assets/videos/guide-8-vidio.gif"
     alt=""
     style="
@@ -394,7 +397,15 @@ const toIntro = () => {
       z-index: 9999;
     "
     @click="toIntro"
-  />
+  /> -->
+  <!-- <div style="margin:50px">
+    <button @click="showDiv = !showDiv">切换</button>
+    <transition name="slide-fade">
+      <div v-if="showDiv" class="my-div">
+        内容将从右侧淡入
+      </div>
+    </transition>
+  </div> -->
   <MyFavorite style="position: fixed; top: 10px; left: 10px;z-index: 9999;" @favorite="handelFavorite" />
   <VOnboardingWrapper ref="wrapper" :steps="steps">
     <template #default="{ previous, next, step, exit, isFirst, isLast, index }">
@@ -461,7 +472,23 @@ const toIntro = () => {
       <!-- 我的收藏 -->
       <!-- <MyFavorite @favorite="handelFavorite" /> -->
       <!-- 搜索栏 -->
-      <SearchBar @search-input="handleSearchInput" @search="handleSearch" />
+       <div class="search-area">
+          <transition name="slide-fade">
+            <SearchBar v-if="showSearchBar" @search-input="handleSearchInput" @search="handleSearch" />
+          </transition>
+          <div v-if="!showSearchBar" class="search-bar-holder"></div>
+          <img
+            src="@/assets/videos/guide-8-vidio.gif"
+            alt=""
+            style="
+              width: 60px;
+              height: 90px;
+            "
+            @click="toIntro"
+          />
+
+       </div>
+      <!-- <SearchBar @search-input="handleSearchInput" @search="handleSearch" /> -->
       <!-- 收藏弹窗 -->
       <DragExpandPanel
         class="drag-panel-container"
@@ -495,6 +522,7 @@ const toIntro = () => {
       :isFavorited="selectedMerchant?.isFavorited"
       @refreshList="changeFavorite"
     />
+
   </div>
 </template>
 
@@ -568,12 +596,33 @@ const toIntro = () => {
     right: 0;
     z-index: 99;
   }
+}
 
-  .drag-panel-container {
-    // margin:0 8px;
+.search-area {
+  display: flex;
+  .search-bar, .search-bar-holder {
+    flex: 1;
+    align-self: flex-end;
+    height: 44px;
   }
 }
 
-.drag-handle {
+/* 从右侧淡入，并向左移动 */
+.slide-fade-enter-active,
+.slide-fade-leave-active {
+  transition: all 0.5s ease; /* 过渡效果，可以是动画也可以是过渡 */
 }
+
+/* 进入时的初始状态 */
+.slide-fade-enter {
+  // transform: translateX(100%); /* 从右侧开始 */
+  opacity: 0; /* 完全透明 */
+}
+
+/* 离开时的最终状态 */
+.slide-fade-leave-to {
+  // transform: translateX(-100%); /* 向左移动 */
+  opacity: 0; /* 完全透明 */
+}
+
 </style>
